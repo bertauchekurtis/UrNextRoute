@@ -401,36 +401,63 @@ class EditPinPage extends StatelessWidget {
       ),
       body: ListView(
         padding: EdgeInsets.zero,
-        children: const [
-          ListTile(
+        children: [
+          const ListTile(
             leading: Icon(Icons.pin_drop_outlined),
             title: Text("Near WPEB Engineering"),
             subtitle: Text("Location"),
             trailing: Icon(Icons.edit),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.watch_later_outlined),
             title: Text("Expires in 2 hours 32 minutes"),
             subtitle: Text("Expiration time"),
             trailing: Icon(Icons.edit),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.build),
             title: Text("Maintenance Pin"),
             subtitle: Text("Pin Type"),
             trailing: Icon(Icons.edit),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.description),
             title: Text("Loose Handrailing"),
             subtitle: Text("Description"),
             trailing: Icon(Icons.edit),
           ),
-          Text(
+          const Text(
             "Tap on a property to edit",
             textAlign: TextAlign.center,
           ),
-          Text("Would be cool to put a map here")
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 420,
+            child: FlutterMap(
+              options: const MapOptions(
+                initialCenter: LatLng(39.539961, -119.812230),
+                initialZoom: 18,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.app',
+                ),
+                MarkerLayer(markers: [
+                  Marker(
+                    point: const LatLng(39.539961, -119.812230),
+                    width: 50,
+                    height: 50,
+                    child: Icon(
+                      Icons.push_pin,
+                      color: Colors.blue.shade900,
+                      size: 60,
+                    ),
+                  ),
+                ]),
+              ],
+            ),
+          ),
         ],
       ),
     );
