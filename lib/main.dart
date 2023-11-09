@@ -3,9 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
+}
+
+Future<UserCredential> signInWithGoogle() async {
+  // Trigger the authentication flow
+  final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+  // Obtain the auth details from the request
+  final GoogleSignInAuthentication? googleAuth =
+      await googleUser?.authentication;
+
+  // Create a new credential
+  final credential = GoogleAuthProvider.credential(
+    accessToken: googleAuth?.accessToken,
+    idToken: googleAuth?.idToken,
+  );
+
+  // Once signed in, return the UserCredential
+  return await FirebaseAuth.instance.signInWithCredential(credential);
 }
 
 class MyApp extends StatelessWidget {
@@ -50,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = const MapPage();
       case 1:
-        page = const RouteSettingsPage();
+        page = RouteSettingsPage();
       case 2:
         page = const MyPinsPage();
       default:
@@ -220,7 +246,8 @@ class MapPage extends StatelessWidget {
 }
 
 class RouteSettingsPage extends StatelessWidget {
-  const RouteSettingsPage({super.key});
+  RouteSettingsPage({super.key});
+  final credential = signInWithGoogle();
 
   @override
   Widget build(BuildContext context) {

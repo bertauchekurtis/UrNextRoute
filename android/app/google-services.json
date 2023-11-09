@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1030067242876",
+    "project_id": "ur-next-route",
+    "storage_bucket": "ur-next-route.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030067242876:android:d1f73e3264c1b40d3846f9",
+        "android_client_info": {
+          "package_name": "com.example.ur_next_route"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALGdBe32x_W9g1wm1sMJeT7slBti3ZGko"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
