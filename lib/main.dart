@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'sign_in.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,24 +15,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
-}
-
-Future<UserCredential> signInWithGoogle() async {
-  // Trigger the authentication flow
-  final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-  // Obtain the auth details from the request
-  final GoogleSignInAuthentication? googleAuth =
-      await googleUser?.authentication;
-
-  // Create a new credential
-  final credential = GoogleAuthProvider.credential(
-    accessToken: googleAuth?.accessToken,
-    idToken: googleAuth?.idToken,
-  );
-
-  // Once signed in, return the UserCredential
-  return await FirebaseAuth.instance.signInWithCredential(credential);
 }
 
 class MyApp extends StatelessWidget {
@@ -42,14 +25,13 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'Namer App',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 4, 30, 66)),
-        ),
-        home: const MyHomePage(),
-      ),
+          title: 'Namer App',
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color.fromARGB(255, 4, 30, 66)),
+          ),
+          home: const SignInPage()),
     );
   }
 }
@@ -67,6 +49,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
+  final user = FirebaseAuth.instance.currentUser;
+  late final name = user?.providerData.first.displayName;
+  late final email = user?.providerData.first.email;
+  late final photoURL = user?.providerData.first.photoURL;
+
+  void signOutProcess() async {
+    await GoogleSignIn().signOut();
+    await FirebaseAuth.instance.signOut();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = const MapPage();
       case 1:
-        page = RouteSettingsPage();
+        page = const RouteSettingsPage();
       case 2:
         page = const MyPinsPage();
       default:
@@ -94,23 +85,26 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  const UserAccountsDrawerHeader(
-                    decoration: BoxDecoration(
+                  UserAccountsDrawerHeader(
+                    decoration: const BoxDecoration(
                       color: Color.fromARGB(255, 4, 30, 66),
                     ),
                     accountName: Text(
-                      "Test User",
-                      style: TextStyle(
+                      name!,
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     accountEmail: Text(
-                      "TestUser@nevada.unr.edu",
-                      style: TextStyle(
+                      email!,
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    currentAccountPicture: FlutterLogo(),
+                    currentAccountPicture: CircleAvatar(
+                      radius: 40,
+                      backgroundImage: NetworkImage(photoURL!),
+                    ),
                   ),
                   ListTile(
                     leading: const Icon(Icons.map_outlined),
@@ -142,14 +136,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                   ListTile(
-                      leading: const Icon(Icons.settings_outlined),
-                      title: const Text("Settings"),
-                      onTap: () {
-                        setState(() {
-                          selectedIndex = 3;
-                        });
-                        Navigator.pop(context);
-                      })
+                    leading: const Icon(Icons.settings_outlined),
+                    title: const Text("Settings"),
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 3;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.logout),
+                    title: const Text("Logout"),
+                    onTap: () {
+                      signOutProcess();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                  )
                 ],
               ),
             ),
@@ -246,8 +250,7 @@ class MapPage extends StatelessWidget {
 }
 
 class RouteSettingsPage extends StatelessWidget {
-  RouteSettingsPage({super.key});
-  final credential = signInWithGoogle();
+  const RouteSettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
