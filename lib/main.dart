@@ -10,6 +10,7 @@ import 'map.dart';
 import 'route_settings.dart';
 import 'my_pins.dart';
 import 'edit_pin.dart';
+import 'safety_toolkit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,6 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
         page = const RouteSettingsPage();
       case 2:
         page = const MyPinsPage();
+      case 3:
+        page = SafetyToolKit();
       default:
         page = const EditPinPage();
     }
@@ -138,11 +141,21 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                   ListTile(
+                    leading: const Icon(Icons.business_center_sharp),
+                    title: const Text("Safety Toolkit"),
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 3;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
                     leading: const Icon(Icons.settings_outlined),
                     title: const Text("Settings"),
                     onTap: () {
                       setState(() {
-                        selectedIndex = 3;
+                        selectedIndex = 4;
                       });
                       Navigator.pop(context);
                     },
