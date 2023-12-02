@@ -53,46 +53,6 @@ class MapPage extends StatelessWidget {
                 ),
                 MarkerLayer(
                   markers: [
-                    Marker(
-                      point: const LatLng(39.539886, -119.812539),
-                      width: 50,
-                      height: 50,
-                      child: Icon(
-                        Icons.push_pin,
-                        color: Colors.blue.shade900,
-                        size: 50,
-                      ),
-                    ),
-                    const Marker(
-                      point: LatLng(39.540308, -119.815999),
-                      width: 50,
-                      height: 50,
-                      child: Icon(
-                        Icons.push_pin,
-                        color: Colors.red,
-                        size: 50,
-                      ),
-                    ),
-                    Marker(
-                      point: const LatLng(39.542138, -119.815463),
-                      width: 50,
-                      height: 50,
-                      child: Icon(
-                        Icons.push_pin,
-                        color: Colors.blue.shade900,
-                        size: 50,
-                      ),
-                    ),
-                    Marker(
-                      point: const LatLng(39.536554, -119.814330),
-                      width: 50,
-                      height: 50,
-                      child: Icon(
-                        Icons.push_pin,
-                        color: Colors.blue.shade900,
-                        size: 50,
-                      ),
-                    ),
                     if(appState.showBlueLights)
                     for (var blueLight in appState.blueLightList)
                     Marker(
@@ -100,9 +60,9 @@ class MapPage extends StatelessWidget {
                       width: 50,
                       height: 50,
                       child: Icon(
-                        Icons.push_pin,
-                        color: Colors.purple.shade900,
-                        size: 50,
+                        Icons.flare_rounded,
+                        color: Color.fromARGB(255, 3, 98, 188),
+                        size: 20,
                       ),
                     ),
                   ],

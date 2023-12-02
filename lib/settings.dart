@@ -31,7 +31,7 @@ class SettingsPage extends StatelessWidget {
         children:  [
           ListTile(
             leading: const Icon(
-              Icons.store,
+              Icons.campaign_outlined,
               size: 30,
             ),
             title: const Text("Overlay Emergency Blue Lights on Map"),
