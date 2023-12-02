@@ -29,7 +29,7 @@ class MapPage extends StatelessWidget {
                   showModalBottomSheet(
                     context: context,
                     builder: (builder) {
-                      return AddPinModal();
+                      return AddPinModal(position: point);
                     },
                   ),
                 },
@@ -41,17 +41,27 @@ class MapPage extends StatelessWidget {
                 ),
                 MarkerLayer(
                   markers: [
-                    for (var startEnd in appState.startEndList)
-                      Marker(
-                        point: startEnd.position,
-                        width: 50,
-                        height: 50,
-                        child: const Icon(
-                          Icons.star_rate_rounded,
-                          color: const Color.fromARGB(255, 48, 167, 56),
-                          size: 10,
-                        ),
+                    // if (appState.start.position != const LatLng(0, 0))
+                    Marker(
+                      point: appState.start.position,
+                      width: 50,
+                      height: 50,
+                      child: const Icon(
+                        Icons.star_rate_rounded,
+                        color: const Color.fromARGB(255, 48, 167, 56),
+                        size: 50,
                       ),
+                    ),
+                    Marker(
+                      point: appState.end.position,
+                      width: 50,
+                      height: 50,
+                      child: const Icon(
+                        Icons.star_rate_rounded,
+                        color: Color.fromARGB(255, 167, 52, 48),
+                        size: 50,
+                      ),
+                    ),
                   ],
                 ),
               ],

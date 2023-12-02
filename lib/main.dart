@@ -1,5 +1,6 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -42,11 +43,17 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
-  var startEndList = <StartEnd>[];
 
-  void addStartEnd(startEnd) {
-    startEndList.add(startEnd);
+  var start = StartEnd(true, LatLng(0, 0));
+  var end = StartEnd(false, LatLng(0, 0));
+
+  void setStart(start) {
+    start = start;
     notifyListeners();
+  }
+
+  void setEnd(end) {
+    end = end;
   }
 }
 
