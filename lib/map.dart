@@ -1,6 +1,7 @@
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
+import 'package:ur_next_route/add_pin_modal.dart';
 import 'package:ur_next_route/main.dart';
 import 'package:provider/provider.dart';
 import 'package:ur_next_route/start_end.dart';
@@ -24,7 +25,13 @@ class MapPage extends StatelessWidget {
                 initialZoom: 15,
                 keepAlive: true,
                 onTap: (tapPosition, point) => {
-                  appState.addStartEnd(StartEnd(true, point)),
+                  //appState.addStartEnd(StartEnd(true, point)),
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (builder) {
+                      return AddPinModal();
+                    },
+                  ),
                 },
               ),
               children: [
@@ -39,7 +46,7 @@ class MapPage extends StatelessWidget {
                         point: startEnd.position,
                         width: 50,
                         height: 50,
-                        child: Icon(
+                        child: const Icon(
                           Icons.star_rate_rounded,
                           color: const Color.fromARGB(255, 48, 167, 56),
                           size: 10,
