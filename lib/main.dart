@@ -11,6 +11,7 @@ import 'route_settings.dart';
 import 'my_pins.dart';
 import 'edit_pin.dart';
 import 'safety_toolkit.dart';
+import 'start_end.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +42,12 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
+  var startEndList = <StartEnd>[];
+
+  void addStartEnd(startEnd) {
+    startEndList.add(startEnd);
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatefulWidget {
