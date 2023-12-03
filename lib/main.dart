@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:ur_next_route/blue_light.dart';
 import 'firebase_options.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,9 @@ import 'my_pins.dart';
 import 'edit_pin.dart';
 import 'safety_toolkit.dart';
 import 'start_end.dart';
+import 'settings.dart';
+import 'dart:convert';
+import 'package:latlong2/latlong.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +47,8 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
-
+  var showBlueLights = false;
+  var blueLightList = <BlueLight>[];
   var start = StartEnd(true, LatLng(0, 0));
   var end = StartEnd(false, LatLng(0, 0));
 
@@ -54,6 +59,16 @@ class MyAppState extends ChangeNotifier {
 
   void setEnd(end) {
     end = end;
+  }
+
+  void toggleBlueLights() {
+    showBlueLights = !showBlueLights;
+    print(showBlueLights);
+    notifyListeners();
+  }
+
+  void addBlueLight(blueLight) {
+    blueLightList.add(blueLight);
   }
 }
 
@@ -90,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 3:
         page = SafetyToolKit();
       default:
-        page = const EditPinPage();
+        page = SettingsPage();
     }
 
     return Scaffold(
