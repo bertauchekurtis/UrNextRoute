@@ -11,12 +11,9 @@ import 'sign_in.dart';
 import 'map.dart';
 import 'route_settings.dart';
 import 'my_pins.dart';
-import 'edit_pin.dart';
 import 'safety_toolkit.dart';
 import 'start_end.dart';
 import 'settings.dart';
-import 'dart:convert';
-import 'package:latlong2/latlong.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,8 +46,8 @@ class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   var showBlueLights = false;
   var blueLightList = <BlueLight>[];
-  var start = StartEnd(true, LatLng(0, 0));
-  var end = StartEnd(false, LatLng(0, 0));
+  var start = StartEnd(true, const LatLng(0, 0));
+  var end = StartEnd(false, const LatLng(0, 0));
 
   void setStart(start) {
     start = start;
@@ -63,7 +60,6 @@ class MyAppState extends ChangeNotifier {
 
   void toggleBlueLights() {
     showBlueLights = !showBlueLights;
-    print(showBlueLights);
     notifyListeners();
   }
 
@@ -105,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 3:
         page = SafetyToolKit();
       default:
-        page = SettingsPage();
+        page = const SettingsPage();
     }
 
     return Scaffold(

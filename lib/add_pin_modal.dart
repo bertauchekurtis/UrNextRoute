@@ -5,13 +5,13 @@ import 'package:ur_next_route/start_end.dart';
 import 'main.dart';
 
 class AddPinModal extends StatelessWidget {
-  const AddPinModal({Key? key, required LatLng this.position})
+  const AddPinModal({Key? key, required this.position})
       : super(key: key);
   final LatLng position;
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.33,
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 4, 30, 66),
