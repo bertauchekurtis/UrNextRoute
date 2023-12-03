@@ -20,9 +20,9 @@ Future<UserCredential> signInWithGoogle() async {
 
 void debugSign() {
   if (FirebaseAuth.instance.currentUser != null) {
-    print("Signed in");
+    //print("Signed in");
   } else {
-    print("Signed out");
+    //print("Signed out");
   }
 }
 

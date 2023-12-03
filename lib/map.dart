@@ -1,38 +1,39 @@
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:ur_next_route/add_pin_modal.dart';
 import 'main.dart';
+import 'package:provider/provider.dart';
 import 'blue_light.dart';
 import 'dart:convert';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
-  
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    List<String> questions = [];
     List<BlueLight> blueLightList = [];
 
     Future<List<String>> loadBlueLights(context) async {
       List<String> questions = [];
-      await DefaultAssetBundle.of(context).loadString('assets/blue_light_data.csv').then((q) {
-        for (String i in LineSplitter().convert(q)) {
+      await DefaultAssetBundle.of(context)
+          .loadString('assets/blue_light_data.csv')
+          .then((q) {
+        for (String i in const LineSplitter().convert(q)) {
           var allThree = i.split(',');
           questions.add(i);
           //print(allThree);
-          BlueLight thisBlue = BlueLight(allThree[0], LatLng(double.parse(allThree[1]), double.parse(allThree[2])));
+          BlueLight thisBlue = BlueLight(allThree[0],
+              LatLng(double.parse(allThree[1]), double.parse(allThree[2])));
           blueLightList.add(thisBlue);
           appState.addBlueLight(thisBlue);
         }
       });
       return questions;
     }
+
     loadBlueLights(context);
-    //print(questions);
-    //print(blueLightList);
 
     return SafeArea(
       child: Stack(
@@ -41,10 +42,19 @@ class MapPage extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: FlutterMap(
-              options: const MapOptions(
-                initialCenter: LatLng(39.543956, -119.815827),
+              options: MapOptions(
+                initialCenter: const LatLng(39.543956, -119.815827),
                 initialZoom: 15,
                 keepAlive: true,
+                onTap: (tapPosition, point) => {
+                  //appState.addStartEnd(StartEnd(true, point)),
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (builder) {
+                      return AddPinModal(position: point);
+                    },
+                  ),
+                },
               ),
               children: [
                 TileLayer(
@@ -53,20 +63,39 @@ class MapPage extends StatelessWidget {
                 ),
                 MarkerLayer(
                   markers: [
-                    if(appState.showBlueLights)
-                    for (var blueLight in appState.blueLightList)
                     Marker(
-                      point: blueLight.position,
+                      point: appState.start.position,
                       width: 50,
                       height: 50,
-                      child: Icon(
-                        Icons.flare_rounded,
-                        color: Color.fromARGB(255, 3, 98, 188),
-                        size: 20,
+                      child: const Icon(
+                        Icons.star_rate_rounded,
+                        color: Color.fromARGB(255, 48, 167, 56),
+                        size: 50,
                       ),
                     ),
+                    Marker(
+                      point: appState.end.position,
+                      width: 50,
+                      height: 50,
+                      child: const Icon(
+                        Icons.star_rate_rounded,
+                        color: Color.fromARGB(255, 167, 52, 48),
+                        size: 50,
+                      ),
+                    ),
+                    if (appState.showBlueLights)
+                      for (var blueLight in appState.blueLightList)
+                        Marker(
+                          point: blueLight.position,
+                          width: 50,
+                          height: 50,
+                          child: const Icon(
+                            Icons.flare_rounded,
+                            color: Color.fromARGB(255, 3, 98, 188),
+                            size: 20,
+                          ),
+                        ),
                   ],
-
                 ),
               ],
             ),
@@ -85,6 +114,3 @@ class MapPage extends StatelessWidget {
     );
   }
 }
-
-
-

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CampusVictimAdvocate extends StatelessWidget {
-  CampusVictimAdvocate({super.key});
+  const CampusVictimAdvocate({super.key});
 
   @override
   Widget build(BuildContext context) {
