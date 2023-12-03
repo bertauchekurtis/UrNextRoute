@@ -102,7 +102,7 @@ class SafetyToolKit extends StatelessWidget {
                 side: const BorderSide(color: Color.fromARGB(255, 0, 12, 146), width: 1.5)
               ),
               onPressed: () {
-                CampusVictimAdvocate();
+                const CampusVictimAdvocate();
               },
               child: const Text("Campus Victim Advocate",  textAlign: TextAlign.center),
             ),
