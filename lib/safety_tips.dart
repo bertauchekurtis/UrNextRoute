@@ -27,32 +27,28 @@ class SafetyTips extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: const [
           ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Be aware of your surroundings"),
+            leading: Icon(Icons.brightness_1),
+            title: Text("Be aware of your surroundings."),
           ),
           ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Walk in the center of the sidewalk, away from building doorways, hedges, and parked cars"),
+            leading: Icon(Icons.brightness_1),
+            title: Text("Walk in the center of the sidewalk, away from building doorways, hedges, and parked cars."),
           ), 
           ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Try to avoid walking alone at night"),
+            leading: Icon(Icons.brightness_1),
+            title: Text("Avoid walking alone at night."),
           ),
           ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Avoid walking down dark, vacant, or deserted"),
+            leading: Icon(Icons.brightness_1),
+            title: Text("Avoid walking down dark, vacant, or deserted areas."),
           ),
           ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Always look where you are going, do not get distracted with your phone"),
+            leading: Icon(Icons.brightness_1),
+            title: Text("Always look where you are going."),
           ),
           ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Tuck gold chains and other jewelry that might attract a criminal's attention inside your clothing"),
-          ),
-          ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Tuck gold chains and other jewelry that might attract a criminal's attention inside your clothing"),
+            leading: Icon(Icons.brightness_1),
+            title: Text("Tuck gold chains and other jewelry that might attract a criminal's attention inside your clothing."),
           ),      
         ],
       ),
