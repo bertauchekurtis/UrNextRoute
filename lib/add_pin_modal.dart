@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:ur_next_route/add_safety_pin.dart';
 import 'package:ur_next_route/start_end.dart';
 import 'main.dart';
 
@@ -35,7 +36,8 @@ class AddPinModal extends StatelessWidget {
                         true,
                         position,
                       )),
-                      appState.notifyListeners(), // should fix how this is updating (do this later)
+                      appState.startPointChosen = true,
+                      appState.triggerUpdate(),
                       Navigator.pop(context),
                     }),
             const SizedBox(
@@ -57,24 +59,28 @@ class AddPinModal extends StatelessWidget {
                         false,
                         position,
                       )),
-                      appState.notifyListeners(), // should fix how this is updating (do this later)
+                      appState.endPointChosen = true,
+                      appState.triggerUpdate(),
                       Navigator.pop(context),
                     }),
             const SizedBox(
               height: 10,
             ),
             ListTile(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              tileColor: Colors.white,
-              title: const Center(
-                  child: Text(
-                "Drop Safety Pin",
-                style: TextStyle(fontSize: 25),
-              )),
-              contentPadding: const EdgeInsets.all(10),
-            ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                tileColor: Colors.white,
+                title: const Center(
+                    child: Text(
+                  "Drop Safety Pin",
+                  style: TextStyle(fontSize: 25),
+                )),
+                contentPadding: const EdgeInsets.all(10),
+                onTap: () => {
+                  Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => AddSafetyPinPage(position: position,))),
+                }),
             const SizedBox(
               height: 10,
             ),
