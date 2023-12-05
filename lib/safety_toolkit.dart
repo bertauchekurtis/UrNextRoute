@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:volume_controller/volume_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+
+import 'safety_tips.dart';
 import 'campus_victim_advocate.dart';
 
-class SafetyToolKit extends StatelessWidget {
-  SafetyToolKit({super.key});
+class SafetyToolKit extends StatefulWidget {
+  const SafetyToolKit({super.key});
+
+  @override
+  State<SafetyToolKit> createState() => _SafetyToolKitState();
+}
+
+class _SafetyToolKitState extends State<SafetyToolKit> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   final player = AudioPlayer();
+  final Uri _url = Uri.parse('https://www.unr.edu/equal-opportunity-title-ix/resources');
+  PlayerState _playerState = PlayerState.stopped; 
 
   @override
   Widget build(BuildContext context) {
@@ -29,104 +42,93 @@ class SafetyToolKit extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                textStyle: const TextStyle(fontSize: 30),
-                padding: const EdgeInsets.all(20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)
-                ),  
-                side: const BorderSide(color: Color.fromARGB(255, 0, 12, 146), width: 1.5)
-              ),
-              child: const Text("Safety Tips", textAlign: TextAlign.center),
+
+            ListTile(
+              title: const Text("Safety Tips"),
+              trailing: TextButton( 
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SafetyTips()),
+                  );
+                },
+                child: const Icon(Icons.keyboard_arrow_right),
+              ),  
             ),
 
             const SizedBox(height: 25),
 
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                textStyle: const TextStyle(fontSize: 30),
-                padding: const EdgeInsets.all(20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)
-                ),  
-                side: const BorderSide(color: Color.fromARGB(255, 0, 12, 146), width: 1.5)
-              ),
-              child: const Text("Title IX Resources",  textAlign: TextAlign.center),
+            ListTile(
+              title: const Text("Title IX Resources"),
+              trailing: TextButton( 
+                onPressed: () {
+                    _launchUrl();
+                },
+                child: const Icon(Icons.keyboard_arrow_right),
+              ),  
             ),
 
             const SizedBox(height: 25),
 
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                textStyle: const TextStyle(fontSize: 30),
-                padding: const EdgeInsets.all(20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)
-                ),  
-                side: const BorderSide(color: Color.fromARGB(255, 0, 12, 146), width: 1.5)
-              ),
-              child: const Text("Non-Emergency Police",  textAlign: TextAlign.center),
-            ),
-
-            const SizedBox(height: 25),
-
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                textStyle: const TextStyle(fontSize: 30),
-                padding: const EdgeInsets.all(20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)
-                ),  
-                side: const BorderSide(color: Color.fromARGB(255, 0, 12, 146), width: 1.5)
-              ),
-              child: const Text("Report a Tip",  textAlign: TextAlign.center),
+            ListTile(
+              title: const Text("Campus Police"),
+              trailing: TextButton( 
+                onPressed: () {
+                  FlutterPhoneDirectCaller.callNumber('7753342677');
+                },
+                child: const Icon(Icons.local_phone_rounded),
+              ),  
             ),
 
             const SizedBox(height: 25),            
             
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                textStyle: const TextStyle(fontSize: 30),
-                padding: const EdgeInsets.all(20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)
-                ),  
-                side: const BorderSide(color: Color.fromARGB(255, 0, 12, 146), width: 1.5)
-              ),
+          ListTile(
+            title: const Text("Campus Victum Advocate"),
+            trailing: TextButton(  
               onPressed: () {
-                const CampusVictimAdvocate();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CampusVictimAdvocate()),
+                );
               },
-              child: const Text("Campus Victim Advocate",  textAlign: TextAlign.center),
+          child: const Icon(Icons.keyboard_arrow_right),
+          )
             ),
 
             const SizedBox(height: 25),  
 
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                textStyle: const TextStyle(fontSize: 30),
-                padding: const EdgeInsets.all(20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)
-                ),  
-                side: const BorderSide(color: Color.fromARGB(255, 0, 12, 146), width: 1.5)
-              ),
-              onPressed: () {
-                VolumeController().maxVolume();
-                player.play(AssetSource('alarm.mp3'));
+            ListTile(
+              title: const Text("Loud Alarm"),
+              trailing: TextButton( 
+                onPressed: () {
+                if(_playerState == PlayerState.stopped){
+                  VolumeController().maxVolume();
+                  player.play(AssetSource('alarm.mp3'));
+                  setState(() {
+                    _playerState = PlayerState.playing; 
+                  });
+                }
+                else{
+                  player.stop();
+                  setState(() {
+                    _playerState = PlayerState.stopped;
+                  });
+                }
               },
-              child: const Text("Loud Alarm",  textAlign: TextAlign.center),
+                child: const Icon(Icons.notifications_active),
+              ),  
             ),
           ],
         ),
       ),
     );
+  }
+  Future<void> _launchUrl () async {
+   if (!await launchUrl(_url)) {
+        throw Exception('Could not launch $_url');
+    }
   }
 }

@@ -76,6 +76,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   var selectedIndex = 0;
   final user = FirebaseAuth.instance.currentUser;
   late final name = user?.providerData.first.displayName;
@@ -99,12 +100,13 @@ class _MyHomePageState extends State<MyHomePage> {
       case 2:
         page = const MyPinsPage();
       case 3:
-        page = SafetyToolKit();
+        page = const SafetyToolKit();
       default:
         page = const SettingsPage();
     }
 
     return Scaffold(
+      key: scaffoldKey,
       resizeToAvoidBottomInset: false,
       drawer: Drawer(
         child: Container(
