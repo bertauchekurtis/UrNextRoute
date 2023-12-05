@@ -46,6 +46,8 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   var showBlueLights = false;
+  var startPointChosen = false;
+  var endPointChosen = false;
   var showMaintenancePins = true;
   var showTripFallPins = true;
   var showSafetyHazardPins = true;
