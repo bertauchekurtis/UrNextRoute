@@ -42,6 +42,45 @@ class SettingsPage extends StatelessWidget {
               },
             ),
           ),
+          ListTile(
+            leading: const Icon(
+              Icons.home_repair_service,
+              size: 30,
+            ),
+            title: const Text("Overlay Maintenance Pins on Map"),
+            trailing: Switch(
+              value: appState.showMaintenancePins,
+              onChanged: (value) {
+                appState.toggleMaintenancePins();
+              },
+            ),
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.personal_injury,
+              size: 30,
+            ),
+            title: const Text("Overlay Trip/Fall Hazard Pins on Map"),
+            trailing: Switch(
+              value: appState.showTripFallPins,
+              onChanged: (value) {
+                appState.toggleTripFallPins();
+              },
+            ),
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.warning,
+              size: 30,
+            ),
+            title: const Text("Overlay Safety Hazard Pins on Map"),
+            trailing: Switch(
+              value: appState.showSafetyHazardPins,
+              onChanged: (value) {
+                appState.toggleSafetyHazardPins();
+              },
+            ),
+          ),
         ],
       ),
     );

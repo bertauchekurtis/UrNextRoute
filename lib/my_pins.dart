@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'main.dart';
+import 'package:intl/intl.dart';
 
 class MyPinsPage extends StatelessWidget {
   const MyPinsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var allPins = appState.maintenancePinsList + appState.tripFallPinsList + appState.safetyHazardPinsList;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -25,35 +30,24 @@ class MyPinsPage extends StatelessWidget {
       ),
       body: ListView(
         padding: EdgeInsets.zero,
-        children: const [
-          ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Pin Near WPEB Engineering"),
-            subtitle: Text("Expires in 2 hours 12 minutes"),
-            trailing: Icon(Icons.keyboard_arrow_right),
-          ),
-          ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Pin Near PSAC"),
-            subtitle: Text("Expires in 2 hours 32 minutes"),
-            trailing: Icon(Icons.keyboard_arrow_right),
-          ),
-          ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Pin Near Raggio Building"),
-            subtitle: Text("Expires in 4 hours 36 minutes"),
-            trailing: Icon(Icons.keyboard_arrow_right),
-          ),
-          ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Pin Near Gateway Parking Garage"),
-            subtitle: Text("Expires in 2 days"),
-            trailing: Icon(Icons.keyboard_arrow_right),
-          ),
-          Text(
-            "Tap on a pin to edit",
+        children: [
+          if(allPins.isNotEmpty)
+            for(var pin in allPins)
+              ListTile(
+                leading: const Icon(Icons.pin_drop_outlined),
+                title: Text("Pin Near ${pin.closestBuilding}"),
+                subtitle: Text("Expires at ${DateFormat('kk:mm - EEE, MMM d').format(pin.expirationTime)} \n ${pin.description}"),
+                trailing: const Icon(Icons.keyboard_arrow_right),
+              ),
+          if(allPins.isNotEmpty)
+            const Text(
+              "Tap on a pin to edit",
+              textAlign: TextAlign.center,
+            ),
+          if(allPins.isEmpty)
+            const Text("You don't have any pins yet!",
             textAlign: TextAlign.center,
-          )
+            style: TextStyle(fontSize: 20),),
         ],
       ),
     );

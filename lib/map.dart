@@ -95,6 +95,42 @@ class MapPage extends StatelessWidget {
                             size: 20,
                           ),
                         ),
+                    if(appState.showMaintenancePins)
+                      for (var pin in appState.maintenancePinsList)
+                        Marker(
+                          point: pin.position,
+                          width: 50,
+                          height: 50,
+                          child: const Icon(
+                              Icons.push_pin_sharp,
+                              color: Color.fromARGB(255, 229, 10, 245),
+                              size: 40,
+                            ),
+                          ),
+                    if(appState.showTripFallPins)
+                      for (var pin in appState.tripFallPinsList)   
+                        Marker(
+                          point: pin.position,
+                          width: 50,
+                          height: 50,
+                          child: const Icon(
+                              Icons.push_pin_sharp,
+                              color: Color.fromARGB(255, 46, 135, 195),
+                              size: 40,
+                            ),
+                          ),
+                    if(appState.showSafetyHazardPins)
+                      for(var pin in appState.safetyHazardPinsList)     
+                      Marker(
+                          point: pin.position,
+                          width: 50,
+                          height: 50,
+                          child: const Icon(
+                              Icons.push_pin_sharp,
+                              color: Color.fromARGB(255, 245, 10, 10),
+                              size: 40,
+                            ),
+                          ),       
                   ],
                 ),
               ],

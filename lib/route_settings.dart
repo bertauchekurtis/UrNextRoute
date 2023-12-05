@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 
-class RouteSettingsPage extends StatelessWidget {
-  const RouteSettingsPage({super.key});
+class RouteSettingsPage extends StatefulWidget {
+  RouteSettingsPage({super.key});
 
+  @override
+  State<RouteSettingsPage> createState() => _RouteSettingsPageState();
+}
+
+class _RouteSettingsPageState extends State<RouteSettingsPage> {
+  double _blueLightValue = 0.9;
+  double _brightnessPref = 0.5;
+  bool allowStairs = true;
+  bool allowBuildings = true;
+  bool allowPins = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,8 +42,12 @@ class RouteSettingsPage extends StatelessWidget {
               size: 30,
             ),
             title: Slider(
-              value: 0.2,
-              onChanged: (value) {},
+              value: _brightnessPref,
+              onChanged: (value) {
+                setState(() {
+                  _brightnessPref = value;
+                });
+              },
             ),
             subtitle: const Text(
               "Path Brightness Preference",
@@ -47,8 +61,15 @@ class RouteSettingsPage extends StatelessWidget {
               color: Colors.blue,
             ),
             title: Slider(
-              value: 0.3,
-              onChanged: (value) {},
+              value: _blueLightValue,
+              divisions: 100,
+              min: 0,
+              max: 1,
+              onChanged: (value) {
+                setState(() {
+                  _blueLightValue = value;
+                });
+              },
             ),
             subtitle: const Text(
               "Emergency Blue Light Closeness",
@@ -65,8 +86,11 @@ class RouteSettingsPage extends StatelessWidget {
             ),
             title: const Text("Allow routing with Stairs"),
             trailing: Switch(
-              value: true,
-              onChanged: (bool value) {},
+              value: allowStairs,
+              onChanged: (bool value) {
+              setState(() {
+                allowStairs = value;
+              });}
             ),
           ),
           ListTile(
@@ -76,8 +100,12 @@ class RouteSettingsPage extends StatelessWidget {
             ),
             title: const Text("Allow routing through buildings"),
             trailing: Switch(
-              value: false,
-              onChanged: (value) {},
+              value: allowBuildings,
+              onChanged: (value) {
+                setState(() {
+                  allowBuildings = value;
+                });
+              },
             ),
           ),
           ListTile(
@@ -85,10 +113,14 @@ class RouteSettingsPage extends StatelessWidget {
               Icons.pin_drop,
               size: 30,
             ),
-            title: const Text("Allow routing near maintenance pins"),
+            title: const Text("Allow routing near safety pins"),
             trailing: Switch(
-              value: true,
-              onChanged: (value) {},
+              value: allowPins,
+              onChanged: (value) {
+                setState(() {
+                  allowPins = value;
+                });
+              },
             ),
           )
         ],
