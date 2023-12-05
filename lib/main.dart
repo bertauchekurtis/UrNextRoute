@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:ur_next_route/blue_light.dart';
+import 'package:ur_next_route/safety_pin.dart';
 import 'firebase_options.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,9 +46,16 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   var showBlueLights = false;
+  var showMaintenancePins = true;
+  var showTripFallPins = true;
+  var showSafetyHazardPins = true;
   var blueLightList = <BlueLight>[];
   var start = StartEnd(true, const LatLng(0, 0));
   var end = StartEnd(false, const LatLng(0, 0));
+
+  var maintenancePinsList = <SafetyPin>[];
+  var tripFallPinsList = <SafetyPin>[];
+  var safetyHazardPinsList = <SafetyPin>[];
 
   void setStart(start) {
     start = start;
@@ -63,8 +71,41 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleMaintenancePins() {
+    showMaintenancePins = !showMaintenancePins;
+    notifyListeners();
+  }
+
+  void toggleTripFallPins() {
+    showTripFallPins = !showTripFallPins;
+    notifyListeners();
+  }
+
+  void toggleSafetyHazardPins() {
+    showSafetyHazardPins = !showSafetyHazardPins;
+    notifyListeners();
+  }
+
   void addBlueLight(blueLight) {
     blueLightList.add(blueLight);
+  }
+
+  void addSafetyPin(SafetyPin newPin) {
+    switch(newPin.type) {
+      case 1:
+        // maintenance
+        maintenancePinsList.add(newPin);
+        break;
+      case 2:
+        // trip/fall
+        tripFallPinsList.add(newPin);
+        break;
+      case 3:
+        // safety
+        safetyHazardPinsList.add(newPin);
+        break;
+    }
+    notifyListeners();
   }
 }
 
@@ -95,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = const MapPage();
       case 1:
-        page = const RouteSettingsPage();
+        page = RouteSettingsPage();
       case 2:
         page = const MyPinsPage();
       case 3:
