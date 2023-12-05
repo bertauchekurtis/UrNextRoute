@@ -71,19 +71,13 @@ class _SignInPageState extends State<SignInPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const FlutterLogo(
-                  size: 200,
+                Image.asset(
+                  'assets/appstore.png',
+                  height: 400,
+                  width: 400,
                 ),
                 const SizedBox(
                   height: 20,
-                ),
-                const Text(
-                  "Ur Next Route",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 30,
-                  ),
                 ),
                 const SizedBox(
                   height: 20,
