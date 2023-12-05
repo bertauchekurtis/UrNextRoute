@@ -28,31 +28,27 @@ class SafetyTips extends StatelessWidget {
         children: const [
           ListTile(
             leading: Icon(Icons.brightness_1),
-            title: Text("Be aware of your surroundings"),
+            title: Text("Be aware of your surroundings."),
           ),
           ListTile(
             leading: Icon(Icons.brightness_1),
-            title: Text("Walk in the center of the sidewalk, away from building doorways, hedges, and parked cars"),
+            title: Text("Walk in the center of the sidewalk, away from building doorways, hedges, and parked cars."),
           ), 
           ListTile(
             leading: Icon(Icons.brightness_1),
-            title: Text("Try to avoid walking alone at night"),
+            title: Text("Avoid walking alone at night."),
           ),
           ListTile(
             leading: Icon(Icons.brightness_1),
-            title: Text("Avoid walking down dark, vacant, or deserted"),
+            title: Text("Avoid walking down dark, vacant, or deserted areas."),
           ),
           ListTile(
             leading: Icon(Icons.brightness_1),
-            title: Text("Always look where you are going, do not get distracted with your phone"),
+            title: Text("Always look where you are going."),
           ),
           ListTile(
             leading: Icon(Icons.brightness_1),
-            title: Text("Tuck gold chains and other jewelry that might attract a criminal's attention inside your clothing"),
-          ),
-          ListTile(
-            leading: Icon(Icons.brightness_1),
-            title: Text("Tuck gold chains and other jewelry that might attract a criminal's attention inside your clothing"),
+            title: Text("Tuck gold chains and other jewelry that might attract a criminal's attention inside your clothing."),
           ),      
         ],
       ),

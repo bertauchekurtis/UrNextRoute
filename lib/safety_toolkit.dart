@@ -86,7 +86,7 @@ class _SafetyToolKitState extends State<SafetyToolKit> {
             const SizedBox(height: 25),            
             
           ListTile(
-            title: const Text("Campus Victum Advocate"),
+            title: const Text("Campus Victim Advocate"),
             trailing: TextButton(  
               onPressed: () {
                 Navigator.push(
