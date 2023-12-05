@@ -45,6 +45,8 @@ dependencies:
   google_sign_in: ^6.1.6
   firebase_auth: ^4.12.1
   volume_controller: ^2.0.7
+  intl: ^0.18.1
+  flutter_phone_direct_caller: ^2.1.1
 
 dev_dependencies:
   flutter_test:

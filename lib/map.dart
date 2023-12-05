@@ -2,10 +2,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
 import 'package:ur_next_route/add_pin_modal.dart';
-import 'package:ur_next_route/start_end.dart';
 import 'main.dart';
 import 'package:provider/provider.dart';
-import 'main.dart';
 import 'blue_light.dart';
 import 'dart:convert';
 
@@ -22,7 +20,7 @@ class MapPage extends StatelessWidget {
       await DefaultAssetBundle.of(context)
           .loadString('assets/blue_light_data.csv')
           .then((q) {
-        for (String i in LineSplitter().convert(q)) {
+        for (String i in const LineSplitter().convert(q)) {
           var allThree = i.split(',');
           questions.add(i);
           //print(allThree);
@@ -45,7 +43,7 @@ class MapPage extends StatelessWidget {
             height: MediaQuery.of(context).size.height,
             child: FlutterMap(
               options: MapOptions(
-                initialCenter: LatLng(39.543956, -119.815827),
+                initialCenter: const LatLng(39.543956, -119.815827),
                 initialZoom: 15,
                 keepAlive: true,
                 onTap: (tapPosition, point) => {
@@ -106,7 +104,7 @@ class MapPage extends StatelessWidget {
                       height: 50,
                       child: const Icon(
                         Icons.star_rate_rounded,
-                        color: const Color.fromARGB(255, 48, 167, 56),
+                        color: Color.fromARGB(255, 48, 167, 56),
                         size: 50,
                       ),
                     ),
@@ -132,6 +130,42 @@ class MapPage extends StatelessWidget {
                             size: 20,
                           ),
                         ),
+                    if(appState.showMaintenancePins)
+                      for (var pin in appState.maintenancePinsList)
+                        Marker(
+                          point: pin.position,
+                          width: 50,
+                          height: 50,
+                          child: const Icon(
+                              Icons.push_pin_sharp,
+                              color: Color.fromARGB(255, 229, 10, 245),
+                              size: 40,
+                            ),
+                          ),
+                    if(appState.showTripFallPins)
+                      for (var pin in appState.tripFallPinsList)   
+                        Marker(
+                          point: pin.position,
+                          width: 50,
+                          height: 50,
+                          child: const Icon(
+                              Icons.push_pin_sharp,
+                              color: Color.fromARGB(255, 46, 135, 195),
+                              size: 40,
+                            ),
+                          ),
+                    if(appState.showSafetyHazardPins)
+                      for(var pin in appState.safetyHazardPinsList)     
+                      Marker(
+                          point: pin.position,
+                          width: 50,
+                          height: 50,
+                          child: const Icon(
+                              Icons.push_pin_sharp,
+                              color: Color.fromARGB(255, 245, 10, 10),
+                              size: 40,
+                            ),
+                          ),       
                   ],
                 ),
               ],
