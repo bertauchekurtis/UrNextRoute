@@ -37,8 +37,7 @@ class AddPinModal extends StatelessWidget {
                         position,
                       )),
                       appState.startPointChosen = true,
-                      appState
-                          .notifyListeners(), // should fix how this is updating (do this later)
+                      appState.triggerUpdate(),
                       Navigator.pop(context),
                     }),
             const SizedBox(
@@ -61,10 +60,8 @@ class AddPinModal extends StatelessWidget {
                         position,
                       )),
                       appState.endPointChosen = true,
-                      appState
-                          .notifyListeners(), // should fix how this is updating (do this later)
+                      appState.triggerUpdate(),
                       Navigator.pop(context),
-                      print(position),
                     }),
             const SizedBox(
               height: 10,

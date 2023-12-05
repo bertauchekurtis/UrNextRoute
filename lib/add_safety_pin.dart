@@ -9,9 +9,10 @@ import 'main.dart';
 
 class AddSafetyPinPage extends StatefulWidget {
   final LatLng position;
-  var selectedOption = 1;
-  DateTime now = DateTime.now();
-  late String formattedDate = DateFormat('kk:mm - EEE, MMM d').format(now);
+
+  final DateTime now = DateTime.now();
+  late final String formattedDate =
+      DateFormat('kk:mm - EEE, MMM d').format(now);
   final user = FirebaseAuth.instance.currentUser;
   late final uid = user?.uid;
   AddSafetyPinPage({Key? key, required this.position}) : super(key: key);
@@ -21,14 +22,14 @@ class AddSafetyPinPage extends StatefulWidget {
 }
 
 class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
-  
   final TextEditingController descriptionController = TextEditingController();
-
+  var selectedOption = 1;
   @override
   void dispose() {
     descriptionController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -50,26 +51,27 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
           },
         ),
         actions: <Widget>[
-          Padding(padding: const EdgeInsets.only(right: 20.0),
-          child: GestureDetector(
-            onTap: () {
-              SafetyPin newPin = SafetyPin("Placeholder Building", 
-              widget.position, 
-              widget.uid!, 
-              widget.selectedOption, 
-              descriptionController.text, 
-              widget.now, 
-              DateTime(2024));
-              appState.addSafetyPin(newPin);
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Icon(
-              Icons.check,
-              color: Colors.white,
-
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {
+                SafetyPin newPin = SafetyPin(
+                    "Placeholder Building",
+                    widget.position,
+                    widget.uid!,
+                    selectedOption,
+                    descriptionController.text,
+                    widget.now,
+                    DateTime(2024));
+                appState.addSafetyPin(newPin);
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              child: const Icon(
+                Icons.check,
+                color: Colors.white,
+              ),
             ),
-          ),
           ),
         ],
         backgroundColor: const Color.fromARGB(255, 4, 30, 66),
@@ -80,46 +82,43 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
           ListTile(
             leading: const Icon(Icons.pin_drop_outlined),
             title: const Text("Near <<Placeholder>>"),
-            subtitle: Text("Lat: ${widget.position.latitude.toStringAsFixed(4)}, Long: ${widget.position.longitude.toStringAsFixed(4)}"),
+            subtitle: Text(
+                "Lat: ${widget.position.latitude.toStringAsFixed(4)}, Long: ${widget.position.longitude.toStringAsFixed(4)}"),
             trailing: const Icon(Icons.edit),
           ),
           const Text("   Pin Type:", style: TextStyle(fontSize: 20)),
-
           ListTile(
             title: const Text("Maintenance"),
             leading: Radio(
-              value: 1,
-              groupValue: widget.selectedOption,
-              onChanged: (value) {
-                setState(() {
-                  widget.selectedOption = value!;
-                });
-              }
-            ),
+                value: 1,
+                groupValue: selectedOption,
+                onChanged: (value) {
+                  setState(() {
+                    selectedOption = value!;
+                  });
+                }),
           ),
           ListTile(
             title: const Text("Trip/Fall Hazard"),
             leading: Radio(
-              value: 2,
-              groupValue: widget.selectedOption,
-              onChanged: (value) {
-                setState(() {
-                  widget.selectedOption = value!;
-                });
-              }
-            ),
+                value: 2,
+                groupValue: selectedOption,
+                onChanged: (value) {
+                  setState(() {
+                    selectedOption = value!;
+                  });
+                }),
           ),
           ListTile(
             title: const Text("Safety Concern"),
             leading: Radio(
-              value: 3,
-              groupValue: widget.selectedOption,
-              onChanged: (value) {
-                setState(() {
-                  widget.selectedOption = value!;
-                });
-              }
-            ),
+                value: 3,
+                groupValue: selectedOption,
+                onChanged: (value) {
+                  setState(() {
+                    selectedOption = value!;
+                  });
+                }),
           ),
           ListTile(
             leading: const Icon(Icons.watch_later_outlined),
@@ -127,35 +126,35 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
             //subtitle: const Text("Tap to back date"), will do back dating later
             //trailing: const Icon(Icons.edit),
           ),
-          
           const Padding(
             padding: EdgeInsets.only(left: 10, right: 10),
             child: TextField(
               decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'When should this pin expire?',
+                border: OutlineInputBorder(),
+                hintText: 'When should this pin expire?',
               ),
             ),
           ),
-
-          const SizedBox(height: 15,),
-
+          const SizedBox(
+            height: 15,
+          ),
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: TextField(
               controller: descriptionController,
               decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter a short description.',
+                border: OutlineInputBorder(),
+                hintText: 'Enter a short description.',
               ),
             ),
           ),
-
-          const SizedBox(height: 15,),
-
-          const Text("Location Preview:",
-          textAlign: TextAlign.center,),
-        
+          const SizedBox(
+            height: 15,
+          ),
+          const Text(
+            "Location Preview:",
+            textAlign: TextAlign.center,
+          ),
           SizedBox(
             width: MediaQuery.of(context).size.width,
             height: 250,

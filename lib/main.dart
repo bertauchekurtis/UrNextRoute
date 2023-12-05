@@ -93,7 +93,7 @@ class MyAppState extends ChangeNotifier {
   }
 
   void addSafetyPin(SafetyPin newPin) {
-    switch(newPin.type) {
+    switch (newPin.type) {
       case 1:
         // maintenance
         maintenancePinsList.add(newPin);
@@ -107,6 +107,10 @@ class MyAppState extends ChangeNotifier {
         safetyHazardPinsList.add(newPin);
         break;
     }
+    notifyListeners();
+  }
+
+  void triggerUpdate() {
     notifyListeners();
   }
 }
@@ -139,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = const MapPage();
       case 1:
-        page = RouteSettingsPage();
+        page = const RouteSettingsPage();
       case 2:
         page = const MyPinsPage();
       case 3:
