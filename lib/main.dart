@@ -54,6 +54,7 @@ class MyAppState extends ChangeNotifier {
   var blueLightList = <BlueLight>[];
   var start = StartEnd(true, const LatLng(0, 0));
   var end = StartEnd(false, const LatLng(0, 0));
+  var genRoute = false;
 
   var maintenancePinsList = <SafetyPin>[];
   var tripFallPinsList = <SafetyPin>[];
