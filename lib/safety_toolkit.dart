@@ -83,18 +83,6 @@ class _SafetyToolKitState extends State<SafetyToolKit> {
               ),  
             ),
 
-            const SizedBox(height: 25),
-
-            ListTile(
-              title: const Text("Report a Tip"),
-              trailing: TextButton( 
-                onPressed: () {
-                  
-                },
-                child: const Icon(Icons.keyboard_arrow_right),
-              ),  
-            ),
-
             const SizedBox(height: 25),            
             
           ListTile(
