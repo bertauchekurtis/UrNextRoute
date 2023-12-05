@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:ur_next_route/safety_pin.dart';
+import 'package:intl/intl.dart';
 
 class EditPinPage extends StatelessWidget {
-  const EditPinPage({super.key});
+  const EditPinPage({Key? key, required this.clickPin}) : super(key: key);
+  final SafetyPin clickPin;
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +19,11 @@ class EditPinPage extends StatelessWidget {
         ),
         leading: IconButton(
           icon: const Icon(
-            Icons.dehaze,
+            Icons.arrow_back,
             color: Colors.white,
           ),
           onPressed: () {
-            Scaffold.of(context).openDrawer();
+            Navigator.pop(context);
           },
         ),
         backgroundColor: const Color.fromARGB(255, 4, 30, 66),
@@ -28,29 +31,45 @@ class EditPinPage extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const ListTile(
-            leading: Icon(Icons.pin_drop_outlined),
-            title: Text("Near WPEB Engineering"),
-            subtitle: Text("Location"),
-            trailing: Icon(Icons.edit),
+          ListTile(
+            leading: const Icon(Icons.pin_drop_outlined),
+            title: Text("Near ${clickPin.closestBuilding}"),
+            subtitle: const Text("Location"),
+            trailing: const Icon(Icons.edit),
           ),
-          const ListTile(
-            leading: Icon(Icons.watch_later_outlined),
-            title: Text("Expires in 2 hours 32 minutes"),
-            subtitle: Text("Expiration time"),
-            trailing: Icon(Icons.edit),
+          ListTile(
+            leading: const Icon(Icons.watch_later_outlined),
+            title: Text(DateFormat('kk:mm - EEE, MMM d')
+                .format(clickPin.expirationTime)),
+            subtitle: const Text("Expiration time"),
+            trailing: const Icon(Icons.edit),
           ),
-          const ListTile(
-            leading: Icon(Icons.build),
-            title: Text("Maintenance Pin"),
-            subtitle: Text("Pin Type"),
-            trailing: Icon(Icons.edit),
-          ),
-          const ListTile(
-            leading: Icon(Icons.description),
-            title: Text("Loose Handrailing"),
-            subtitle: Text("Description"),
-            trailing: Icon(Icons.edit),
+          if (clickPin.type == 1)
+            const ListTile(
+              leading: Icon(Icons.build),
+              title: Text("Maintenance"),
+              subtitle: Text("Pin Type"),
+              trailing: Icon(Icons.edit),
+            ),
+          if (clickPin.type == 2)
+            const ListTile(
+              leading: Icon(Icons.build),
+              title: Text("Trip/Fall Hazard"),
+              subtitle: Text("Pin Type"),
+              trailing: Icon(Icons.edit),
+            ),
+          if (clickPin.type == 3)
+            const ListTile(
+              leading: Icon(Icons.build),
+              title: Text("Safety Concern "),
+              subtitle: Text("Pin Type"),
+              trailing: Icon(Icons.edit),
+            ),
+          ListTile(
+            leading: const Icon(Icons.description),
+            title: Text(clickPin.description),
+            subtitle: const Text("Description"),
+            trailing: const Icon(Icons.edit),
           ),
           const Text(
             "Tap on a property to edit",
@@ -60,8 +79,8 @@ class EditPinPage extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             height: 420,
             child: FlutterMap(
-              options: const MapOptions(
-                initialCenter: LatLng(39.539961, -119.812230),
+              options: MapOptions(
+                initialCenter: clickPin.position,
                 initialZoom: 18,
               ),
               children: [
@@ -71,7 +90,7 @@ class EditPinPage extends StatelessWidget {
                 ),
                 MarkerLayer(markers: [
                   Marker(
-                    point: const LatLng(39.539961, -119.812230),
+                    point: clickPin.position,
                     width: 50,
                     height: 50,
                     child: Icon(

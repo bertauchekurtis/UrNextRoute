@@ -1,6 +1,6 @@
 import 'package:latlong2/latlong.dart';
 
-class SafetyPin { 
+class SafetyPin {
   String closestBuilding = "placeholder";
   LatLng position = const LatLng(0, 0);
   String userUID = "";
@@ -9,11 +9,13 @@ class SafetyPin {
   int type = 0;
   String description = "";
 
-  SafetyPin(this.closestBuilding, 
-  this.position, 
-  this.userUID, 
-  this.type, 
-  this.description,
-  this.placedTime, 
-  this.expirationTime,);
+  SafetyPin(
+    this.closestBuilding,
+    this.position,
+    this.userUID,
+    this.type,
+    this.description,
+    this.placedTime,
+    this.expirationTime,
+  );
 }
