@@ -1,7 +1,9 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:ur_next_route/blue_light.dart';
 import 'firebase_options.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,8 +11,9 @@ import 'sign_in.dart';
 import 'map.dart';
 import 'route_settings.dart';
 import 'my_pins.dart';
-import 'edit_pin.dart';
 import 'safety_toolkit.dart';
+import 'start_end.dart';
+import 'settings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +44,28 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
+  var showBlueLights = false;
+  var blueLightList = <BlueLight>[];
+  var start = StartEnd(true, const LatLng(0, 0));
+  var end = StartEnd(false, const LatLng(0, 0));
+
+  void setStart(start) {
+    start = start;
+    notifyListeners();
+  }
+
+  void setEnd(end) {
+    end = end;
+  }
+
+  void toggleBlueLights() {
+    showBlueLights = !showBlueLights;
+    notifyListeners();
+  }
+
+  void addBlueLight(blueLight) {
+    blueLightList.add(blueLight);
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -77,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 3:
         page = const SafetyToolKit();
       default:
-        page = const EditPinPage();
+        page = const SettingsPage();
     }
 
     return Scaffold(
