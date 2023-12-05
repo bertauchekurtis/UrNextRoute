@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SafetyTips extends StatelessWidget {
-  SafetyTips({super.key});
+  const SafetyTips({super.key});
 
   @override
   Widget build(BuildContext context) {

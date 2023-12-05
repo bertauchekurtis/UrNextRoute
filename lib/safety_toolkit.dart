@@ -52,7 +52,7 @@ class _SafetyToolKitState extends State<SafetyToolKit> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SafetyTips()),
+                    MaterialPageRoute(builder: (context) => const SafetyTips()),
                   );
                 },
                 child: const Icon(Icons.keyboard_arrow_right),
