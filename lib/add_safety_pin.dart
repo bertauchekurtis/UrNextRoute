@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ur_next_route/safety_pin.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'main.dart';
 
 class AddSafetyPinPage extends StatefulWidget {
@@ -17,6 +18,13 @@ class AddSafetyPinPage extends StatefulWidget {
   late final uid = user?.uid;
   AddSafetyPinPage({Key? key, required this.position}) : super(key: key);
 
+  DateTime dropTime = DateTime.now();
+  late String formattedDropTime =
+      DateFormat('kk:mm - EEE, MMM d').format(dropTime);
+  DateTime expireTime = DateTime.now();
+  late String formattedExpireTime =
+      DateFormat('kk:mm - EEE, MMM d').format(expireTime);
+
   @override
   State<AddSafetyPinPage> createState() => _AddSafetyPinPageState();
 }
@@ -24,6 +32,11 @@ class AddSafetyPinPage extends StatefulWidget {
 class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
   final TextEditingController descriptionController = TextEditingController();
   var selectedOption = 1;
+
+  String getFormattedTime(DateTime thisDate) {
+    return DateFormat('kk:mm - EEE, MMM d').format(thisDate);
+  }
+
   @override
   void dispose() {
     descriptionController.dispose();
@@ -61,8 +74,8 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
                     widget.uid!,
                     selectedOption,
                     descriptionController.text,
-                    widget.now,
-                    DateTime(2024));
+                    widget.dropTime,
+                    widget.expireTime);
                 appState.addSafetyPin(newPin);
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -122,19 +135,47 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
           ),
           ListTile(
             leading: const Icon(Icons.watch_later_outlined),
-            title: Text("Time: ${widget.formattedDate}"),
-            //subtitle: const Text("Tap to back date"), will do back dating later
-            //trailing: const Icon(Icons.edit),
+            title: Text("Drop Time: ${widget.formattedDropTime}"),
+            subtitle: const Text("Tap to back date"), 
+            trailing: const Icon(Icons.edit),
+            onTap: () {
+              DatePicker.showDatePicker(
+                context,
+                dateFormat: 'HH:mm MMMM dd yyyy',
+                initialDateTime: DateTime.now(),
+                minDateTime: DateTime(2023),
+                maxDateTime: DateTime.now(),
+                onMonthChangeStartWithFirstDate: true,
+                onConfirm: (dateTime, List<int> index) {
+                  setState(() {
+                    widget.dropTime = dateTime;
+                    widget.formattedDropTime = getFormattedTime(dateTime);
+                  });
+                });            
+            },
           ),
-          const Padding(
-            padding: EdgeInsets.only(left: 10, right: 10),
-            child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'When should this pin expire?',
-              ),
-            ),
+          ListTile(
+            leading: const Icon(Icons.watch_later_outlined),
+            title: Text("Expire Time: ${widget.formattedExpireTime}"),
+            subtitle: const Text("Tap to select date"), 
+            trailing: const Icon(Icons.edit),
+            onTap: () {
+              DatePicker.showDatePicker(
+                context,
+                dateFormat: 'HH:mm MMMM dd yyyy',
+                initialDateTime: DateTime.now(),
+                minDateTime: DateTime.now(),
+                maxDateTime: DateTime(2025),
+                onMonthChangeStartWithFirstDate: true,
+                onConfirm: (dateTime, List<int> index) {
+                  setState(() {
+                    widget.expireTime = dateTime;
+                    widget.formattedExpireTime = getFormattedTime(dateTime);
+                  });
+                });            
+            },
           ),
+
           const SizedBox(
             height: 15,
           ),
