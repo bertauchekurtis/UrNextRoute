@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class CampusVictimAdvocate extends StatelessWidget {
-  const CampusVictimAdvocate({super.key});
+  CampusVictimAdvocate({super.key});
 
   var advocate = '7752217634'; 
   var assistant = '753283210';
