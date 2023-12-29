@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:ur_next_route/blue_light.dart';
+import 'package:ur_next_route/map_editor.dart';
 import 'package:ur_next_route/safety_pin.dart';
 import 'firebase_options.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -15,6 +16,8 @@ import 'my_pins.dart';
 import 'safety_toolkit.dart';
 import 'start_end.dart';
 import 'settings.dart';
+import 'node.dart';
+import 'link.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -149,6 +152,10 @@ class _MyHomePageState extends State<MyHomePage> {
         page = const MyPinsPage();
       case 3:
         page = const SafetyToolKit();
+      case 4:
+        page = const SettingsPage();
+      case 5:
+        page = MapEditorPage();
       default:
         page = const SettingsPage();
     }
@@ -231,6 +238,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     onTap: () {
                       setState(() {
                         selectedIndex = 4;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.maps_home_work),
+                    title: const Text("Map Editor"),
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 5;
                       });
                       Navigator.pop(context);
                     },
