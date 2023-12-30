@@ -16,8 +16,6 @@ import 'my_pins.dart';
 import 'safety_toolkit.dart';
 import 'start_end.dart';
 import 'settings.dart';
-import 'node.dart';
-import 'link.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

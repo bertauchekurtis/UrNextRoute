@@ -3,7 +3,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:ur_next_route/add_safety_pin.dart';
 import 'package:ur_next_route/start_end.dart';
-import 'main.dart';
+import '../main.dart';
 
 class AddPinModal extends StatelessWidget {
   const AddPinModal({Key? key, required this.position})

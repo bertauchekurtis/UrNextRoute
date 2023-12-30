@@ -1,7 +1,7 @@
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
-import 'package:ur_next_route/add_pin_modal.dart';
+import 'package:ur_next_route/modals/add_pin_modal.dart';
 import 'main.dart';
 import 'package:provider/provider.dart';
 import 'blue_light.dart';
@@ -65,7 +65,7 @@ class MapPage extends StatelessWidget {
                   PolylineLayer(
                     polylines: [
                       Polyline(
-                        borderColor: Color.fromARGB(255, 4, 30, 66),
+                        borderColor: const Color.fromARGB(255, 4, 30, 66),
                         borderStrokeWidth: 6,
                         points: [
                           const LatLng(39.53952, -119.812431),
@@ -92,7 +92,7 @@ class MapPage extends StatelessWidget {
                           const LatLng(39.547721, -119.812192),
                           const LatLng(39.548412, -119.811796)
                         ],
-                        color: Color.fromARGB(255, 2, 42, 99),
+                        color: const Color.fromARGB(255, 2, 42, 99),
                       ),
                     ],
                   ),

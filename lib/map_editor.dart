@@ -1,24 +1,20 @@
-import 'dart:collection';
-
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
-import 'package:ur_next_route/add_node.dart';
-import 'package:ur_next_route/add_pin_modal.dart';
-import 'package:ur_next_route/add_safety_pin.dart';
-import 'main.dart';
-import 'package:provider/provider.dart';
+import 'package:ur_next_route/modals/add_link_modal.dart';
+import 'package:ur_next_route/modals/add_node.dart';
+import 'package:ur_next_route/modals/edit_node.dart';
 import 'node.dart';
 import 'link.dart';
-import 'package:flutter_map_tappable_polyline/flutter_map_tappable_polyline.dart';
 
 class MapEditorPage extends StatefulWidget {
-  late Node startNewLink;
-  late Node endNewLink;
+  Node? startNewLink;
+  Node? endNewLink;
   MapEditorPage({super.key});
   var nodeList = <Node>[];
   var linkList = <Link>[];
   int currentNode = 0;
+  var setStart = true;
 
   @override
   State<MapEditorPage> createState() => _MapEditorPageState();
@@ -49,6 +45,30 @@ class _MapEditorPageState extends State<MapEditorPage> {
     });
   }
 
+  void setStartEndPoints(Node newNode) {
+    if (widget.setStart) {
+      setStartNewLink(newNode);
+    } else {
+      setEndNewLink(newNode);
+    }
+    setState(() {
+      widget.setStart = !widget.setStart;
+    });
+  }
+
+  void removeNode(Node oldNode) {
+    setState(() {
+      widget.nodeList.remove(oldNode);
+      ////////////////////// ALSO NEED TO REMOVE ANY LINKS CONNECTED TO THIS NODE
+    });
+  }
+
+  void removeLink(Link oldLink) {
+    setState(() {
+      widget.linkList.remove(oldLink);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,9 +92,17 @@ class _MapEditorPageState extends State<MapEditorPage> {
             padding: const EdgeInsets.only(right: 20.0),
             child: GestureDetector(
               onTap: () {
-                print("hola");
-                addLink(Link(12, 1, 2, 10, widget.startNewLink.position,
-                    widget.endNewLink.position, false, false, false));
+                if (widget.startNewLink != null && widget.endNewLink != null) {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (builder) {
+                        return AddLinkModal(
+                            startNode: widget.startNewLink!,
+                            endNode: widget.endNewLink!,
+                            addLink: addLink,
+                            idForNewLink: 0);
+                      });
+                }
               },
               child: const Icon(
                 Icons.check,
@@ -111,6 +139,22 @@ class _MapEditorPageState extends State<MapEditorPage> {
             ),
             MarkerLayer(
               markers: [
+                if (widget.startNewLink != null)
+                  Marker(
+                    point: widget.startNewLink!.position,
+                    width: 40,
+                    height: 40,
+                    child: const Icon(Icons.circle_rounded,
+                        color: Colors.green, size: 40),
+                  ),
+                if (widget.endNewLink != null)
+                  Marker(
+                    point: widget.endNewLink!.position,
+                    width: 40,
+                    height: 40,
+                    child: const Icon(Icons.circle_rounded,
+                        color: Colors.red, size: 40),
+                  ),
                 for (var node in widget.nodeList)
                   if (node.isInside) ...[
                     Marker(
@@ -119,10 +163,23 @@ class _MapEditorPageState extends State<MapEditorPage> {
                       height: 50,
                       child: GestureDetector(
                         onTap: () {
-                          setStartNewLink(node);
+                          setStartEndPoints(node);
+                        },
+                        onLongPress: () {
+                          setState(() {
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (builder) {
+                                  return EditNodeModal(
+                                    thisNode: node,
+                                    isInside: node.isInside,
+                                    delNode: removeNode,
+                                  );
+                                });
+                          });
                         },
                         child: const Icon(Icons.circle_rounded,
-                            color: Colors.red, size: 20),
+                            color: Colors.red, size: 30),
                       ),
                     ),
                   ] else ...[
@@ -132,13 +189,26 @@ class _MapEditorPageState extends State<MapEditorPage> {
                       height: 50,
                       child: GestureDetector(
                         onTap: () {
-                          setEndNewLink(node);
+                          setStartEndPoints(node);
+                        },
+                        onLongPress: () {
+                          setState(() {
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (builder) {
+                                  return EditNodeModal(
+                                    thisNode: node,
+                                    isInside: node.isInside,
+                                    delNode: removeNode,
+                                  );
+                                });
+                          });
                         },
                         child: const Icon(Icons.circle_rounded,
-                            color: Colors.black, size: 20),
+                            color: Colors.black, size: 30),
                       ),
                     ),
-                  ]
+                  ],
               ],
             ),
             PolylineLayer(
@@ -146,10 +216,21 @@ class _MapEditorPageState extends State<MapEditorPage> {
                 for (var link in widget.linkList)
                   Polyline(
                     borderColor: Colors.black,
+                    color: Colors.black,
                     borderStrokeWidth: 4,
                     points: [
                       link.startPos,
                       link.endPos,
+                    ],
+                  ),
+                if (widget.startNewLink != null && widget.endNewLink != null)
+                  Polyline(
+                    isDotted: true,
+                    color: Colors.black,
+                    strokeWidth: 4,
+                    points: [
+                      widget.startNewLink!.position,
+                      widget.endNewLink!.position,
                     ],
                   )
               ],

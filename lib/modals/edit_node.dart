@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:intl/intl.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ur_next_route/map_editor.dart';
-import 'package:ur_next_route/safety_pin.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
-import 'main.dart';
-import 'node.dart';
+import '../node.dart';
 
-class AddNodePage extends StatefulWidget {
-  final LatLng position;
-  bool isInside = false;
-  final addNode;
-  AddNodePage({Key? key, required this.position, this.addNode})
+class EditNodeModal extends StatefulWidget {
+  Node thisNode;
+  bool isInside;
+  final Function delNode;
+  EditNodeModal(
+      {Key? key,
+      required this.thisNode,
+      required this.isInside,
+      required this.delNode})
       : super(key: key);
 
   @override
-  State<AddNodePage> createState() => _AddNodePageState();
+  State<EditNodeModal> createState() => _EditNodeModalState();
 }
 
-class _AddNodePageState extends State<AddNodePage> {
+class _EditNodeModalState extends State<EditNodeModal> {
   @override
   Widget build(BuildContext context) {
     //var mapEditorState = context.watch<MapEditorPage>();
@@ -29,7 +24,7 @@ class _AddNodePageState extends State<AddNodePage> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          "Add Node",
+          "Edit Node",
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color.fromARGB(255, 4, 30, 66),
@@ -41,7 +36,7 @@ class _AddNodePageState extends State<AddNodePage> {
             leading: const Icon(Icons.pin_drop_outlined),
             title: const Text("Near <<Placeholder>>"),
             subtitle: Text(
-                "Lat: ${widget.position.latitude.toStringAsFixed(4)}, Long: ${widget.position.longitude.toStringAsFixed(4)}"),
+                "Lat: ${widget.thisNode.position.latitude.toStringAsFixed(4)}, Long: ${widget.thisNode.position.longitude.toStringAsFixed(4)}"),
           ),
           ListTile(
             leading: const Icon(
@@ -59,10 +54,14 @@ class _AddNodePageState extends State<AddNodePage> {
           ),
           ElevatedButton(
               onPressed: () => {
-                    widget.addNode(Node(0, widget.position, widget.isInside)),
+                    widget.thisNode.isInside = widget.isInside,
                     Navigator.pop(context)
                   },
-              child: const Text("Add Node"))
+              child: const Text("Save Changes")),
+          ElevatedButton(
+              onPressed: () =>
+                  {widget.delNode(widget.thisNode), Navigator.pop(context)},
+              child: const Text("Delete Node"))
         ],
       ),
     );
