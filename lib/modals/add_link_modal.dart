@@ -76,7 +76,7 @@ class _AddLinkModalState extends State<AddLinkModal> {
             ),
             title: const Text("Are there stairs along link?"),
             trailing: Switch(
-                value: widget.isInside,
+                value: widget.containsStairs,
                 onChanged: (bool value) {
                   setState(() {
                     widget.containsStairs = !widget.containsStairs;

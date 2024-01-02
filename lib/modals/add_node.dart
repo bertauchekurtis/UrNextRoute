@@ -16,7 +16,7 @@ class AddNodePage extends StatefulWidget {
 class _AddNodePageState extends State<AddNodePage> {
   @override
   Widget build(BuildContext context) {
-    //var mapEditorState = context.watch<MapEditorPage>();
+    
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

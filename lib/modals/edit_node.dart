@@ -19,7 +19,6 @@ class EditNodeModal extends StatefulWidget {
 class _EditNodeModalState extends State<EditNodeModal> {
   @override
   Widget build(BuildContext context) {
-    //var mapEditorState = context.watch<MapEditorPage>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -59,8 +58,33 @@ class _EditNodeModalState extends State<EditNodeModal> {
                   },
               child: const Text("Save Changes")),
           ElevatedButton(
-              onPressed: () =>
-                  {widget.delNode(widget.thisNode), Navigator.pop(context)},
+              onPressed: () => {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text("Are you sure?"),
+                            content: const Text(
+                                "Deleting this node will also delete all links connected to it!"),
+                            actions: [
+                              ElevatedButton(
+                                onPressed: () => {
+                                  widget.delNode(widget.thisNode),
+                                  Navigator.pop(context),
+                                  Navigator.pop(context),
+                                },
+                                child: const Text("Yes, I am sure."),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => {Navigator.pop(context)},
+                                child: const Text("No, Cancel."),
+                              ),
+                            ],
+                          );
+                        })
+                    //widget.delNode(widget.thisNode),
+                    //Navigator.pop(context),
+                  },
               child: const Text("Delete Node"))
         ],
       ),
