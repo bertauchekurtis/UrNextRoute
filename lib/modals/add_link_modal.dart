@@ -114,7 +114,8 @@ class _AddLinkModalState extends State<AddLinkModal> {
                         widget.endNode.position,
                         widget.isInside,
                         widget.containsBlueLight,
-                        widget.containsStairs)),
+                        widget.containsStairs,
+                        0)),
                     Navigator.pop(context)
                   },
               child: const Text("Add Link"))

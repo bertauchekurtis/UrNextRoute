@@ -7,6 +7,8 @@ import 'package:ur_next_route/modals/edit_link_modal.dart';
 import 'package:ur_next_route/modals/edit_node.dart';
 import 'node.dart';
 import 'link.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class MapEditorPage extends StatefulWidget {
   Node? startNewLink;
@@ -26,12 +28,14 @@ class _MapEditorPageState extends State<MapEditorPage> {
     setState(() {
       widget.nodeList.add(newNode);
     });
+    writeNodes(widget.nodeList);
   }
 
   void addLink(Link newLink) {
     setState(() {
       widget.linkList.add(newLink);
     });
+    writeLinks(widget.linkList);
   }
 
   void setStartNewLink(Node newNode) {
@@ -65,6 +69,8 @@ class _MapEditorPageState extends State<MapEditorPage> {
           element.endPos == oldNode.position);
       clearNewLinkPositions();
     });
+    writeLinksFromOutside();
+    writeNodesFromOutside();
   }
 
   void removeLink(Link oldLink) {
@@ -78,6 +84,35 @@ class _MapEditorPageState extends State<MapEditorPage> {
       widget.startNewLink = null;
       widget.endNewLink = null;
     });
+  }
+
+  Color convertBrightnessToColor(int brightness) {
+    switch (brightness) {
+      case 0:
+        return const Color.fromARGB(255, 29, 31, 36);
+      case 1:
+        return const Color.fromARGB(255, 46, 45, 80);
+      case 2:
+        return const Color.fromARGB(255, 74, 72, 131);
+      case 3:
+        return const Color.fromARGB(255, 87, 111, 166);
+      case 4:
+        return const Color.fromARGB(255, 87, 132, 166);
+      case 5:
+        return const Color.fromARGB(255, 87, 166, 164);
+      case 6:
+        return const Color.fromARGB(255, 87, 166, 140);
+      case 7:
+        return const Color.fromARGB(255, 87, 166, 115);
+      case 8:
+        return const Color.fromARGB(255, 87, 166, 94);
+      case 9:
+        return const Color.fromARGB(255, 104, 171, 92);
+      case 10:
+        return const Color.fromARGB(255, 80, 206, 58);
+      default:
+        return const Color.fromARGB(255, 80, 206, 58);
+    }
   }
 
   bool linkExists(Node? nodeA, Node? nodeB) {
@@ -99,6 +134,121 @@ class _MapEditorPageState extends State<MapEditorPage> {
         (element.endPos == nodeA.position &&
             element.startPos == nodeB!.position));
     return thisLink;
+  }
+
+  void writeNodesFromOutside() {
+    writeNodes(widget.nodeList);
+  }
+
+  void writeLinksFromOutside() {
+    writeLinks(widget.linkList);
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  Future<File> get _linkFile async {
+    final path = await _localPath;
+    return File('$path/links.csv');
+  }
+
+  Future<File> get _nodeFile async {
+    final path = await _localPath;
+    return File('$path/nodes.csv');
+  }
+
+  Future<File> writeLinks(List<Link> linkList) async {
+    final file = await _linkFile;
+    final stream = file.openWrite();
+    for (final link in linkList) {
+      final String preparedString =
+          '${link.edgeId.toString()},${link.startingNodeId.toString()},${link.endingNodeId.toString()},${link.brightnessLevel.toString()},${link.startPos.latitude.toString()},${link.startPos.longitude.toString()},${link.endPos.latitude.toString()},${link.endPos.longitude.toString()},${link.isInside.toString()},${link.containsBlueLight.toString()},${link.containsStairs.toString()},${link.length.toString()}\n';
+      stream.write(preparedString);
+    }
+    stream.close();
+    return file;
+  }
+
+  Future<File> writeNodes(List<Node> nodeList) async {
+    final file = await _nodeFile;
+    final stream = file.openWrite();
+    for (final node in nodeList) {
+      final String preparedString =
+          '${node.nodeId.toString()},${node.position.latitude.toString()},${node.position.longitude.toString()},${node.isInside.toString()}\n';
+      stream.write(preparedString);
+    }
+    stream.close();
+    return file;
+  }
+
+  Future<List<Link>> readLinks() async {
+    List<Link> thisLinkList = [];
+    try {
+      final file = await _linkFile;
+      final contents = await file.readAsLines();
+      for (final line in contents) {
+        List stringAsList = line.split(',');
+        Link thisLink = buildLinkFromList(stringAsList);
+        thisLinkList.add(thisLink);
+      }
+      return thisLinkList;
+    } catch (e) {
+      return thisLinkList;
+    }
+  }
+
+  Future<List<Node>> readNodes() async {
+    List<Node> thisNodeList = [];
+    try {
+      final file = await _nodeFile;
+      final contents = await file.readAsLines();
+      for (final line in contents) {
+        List stringAsList = line.split(',');
+        Node thisNode = buildNodeFromList(stringAsList);
+        thisNodeList.add(thisNode);
+      }
+      return thisNodeList;
+    } catch (e) {
+      return thisNodeList;
+    }
+  }
+
+  Link buildLinkFromList(List linkInfo) {
+    return Link(
+        int.parse(linkInfo[0]),
+        int.parse(linkInfo[1]),
+        int.parse(linkInfo[2]),
+        int.parse(linkInfo[3]),
+        LatLng(double.parse(linkInfo[4]), double.parse(linkInfo[5])),
+        LatLng(double.parse(linkInfo[6]), double.parse(linkInfo[7])),
+        bool.parse(linkInfo[8]),
+        bool.parse(linkInfo[9]),
+        bool.parse(linkInfo[10]),
+        double.parse(linkInfo[11]));
+  }
+
+  Node buildNodeFromList(List nodeInfo) {
+    return Node(
+        int.parse(nodeInfo[0]),
+        LatLng(double.parse(nodeInfo[1]), double.parse(nodeInfo[2])),
+        bool.parse(nodeInfo[3]));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    readLinks().then((List<Link> linkList) {
+      setState(() {
+        widget.linkList = linkList;
+      });
+    });
+    readNodes().then((List<Node> nodeList) {
+      setState(() {
+        widget.nodeList = nodeList;
+      });
+    });
   }
 
   @override
@@ -199,6 +349,7 @@ class _MapEditorPageState extends State<MapEditorPage> {
                                         thisNode: node,
                                         isInside: node.isInside,
                                         delNode: removeNode,
+                                        writeNodes: writeNodesFromOutside,
                                       );
                                     });
                               });
@@ -225,6 +376,7 @@ class _MapEditorPageState extends State<MapEditorPage> {
                                         thisNode: node,
                                         isInside: node.isInside,
                                         delNode: removeNode,
+                                        writeNodes: writeNodesFromOutside,
                                       );
                                     });
                               });
@@ -240,8 +392,9 @@ class _MapEditorPageState extends State<MapEditorPage> {
                   polylines: [
                     for (var link in widget.linkList)
                       Polyline(
-                        borderColor: Colors.black,
-                        color: Colors.black,
+                        borderColor:
+                            convertBrightnessToColor(link.brightnessLevel),
+                        color: convertBrightnessToColor(link.brightnessLevel),
                         borderStrokeWidth: 4,
                         points: [
                           link.startPos,
@@ -308,6 +461,7 @@ class _MapEditorPageState extends State<MapEditorPage> {
                         containsBlueLight: link.containsBlueLight,
                         containsStairs: link.containsStairs,
                         delLink: removeLink,
+                        writeLinks: writeLinksFromOutside,
                       );
                     },
                   );

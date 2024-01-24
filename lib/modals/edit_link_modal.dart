@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../node.dart';
 import '../link.dart';
 
 class EditLinkModal extends StatefulWidget {
@@ -9,16 +8,18 @@ class EditLinkModal extends StatefulWidget {
   bool containsStairs;
   double brightnessLevel;
   Function delLink;
+  final Function writeLinks;
 
-  EditLinkModal(
-      {Key? key,
-      required this.thisLink,
-      required this.brightnessLevel,
-      required this.isInside,
-      required this.containsBlueLight,
-      required this.containsStairs,
-      required this.delLink})
-      : super(key: key);
+  EditLinkModal({
+    Key? key,
+    required this.thisLink,
+    required this.brightnessLevel,
+    required this.isInside,
+    required this.containsBlueLight,
+    required this.containsStairs,
+    required this.delLink,
+    required this.writeLinks,
+  }) : super(key: key);
 
   @override
   State<EditLinkModal> createState() => _EditLinkModalState();
@@ -108,13 +109,17 @@ class _EditLinkModalState extends State<EditLinkModal> {
               widget.thisLink.containsBlueLight = widget.containsBlueLight,
               widget.thisLink.containsStairs = widget.containsStairs,
               widget.thisLink.isInside = widget.isInside,
+              widget.writeLinks(),
               Navigator.pop(context)
             },
             child: const Text("Save Changes"),
           ),
           ElevatedButton(
-            onPressed: () =>
-                {widget.delLink(widget.thisLink), Navigator.pop(context)},
+            onPressed: () => {
+              widget.delLink(widget.thisLink),
+              widget.writeLinks(),
+              Navigator.pop(context)
+            },
             child: const Text("Delete Link"),
           )
         ],

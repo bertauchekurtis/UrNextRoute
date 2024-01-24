@@ -5,12 +5,14 @@ class EditNodeModal extends StatefulWidget {
   Node thisNode;
   bool isInside;
   final Function delNode;
-  EditNodeModal(
-      {Key? key,
-      required this.thisNode,
-      required this.isInside,
-      required this.delNode})
-      : super(key: key);
+  final Function writeNodes;
+  EditNodeModal({
+    Key? key,
+    required this.thisNode,
+    required this.isInside,
+    required this.delNode,
+    required this.writeNodes,
+  }) : super(key: key);
 
   @override
   State<EditNodeModal> createState() => _EditNodeModalState();
@@ -54,6 +56,7 @@ class _EditNodeModalState extends State<EditNodeModal> {
           ElevatedButton(
               onPressed: () => {
                     widget.thisNode.isInside = widget.isInside,
+                    widget.writeNodes(),
                     Navigator.pop(context)
                   },
               child: const Text("Save Changes")),
@@ -70,6 +73,7 @@ class _EditNodeModalState extends State<EditNodeModal> {
                               ElevatedButton(
                                 onPressed: () => {
                                   widget.delNode(widget.thisNode),
+                                  widget.writeNodes(),
                                   Navigator.pop(context),
                                   Navigator.pop(context),
                                 },

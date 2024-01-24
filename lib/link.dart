@@ -13,13 +13,15 @@ class Link {
   double length = 0;
 
   Link(
-      this.edgeId,
-      this.startingNodeId,
-      this.endingNodeId,
-      this.brightnessLevel,
-      this.startPos,
-      this.endPos,
-      this.isInside,
-      this.containsBlueLight,
-      this.containsStairs);
+    this.edgeId,
+    this.startingNodeId,
+    this.endingNodeId,
+    this.brightnessLevel,
+    this.startPos,
+    this.endPos,
+    this.isInside,
+    this.containsBlueLight,
+    this.containsStairs,
+    this.length,
+  );
 }
