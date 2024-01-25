@@ -5,10 +5,12 @@ import 'package:ur_next_route/modals/add_link_modal.dart';
 import 'package:ur_next_route/modals/add_node.dart';
 import 'package:ur_next_route/modals/edit_link_modal.dart';
 import 'package:ur_next_route/modals/edit_node.dart';
+import 'package:ur_next_route/modals/get_email_modal.dart';
 import 'node.dart';
 import 'link.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class MapEditorPage extends StatefulWidget {
   Node? startNewLink;
@@ -251,6 +253,20 @@ class _MapEditorPageState extends State<MapEditorPage> {
     });
   }
 
+  void exportMapViaEmail(String emailAddress) async {
+    final path = await _localPath;
+    String nodePath = '$path/nodes.csv';
+    String linkPath = '$path/links.csv';
+
+    final Email email = Email(
+        body: 'Email body',
+        subject: 'Subject',
+        recipients: [emailAddress],
+        attachmentPaths: [nodePath, linkPath],
+        isHTML: false);
+    await FlutterEmailSender.send(email);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -270,7 +286,7 @@ class _MapEditorPageState extends State<MapEditorPage> {
           },
         ),
         actions: <Widget>[
-          if (widget.startNewLink != null && widget.endNewLink != null)
+          if (widget.startNewLink != null && widget.endNewLink != null) ...[
             Padding(
               padding: const EdgeInsets.only(right: 20.0),
               child: GestureDetector(
@@ -283,6 +299,24 @@ class _MapEditorPageState extends State<MapEditorPage> {
                 ),
               ),
             ),
+          ] else ...[
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (builder) {
+                        return GetEmailModal(sendEmail: exportMapViaEmail);
+                      });
+                },
+                child: const Icon(
+                  Icons.cloud_upload,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ]
         ],
         backgroundColor: const Color.fromARGB(255, 4, 30, 66),
       ),
