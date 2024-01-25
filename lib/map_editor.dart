@@ -259,8 +259,8 @@ class _MapEditorPageState extends State<MapEditorPage> {
     String linkPath = '$path/links.csv';
 
     final Email email = Email(
-        body: 'Email body',
-        subject: 'Subject',
+        body: 'Attached are the node and link files for the exported map.',
+        subject: 'Ur Next Route Map Export',
         recipients: [emailAddress],
         attachmentPaths: [nodePath, linkPath],
         isHTML: false);
