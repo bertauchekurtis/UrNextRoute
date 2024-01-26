@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
-import '../node.dart';
 
 class GetEmailModal extends StatefulWidget {
   final Function sendEmail;
-  GetEmailModal({Key? key, required this.sendEmail}) : super(key: key);
+  final Function importMapData;
+  final Function clearMapData;
+  const GetEmailModal(
+      {Key? key,
+      required this.sendEmail,
+      required this.importMapData,
+      required this.clearMapData})
+      : super(key: key);
 
   @override
   State<GetEmailModal> createState() => _GetEmailModalState();
@@ -25,7 +30,7 @@ class _GetEmailModalState extends State<GetEmailModal> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          "Export Map Data as CSV",
+          "Export/Import Map Data",
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color.fromARGB(255, 4, 30, 66),
@@ -43,11 +48,70 @@ class _GetEmailModalState extends State<GetEmailModal> {
             ),
           ),
           ElevatedButton(
-              onPressed: () => {
-                    widget.sendEmail(emailController.text),
-                    Navigator.pop(context)
-                  },
-              child: const Text("Export Data via Email"))
+            onPressed: () => {
+              widget.sendEmail(emailController.text),
+              Navigator.pop(context)
+            },
+            child: const Text("Export Data via Email"),
+          ),
+          const Padding(padding: EdgeInsets.all(12.0)),
+          ElevatedButton(
+            onPressed: () => {
+              showDialog(
+                  context: context,
+                  builder: (builder) {
+                    return AlertDialog(
+                      title: const Text("Are you sure?"),
+                      content: const Text(
+                          "Importing default map data via bundle will overwrite any map editor data currently in use. Export unsaved data first."),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () => {
+                            widget.importMapData(),
+                            Navigator.pop(context),
+                            Navigator.pop(context),
+                          },
+                          child: const Text("Yes, I am sure."),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => {Navigator.pop(context)},
+                          child: const Text("No, Cancel."),
+                        ),
+                      ],
+                    );
+                  })
+            },
+            child: const Text("Import Default Map Data via Bundle"),
+          ),
+          const Padding(padding: EdgeInsets.all(12.0)),
+          ElevatedButton(
+            onPressed: () => {
+              showDialog(
+                  context: context,
+                  builder: (builder) {
+                    return AlertDialog(
+                      title: const Text("Are you sure?"),
+                      content: const Text(
+                          "This will clear ALL nodes AND links and CANNOT be undone."),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () => {
+                            widget.clearMapData(),
+                            Navigator.pop(context),
+                            Navigator.pop(context),
+                          },
+                          child: const Text("Yes, I am sure."),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => {Navigator.pop(context)},
+                          child: const Text("No, Cancel."),
+                        ),
+                      ],
+                    );
+                  })
+            },
+            child: const Text("Clear Map"),
+          ),
         ],
       ),
     );

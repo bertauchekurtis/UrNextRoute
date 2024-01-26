@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,7 @@ class MapEditorPage extends StatefulWidget {
   var linkList = <Link>[];
   int currentNode = 0;
   var setStart = true;
-  var uuid = Uuid();
+  var uuid = const Uuid();
 
   @override
   State<MapEditorPage> createState() => _MapEditorPageState();
@@ -237,6 +239,58 @@ class _MapEditorPageState extends State<MapEditorPage> {
     }
   }
 
+  Future<List<Link>> importDefaultLinks() async {
+    List<Link> thisLinkList = [];
+    await DefaultAssetBundle.of(context)
+        .loadString('assets/links.csv')
+        .then((result) {
+      for (String line in const LineSplitter().convert(result)) {
+        List stringAsList = line.split(',');
+        Link thisLink = buildLinkFromList(stringAsList);
+        thisLinkList.add(thisLink);
+      }
+    });
+    return thisLinkList;
+  }
+
+  Future<List<Node>> importDefaultNodes() async {
+    List<Node> thisNodeList = [];
+    await DefaultAssetBundle.of(context)
+        .loadString('assets/nodes.csv')
+        .then((result) {
+      for (String line in const LineSplitter().convert(result)) {
+        List stringAsList = line.split(',');
+        Node thisNode = buildNodeFromList(stringAsList);
+        thisNodeList.add(thisNode);
+      }
+    });
+    return thisNodeList;
+  }
+
+  void importDefaultMapData() {
+    importDefaultLinks().then((List<Link> linkList) {
+      setState(() {
+        widget.linkList = linkList;
+      });
+      writeLinks(linkList);
+    });
+    importDefaultNodes().then((List<Node> nodeList) {
+      setState(() {
+        widget.nodeList = nodeList;
+      });
+      writeNodes(nodeList);
+    });
+  }
+
+  void clearMapData() {
+    setState(() {
+      widget.linkList.clear();
+      widget.nodeList.clear();
+    });
+    writeNodesFromOutside();
+    writeLinksFromOutside();
+  }
+
   Link buildLinkFromList(List linkInfo) {
     return Link(
         linkInfo[0],
@@ -327,11 +381,15 @@ class _MapEditorPageState extends State<MapEditorPage> {
                   showModalBottomSheet(
                       context: context,
                       builder: (builder) {
-                        return GetEmailModal(sendEmail: exportMapViaEmail);
+                        return GetEmailModal(
+                          sendEmail: exportMapViaEmail,
+                          importMapData: importDefaultMapData,
+                          clearMapData: clearMapData,
+                        );
                       });
                 },
                 child: const Icon(
-                  Icons.cloud_upload,
+                  Icons.settings,
                   color: Colors.white,
                 ),
               ),
@@ -485,10 +543,11 @@ class _MapEditorPageState extends State<MapEditorPage> {
                     context: context,
                     builder: (builder) {
                       return AddLinkModal(
-                          startNode: widget.startNewLink!,
-                          endNode: widget.endNewLink!,
-                          addLink: addLink,
-                          getNewLinkuuid: getNewLinkuuid,);
+                        startNode: widget.startNewLink!,
+                        endNode: widget.endNewLink!,
+                        addLink: addLink,
+                        getNewLinkuuid: getNewLinkuuid,
+                      );
                     },
                   );
                 },
