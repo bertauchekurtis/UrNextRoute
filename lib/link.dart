@@ -1,9 +1,9 @@
 import 'package:latlong2/latlong.dart';
 
 class Link {
-  int edgeId = 0;
-  int startingNodeId = 0;
-  int endingNodeId = 0;
+  String edgeId = "";
+  String startingNodeId = "";
+  String endingNodeId = "";
   int brightnessLevel = 0;
   LatLng startPos = const LatLng(0, 0);
   LatLng endPos = const LatLng(0, 0);

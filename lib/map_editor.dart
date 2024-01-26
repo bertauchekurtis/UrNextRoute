@@ -11,6 +11,7 @@ import 'link.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:uuid/uuid.dart';
 
 class MapEditorPage extends StatefulWidget {
   Node? startNewLink;
@@ -20,6 +21,7 @@ class MapEditorPage extends StatefulWidget {
   var linkList = <Link>[];
   int currentNode = 0;
   var setStart = true;
+  var uuid = Uuid();
 
   @override
   State<MapEditorPage> createState() => _MapEditorPageState();
@@ -86,6 +88,24 @@ class _MapEditorPageState extends State<MapEditorPage> {
       widget.startNewLink = null;
       widget.endNewLink = null;
     });
+  }
+
+  String getNewLinkuuid() {
+    while (true) {
+      String newId = widget.uuid.v4();
+      if (!widget.linkList.map((link) => link.edgeId).contains(newId)) {
+        return newId;
+      }
+    }
+  }
+
+  String getNewNodeuuid() {
+    while (true) {
+      String newId = widget.uuid.v4();
+      if (!widget.nodeList.map((node) => node.nodeId).contains(newId)) {
+        return newId;
+      }
+    }
   }
 
   Color convertBrightnessToColor(int brightness) {
@@ -219,9 +239,9 @@ class _MapEditorPageState extends State<MapEditorPage> {
 
   Link buildLinkFromList(List linkInfo) {
     return Link(
-        int.parse(linkInfo[0]),
-        int.parse(linkInfo[1]),
-        int.parse(linkInfo[2]),
+        linkInfo[0],
+        linkInfo[1],
+        linkInfo[2],
         int.parse(linkInfo[3]),
         LatLng(double.parse(linkInfo[4]), double.parse(linkInfo[5])),
         LatLng(double.parse(linkInfo[6]), double.parse(linkInfo[7])),
@@ -233,7 +253,7 @@ class _MapEditorPageState extends State<MapEditorPage> {
 
   Node buildNodeFromList(List nodeInfo) {
     return Node(
-        int.parse(nodeInfo[0]),
+        nodeInfo[0],
         LatLng(double.parse(nodeInfo[1]), double.parse(nodeInfo[2])),
         bool.parse(nodeInfo[3]));
   }
@@ -336,6 +356,7 @@ class _MapEditorPageState extends State<MapEditorPage> {
                       return AddNodePage(
                         position: point,
                         addNode: addNode,
+                        getNewNodeuuid: getNewNodeuuid,
                       );
                     },
                   ),
@@ -467,7 +488,7 @@ class _MapEditorPageState extends State<MapEditorPage> {
                           startNode: widget.startNewLink!,
                           endNode: widget.endNewLink!,
                           addLink: addLink,
-                          idForNewLink: 0);
+                          getNewLinkuuid: getNewLinkuuid,);
                     },
                   );
                 },

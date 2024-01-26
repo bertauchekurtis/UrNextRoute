@@ -6,7 +6,8 @@ class AddNodePage extends StatefulWidget {
   final LatLng position;
   bool isInside = false;
   final Function addNode;
-  AddNodePage({Key? key, required this.position, required this.addNode})
+  final Function getNewNodeuuid;
+  AddNodePage({Key? key, required this.position, required this.addNode, required this.getNewNodeuuid,})
       : super(key: key);
 
   @override
@@ -16,7 +17,6 @@ class AddNodePage extends StatefulWidget {
 class _AddNodePageState extends State<AddNodePage> {
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -51,7 +51,7 @@ class _AddNodePageState extends State<AddNodePage> {
           ),
           ElevatedButton(
               onPressed: () => {
-                    widget.addNode(Node(0, widget.position, widget.isInside)),
+                    widget.addNode(Node(widget.getNewNodeuuid(), widget.position, widget.isInside)),
                     Navigator.pop(context)
                   },
               child: const Text("Add Node"))

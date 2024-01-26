@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import '../node.dart';
 import '../link.dart';
 
@@ -6,7 +7,7 @@ class AddLinkModal extends StatefulWidget {
   final Node startNode;
   final Node endNode;
   final Function addLink;
-  final int idForNewLink;
+  final Function getNewLinkuuid;
 
   double brightnessLevel = 0;
   bool isInside = false;
@@ -18,7 +19,7 @@ class AddLinkModal extends StatefulWidget {
       required this.startNode,
       required this.endNode,
       required this.addLink,
-      required this.idForNewLink})
+      required this.getNewLinkuuid})
       : super(key: key);
 
   @override
@@ -26,6 +27,8 @@ class AddLinkModal extends StatefulWidget {
 }
 
 class _AddLinkModalState extends State<AddLinkModal> {
+  Distance distance =
+      const Distance(roundResult: false, calculator: Vincenty());
   @override
   Widget build(BuildContext context) {
     //var mapEditorState = context.watch<MapEditorPage>();
@@ -106,7 +109,7 @@ class _AddLinkModalState extends State<AddLinkModal> {
           ElevatedButton(
               onPressed: () => {
                     widget.addLink(Link(
-                        widget.idForNewLink,
+                        widget.getNewLinkuuid(),
                         widget.startNode.nodeId,
                         widget.endNode.nodeId,
                         widget.brightnessLevel.toInt(),
@@ -115,8 +118,9 @@ class _AddLinkModalState extends State<AddLinkModal> {
                         widget.isInside,
                         widget.containsBlueLight,
                         widget.containsStairs,
-                        0)),
-                    Navigator.pop(context)
+                        distance.as(LengthUnit.Meter, widget.startNode.position,
+                            widget.endNode.position))),
+                    Navigator.pop(context),
                   },
               child: const Text("Add Link"))
         ],
