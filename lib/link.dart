@@ -4,7 +4,7 @@ class Link {
   String edgeId = "";
   String startingNodeId = "";
   String endingNodeId = "";
-  int brightnessLevel = 0;
+  double brightnessLevel = 0;
   LatLng startPos = const LatLng(0, 0);
   LatLng endPos = const LatLng(0, 0);
   bool isInside = false;

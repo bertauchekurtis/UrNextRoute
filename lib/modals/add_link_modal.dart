@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import '../node.dart';
 import '../link.dart';
@@ -27,6 +29,7 @@ class AddLinkModal extends StatefulWidget {
 }
 
 class _AddLinkModalState extends State<AddLinkModal> {
+  final TextEditingController brightnessController = TextEditingController();
   Distance distance =
       const Distance(roundResult: false, calculator: Vincenty());
   @override
@@ -87,19 +90,14 @@ class _AddLinkModalState extends State<AddLinkModal> {
                 }),
           ),
           ListTile(
-            leading: Text(
-              widget.brightnessLevel.toString(),
-            ),
-            title: Slider(
-              value: widget.brightnessLevel,
-              divisions: 10,
-              min: 0,
-              max: 10,
-              onChanged: (value) {
-                setState(() {
-                  widget.brightnessLevel = value;
-                });
-              },
+            title: TextField(
+              controller: brightnessController,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter link brightness in Lux',
+              ),
             ),
             subtitle: const Text(
               "Brightness",
@@ -112,7 +110,7 @@ class _AddLinkModalState extends State<AddLinkModal> {
                         widget.getNewLinkuuid(),
                         widget.startNode.nodeId,
                         widget.endNode.nodeId,
-                        widget.brightnessLevel.toInt(),
+                        double.parse(brightnessController.text),
                         widget.startNode.position,
                         widget.endNode.position,
                         widget.isInside,

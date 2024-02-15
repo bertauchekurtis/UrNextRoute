@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../link.dart';
 
 class EditLinkModal extends StatefulWidget {
@@ -28,7 +29,8 @@ class EditLinkModal extends StatefulWidget {
 class _EditLinkModalState extends State<EditLinkModal> {
   @override
   Widget build(BuildContext context) {
-    //var mapEditorState = context.watch<MapEditorPage>();
+    final TextEditingController brightnessController =
+        TextEditingController(text: widget.brightnessLevel.toString());
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -84,19 +86,14 @@ class _EditLinkModalState extends State<EditLinkModal> {
                 }),
           ),
           ListTile(
-            leading: Text(
-              widget.brightnessLevel.toString(),
-            ),
-            title: Slider(
-              value: widget.brightnessLevel,
-              divisions: 10,
-              min: 0,
-              max: 10,
-              onChanged: (value) {
-                setState(() {
-                  widget.brightnessLevel = value;
-                });
-              },
+            title: TextField(
+              controller: brightnessController,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]+(\.[0-9]+)?'))
+              ],
+              decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
             subtitle: const Text(
               "Brightness",
@@ -105,7 +102,8 @@ class _EditLinkModalState extends State<EditLinkModal> {
           ),
           ElevatedButton(
             onPressed: () => {
-              widget.thisLink.brightnessLevel = widget.brightnessLevel.toInt(),
+              widget.thisLink.brightnessLevel =
+                  double.parse(brightnessController.text),
               widget.thisLink.containsBlueLight = widget.containsBlueLight,
               widget.thisLink.containsStairs = widget.containsStairs,
               widget.thisLink.isInside = widget.isInside,

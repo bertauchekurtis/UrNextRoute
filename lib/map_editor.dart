@@ -296,7 +296,7 @@ class _MapEditorPageState extends State<MapEditorPage> {
         linkInfo[0],
         linkInfo[1],
         linkInfo[2],
-        int.parse(linkInfo[3]),
+        double.parse(linkInfo[3]),
         LatLng(double.parse(linkInfo[4]), double.parse(linkInfo[5])),
         LatLng(double.parse(linkInfo[6]), double.parse(linkInfo[7])),
         bool.parse(linkInfo[8]),
@@ -506,8 +506,8 @@ class _MapEditorPageState extends State<MapEditorPage> {
                     for (var link in widget.linkList)
                       Polyline(
                         borderColor:
-                            convertBrightnessToColor(link.brightnessLevel),
-                        color: convertBrightnessToColor(link.brightnessLevel),
+                            const Color.fromARGB(255, 4, 30, 66),
+                        color: const Color.fromARGB(255,4 , 30, 66),
                         borderStrokeWidth: 4,
                         points: [
                           link.startPos,
