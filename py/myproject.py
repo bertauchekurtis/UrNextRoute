@@ -1,11 +1,13 @@
 from flask import Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
+import db
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 
 @app.route("/")
 def home():
-    return "<h1 style='color:blue'>hello worlds!</h1>"
+    result = db.get_user()
+    return f"<h1 style='color:blue'>hello worlds! {result[1]} {result[2]}</h1>"
 
 @app.route('/json')
 def json():
