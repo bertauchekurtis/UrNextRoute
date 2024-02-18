@@ -16,7 +16,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           source: "/py"
-          target: "/urnextroute"
+          target: "/home/user/urnextroute"
       - name: Restart flask
         uses: appleboy/ssh-action@master
         with:
