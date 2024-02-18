@@ -26,5 +26,6 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            sudo systemctl restart urnextroute
+            echo ${{ secrets.PASSWORD }}
+            sudo -S systemctl restart urnextroute
         
