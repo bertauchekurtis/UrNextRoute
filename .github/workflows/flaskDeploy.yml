@@ -14,8 +14,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script_stop: true
-          source: "./py"
+          source: "/py"
           target: "./urnextroute"
       - name: Restart flask
         uses: appleboy/ssh-action@master
@@ -24,7 +23,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script_stop: true
           script: |
             sudo systemctl restart urnextroute
         
