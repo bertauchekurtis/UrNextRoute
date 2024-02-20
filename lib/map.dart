@@ -2,6 +2,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
 import 'package:ur_next_route/add_pin_modal.dart';
+import 'package:ur_next_route/show_pin_modal.dart';
 import 'main.dart';
 import 'package:provider/provider.dart';
 import 'blue_light.dart';
@@ -136,10 +137,22 @@ class MapPage extends StatelessWidget {
                           point: pin.position,
                           width: 50,
                           height: 50,
-                          child: const Icon(
-                            Icons.push_pin_sharp,
-                            color: Color.fromARGB(255, 229, 10, 245),
-                            size: 20,
+                          child: GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (builder) {
+                                  return ShowPinModal(
+                                    clickPin: pin,
+                                  );
+                                },
+                              );
+                            },
+                            child: const Icon(
+                              Icons.push_pin_sharp,
+                              color: Color.fromARGB(255, 229, 10, 245),
+                              size: 20,
+                            ),
                           ),
                         ),
                     if (appState.showTripFallPins)
@@ -148,10 +161,22 @@ class MapPage extends StatelessWidget {
                           point: pin.position,
                           width: 50,
                           height: 50,
-                          child: const Icon(
-                            Icons.push_pin_sharp,
-                            color: Color.fromARGB(255, 46, 135, 195),
-                            size: 20,
+                          child: GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (builder) {
+                                  return ShowPinModal(
+                                    clickPin: pin,
+                                  );
+                                },
+                              );
+                            },
+                            child: const Icon(
+                              Icons.push_pin_sharp,
+                              color: Color.fromARGB(255, 46, 135, 195),
+                              size: 20,
+                            ),
                           ),
                         ),
                     if (appState.showSafetyHazardPins)
@@ -160,10 +185,22 @@ class MapPage extends StatelessWidget {
                           point: pin.position,
                           width: 50,
                           height: 50,
-                          child: const Icon(
-                            Icons.push_pin_sharp,
-                            color: Color.fromARGB(255, 245, 10, 10),
-                            size: 20,
+                          child: GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (builder) {
+                                  return ShowPinModal(
+                                    clickPin: pin,
+                                  );
+                                },
+                              );
+                            },
+                            child: const Icon(
+                              Icons.push_pin_sharp,
+                              color: Color.fromARGB(255, 245, 10, 10),
+                              size: 20,
+                            ),
                           ),
                         ),
                   ],

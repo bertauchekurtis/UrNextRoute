@@ -6,8 +6,7 @@ import 'package:ur_next_route/start_end.dart';
 import 'main.dart';
 
 class AddPinModal extends StatelessWidget {
-  const AddPinModal({Key? key, required this.position})
-      : super(key: key);
+  const AddPinModal({Key? key, required this.position}) : super(key: key);
   final LatLng position;
   @override
   Widget build(BuildContext context) {
@@ -78,9 +77,13 @@ class AddPinModal extends StatelessWidget {
                 )),
                 contentPadding: const EdgeInsets.all(10),
                 onTap: () => {
-                  Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => AddSafetyPinPage(position: position,))),
-                }),
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddSafetyPinPage(
+                                    position: position,
+                                  ))),
+                    }),
             const SizedBox(
               height: 10,
             ),

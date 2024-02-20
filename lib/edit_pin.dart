@@ -53,14 +53,14 @@ class EditPinPage extends StatelessWidget {
             ),
           if (clickPin.type == 2)
             const ListTile(
-              leading: Icon(Icons.build),
+              leading: Icon(Icons.personal_injury),
               title: Text("Trip/Fall Hazard"),
               subtitle: Text("Pin Type"),
               trailing: Icon(Icons.edit),
             ),
           if (clickPin.type == 3)
             const ListTile(
-              leading: Icon(Icons.build),
+              leading: Icon(Icons.warning),
               title: Text("Safety Concern "),
               subtitle: Text("Pin Type"),
               trailing: Icon(Icons.edit),
