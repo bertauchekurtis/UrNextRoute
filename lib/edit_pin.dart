@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:provider/provider.dart';
+import 'package:ur_next_route/main.dart';
 import 'package:ur_next_route/safety_pin.dart';
 import 'package:intl/intl.dart';
+import 'main.dart';
 
 class EditPinPage extends StatelessWidget {
   const EditPinPage({Key? key, required this.clickPin}) : super(key: key);
@@ -10,6 +13,7 @@ class EditPinPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -17,6 +21,42 @@ class EditPinPage extends StatelessWidget {
           "Edit Pin",
           style: TextStyle(color: Colors.white),
         ),
+        actions: <Widget>[
+          Padding(padding: const EdgeInsets.only(right: 20.0),
+          child: GestureDetector(
+            onTap: (){
+              showDialog(
+                context: context, 
+                builder: (context){
+                  return AlertDialog(
+                    title: const Text('Are you sure?'),
+                    content: const Text('Are you sure you want to delete this pin?'),
+                    actions: [
+                      ElevatedButton(onPressed: () => {
+                        appState.removePins(clickPin),
+                        Navigator.pop(context),
+                        Navigator.pop(context),
+                      },
+                      child: const Text('Confirm'),
+                      ),
+                      ElevatedButton(onPressed: () => {
+                        Navigator.pop(context),
+                      }, 
+                      child: const Text('Decline'))
+                    ],
+                  );
+                }
+                );
+//              appState.removePins(clickPin);
+ //             Navigator.pop(context);
+            },
+            child: const Icon(
+              Icons.delete,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        ],
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
