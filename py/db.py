@@ -30,5 +30,3 @@ def get_user():
         for row in conn.execute(stmt):
             result.append(row)
         return result[0]
-
-
