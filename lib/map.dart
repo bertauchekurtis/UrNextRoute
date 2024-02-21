@@ -6,6 +6,7 @@ import 'main.dart';
 import 'package:provider/provider.dart';
 import 'blue_light.dart';
 import 'dart:convert';
+import 'modals/show_pin_modal.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
