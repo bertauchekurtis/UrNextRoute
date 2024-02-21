@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:provider/provider.dart';
 import 'package:ur_next_route/add_safety_pin.dart';
-import 'main.dart';
 
 class GenRoutePopUp extends StatelessWidget {
   const GenRoutePopUp({Key? key, required this.position}) : super(key: key);
   final LatLng position;
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.11,
       child: Scaffold(
