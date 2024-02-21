@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../link.dart';
@@ -27,10 +29,9 @@ class EditLinkModal extends StatefulWidget {
 }
 
 class _EditLinkModalState extends State<EditLinkModal> {
+  final TextEditingController brightnessController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final TextEditingController brightnessController =
-        TextEditingController(text: widget.brightnessLevel.toString());
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -90,10 +91,16 @@ class _EditLinkModalState extends State<EditLinkModal> {
               controller: brightnessController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9]+(\.[0-9]+)?'))
-              ],
-              decoration: const InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: widget.brightnessLevel.toString()),
+              onSubmitted: (value) => {
+                setState(
+                  () {
+                    widget.brightnessLevel = double.parse(value);
+                  },
+                )
+              },
             ),
             subtitle: const Text(
               "Brightness",
