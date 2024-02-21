@@ -65,7 +65,18 @@ class MyAppState extends ChangeNotifier {
     start = start;
     notifyListeners();
   }
-
+  void removePins(SafetyPin pin){
+    if(pin.type == 1){
+      maintenancePinsList.remove(pin);
+    }
+    if(pin.type == 2){
+      tripFallPinsList.remove(pin);
+    }
+    if(pin.type == 3){
+      safetyHazardPinsList.remove(pin);
+    }
+    notifyListeners();
+  }
   void setEnd(end) {
     end = end;
   }

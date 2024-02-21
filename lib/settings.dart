@@ -28,7 +28,7 @@ class SettingsPage extends StatelessWidget {
       ),
       body: ListView(
         padding: EdgeInsets.zero,
-        children:  [
+        children: [
           ListTile(
             leading: const Icon(
               Icons.campaign_outlined,
@@ -44,7 +44,7 @@ class SettingsPage extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(
-              Icons.home_repair_service,
+              Icons.build,
               size: 30,
             ),
             title: const Text("Overlay Maintenance Pins on Map"),
