@@ -7,6 +7,8 @@ import 'package:ur_next_route/safety_pin.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'main.dart';
+import 'building.dart';
+import 'dart:convert';
 
 class AddSafetyPinPage extends StatefulWidget {
   final LatLng position;
@@ -24,6 +26,8 @@ class AddSafetyPinPage extends StatefulWidget {
   DateTime expireTime = DateTime.now();
   late String formattedExpireTime =
       DateFormat('kk:mm - EEE, MMM d').format(expireTime);
+    
+  List<Building> buildings = [];
 
   @override
   State<AddSafetyPinPage> createState() => _AddSafetyPinPageState();
@@ -32,11 +36,47 @@ class AddSafetyPinPage extends StatefulWidget {
 class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
   final TextEditingController descriptionController = TextEditingController();
   var selectedOption = 1;
+  Distance distance =
+    const Distance(roundResult: false, calculator: Vincenty());
 
   String getFormattedTime(DateTime thisDate) {
     return DateFormat('kk:mm - EEE, MMM d').format(thisDate);
   }
 
+  Future<List<Building>> loadBuildings(context) async {
+    List<Building> builds = [];
+    await DefaultAssetBundle.of(context)
+        .loadString('assets/buildings.csv')
+        .then((q) {
+      for (String i in const LineSplitter().convert(q)) {
+        var allThree = i.split(',');
+        //builds.add(i);
+        //print(allThree);
+        Building building = Building(allThree[2],
+              LatLng(double.parse(allThree[0]), double.parse(allThree[1])));
+        //widget.buildings.add(building);
+        builds.add(building);
+      }
+    });
+    setState(() {
+      widget.buildings = builds;
+    });
+    return builds;
+  }
+
+  String getClosestBuilding(point) {
+    double currentDist = 999.9;
+    String closest = "err";
+    for(var building in widget.buildings){
+      double thisDist = distance.as(LengthUnit.Kilometer, point, building.position);
+      if(thisDist < currentDist) {
+        currentDist = thisDist;
+        closest = building.name;
+      }
+    }
+    return closest;
+  }
+  
   @override
   void dispose() {
     descriptionController.dispose();
@@ -46,6 +86,10 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    if(widget.buildings.isEmpty){
+      loadBuildings(context);
+    }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -69,7 +113,7 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
             child: GestureDetector(
               onTap: () {
                 SafetyPin newPin = SafetyPin(
-                    "Placeholder Building",
+                    getClosestBuilding(widget.position),
                     widget.position,
                     widget.uid!,
                     selectedOption,
@@ -94,10 +138,9 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
         children: [
           ListTile(
             leading: const Icon(Icons.pin_drop_outlined),
-            title: const Text("Near <<Placeholder>>"),
+            title: Text(getClosestBuilding(widget.position)),
             subtitle: Text(
                 "Lat: ${widget.position.latitude.toStringAsFixed(4)}, Long: ${widget.position.longitude.toStringAsFixed(4)}"),
-            trailing: const Icon(Icons.edit),
           ),
           const Text("   Pin Type:", style: TextStyle(fontSize: 20)),
           ListTile(
