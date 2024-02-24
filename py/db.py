@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import Table, Column, Integer, String, insert, select, Double, DateTime
+from sqlalchemy import Table, Column, Integer, String, insert, select
 # note that the password in this file is not the password used on the server, github actions will auto fill that
 engine = sqlalchemy.create_engine("mariadb+mariadbconnector://root@127.0.0.1:3306/urnextroute")
 metadata_obj = sqlalchemy.MetaData()
@@ -10,20 +10,6 @@ user_table = Table(
     Column("id", Integer, primary_key = True),
     Column("name", String(30)),
     Column("fullname", String(80)),
-)
-
-pin_table = Table(
-    "pin",
-    metadata_obj,
-    Column("id", Integer, primary_key=True),
-    Column("user_id", String(30)),
-    Column("type", Integer),
-    Column("latitude", Double),
-    Column("longitue", Double),
-    Column("creationDate", DateTime),
-    Column("expirationDate", DateTime),
-    Column("closestBuilding", String(120)),
-    Column("comment", String(120))
 )
 
 def init_db():
