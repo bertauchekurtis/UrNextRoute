@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify, json
 from werkzeug.middleware.proxy_fix import ProxyFix
 import db
 import astar
@@ -64,8 +64,18 @@ def getDistanceBetweenTwoNodes(node1, node2):
 
 def getGeoDistance(current, goal):
     posOne = (current.lat, current.long)
-    posTwo = (current.lat, current.long)
+    posTwo = (goal.lat, goal.long)
     return geopy.distance.geodesic(posOne, posTwo).meters
+
+def getClosestNode(lat, long):
+    currentClosestNode = nodes[0]
+    distance = 999
+    for node in nodes:
+        thisDistance = geopy.distance.geodesic((lat, long), (node.lat, node.long)).meters
+        if(thisDistance < distance):
+            distance = thisDistance
+            currentClosestNode = node
+    return currentClosestNode
 
 path = astar.find_path(nodes[26],
                 nodes[86],
@@ -87,6 +97,51 @@ def json():
         "status": "hello world",
         "color": "green",
     }
+
+# example request: https://www.urnextroute.link/getroute?startLat=119&startLong=24&endLat=119&endLong=32
+@app.route("/getroute")
+def getRoute():
+    startLat = request.args.get('startLat', None)
+    startLong = request.args.get('startLong', None)
+    endLat = request.args.get('endLat', None)
+    endLong = request.args.get('endLong', None)
+    startingNode = getClosestNode(float(startLat), float(startLong))
+    endingNode = getClosestNode(float(endLat), float(endLong))
+    path = astar.find_path(startingNode, 
+                           endingNode, 
+                           neighbors_fnct=getNeighbors, 
+                           heuristic_cost_estimate_fnct=getGeoDistance, 
+                           distance_between_fnct=getDistanceBetweenTwoNodes)
+    pathString = startLat + "," + startLong + ","
+    for node in path:
+        pathString += str(node.lat) + "," + str(node.long) + ","
+    pathString += endLat + "," + endLong + ","
+    return {
+        "path" : pathString,
+        "length" : 0,
+    }
+
+# for testing paths easily without the frontend (paste the result into a line plotter)
+@app.route("/getroutehtml")
+def getRouteHTML():
+    startLat = request.args.get('startLat', None)
+    startLong = request.args.get('startLong', None)
+    endLat = request.args.get('endLat', None)
+    endLong = request.args.get('endLong', None)
+    startingNode = getClosestNode(float(startLat), float(startLong))
+    endingNode = getClosestNode(float(endLat), float(endLong))
+    path = astar.find_path(startingNode, 
+                           endingNode, 
+                           neighbors_fnct=getNeighbors, 
+                           heuristic_cost_estimate_fnct=getGeoDistance, 
+                           distance_between_fnct=getDistanceBetweenTwoNodes)
+    pathString = "<p>" + startLat + "," + startLong + "," + "<br>"
+    for node in path:
+        pathString += str(node.lat) + "," + str(node.long) + "," + "<br>"
+    pathString += endLat + "," + endLong + "," + "</p>"
+    return pathString
+    
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
