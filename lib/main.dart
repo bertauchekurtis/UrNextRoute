@@ -21,7 +21,7 @@ import 'start_end.dart';
 import 'settings.dart';
 import 'package:http/http.dart' as http;
 import 'role.dart';
-String baseURL = "10.0.0.2";
+String baseURL = "10.136.7.130";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -147,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var selectedIndex = 0;
   final user = FirebaseAuth.instance.currentUser;
-  String role = "Kurtis";
+  String role = "user";
   bool showErrorMessage = false;
   late final name = user?.providerData.first.displayName;
   late final email = user?.providerData.first.email;
@@ -169,8 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         throw Exception('Failed to load role');
       }
-    } on Exception catch (e) {
-      print("caught the exception");
+    } on Exception {
       return "user";
     }
   }
@@ -186,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         }
       });
-    } on Exception catch (e) {
+    } on Exception {
       // in the server is down, don't crash the app
       role = "user";
       showErrorMessage = true;
@@ -196,7 +195,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     Widget page;
-    print(role);
     switch (selectedIndex) {
       // SHOULD REPLACE THESE INDEXES WITH AN ENUM
       case 0:
@@ -214,7 +212,6 @@ class _MyHomePageState extends State<MyHomePage> {
       default:
         page = const SettingsPage();
     }
-    print(role);
     return Scaffold(
       key: scaffoldKey,
       resizeToAvoidBottomInset: false,
@@ -250,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.map_outlined),
-                    title: Text(role),
+                    title: const Text("Map"),
                     onTap: () {
                       setState(() {
                         selectedIndex = 0;
@@ -297,6 +294,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pop(context);
                     },
                   ),
+                  if (role == 'admin')
                   ListTile(
                     leading: const Icon(Icons.maps_home_work),
                     title: const Text("Map Editor"),
