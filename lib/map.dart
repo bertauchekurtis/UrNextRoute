@@ -47,6 +47,9 @@ class MapPage extends StatelessWidget {
                 initialCenter: const LatLng(39.543956, -119.815827),
                 initialZoom: 15,
                 keepAlive: true,
+                cameraConstraint: CameraConstraint.contain(
+                    bounds: LatLngBounds(const LatLng(39.567396, -119.835296),
+                        const LatLng(39.525842, -119.798912))),
                 onTap: (tapPosition, point) => {
                   //appState.addStartEnd(StartEnd(true, point)),
                   showModalBottomSheet(
