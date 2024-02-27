@@ -4,11 +4,39 @@ import 'package:provider/provider.dart';
 import 'package:ur_next_route/main.dart';
 import 'package:ur_next_route/safety_pin.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'main.dart';
 
-class EditPinPage extends StatelessWidget {
-  const EditPinPage({Key? key, required this.clickPin}) : super(key: key);
-  final SafetyPin clickPin;
+class EditPinPage extends StatefulWidget {
+  EditPinPage({Key? key, required this.clickPin}) : super(key: key);
+  SafetyPin clickPin;
+
+  final DateTime now = DateTime.now();
+  late final String formattedDate =
+      DateFormat('kk:mm - EEE, MMM d').format(now);
+
+  DateTime expireTime = DateTime.now();
+  late String formattedExpireTime =
+      DateFormat('kk:mm - EEE, MMM d').format(expireTime);
+
+  @override
+  State<EditPinPage> createState() => _EditPinPageState();
+  
+}
+
+
+class _EditPinPageState extends State<EditPinPage> {
+
+//  var selectedOption = widget.clickPin.type;
+  final TextEditingController descriptionController = TextEditingController();
+@override
+  void dispose() {
+    descriptionController.dispose();
+    super.dispose();
+  }
+  String getFormattedTime(DateTime thisDate) {
+    return DateFormat('kk:mm - EEE, MMM d').format(thisDate);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +60,7 @@ class EditPinPage extends StatelessWidget {
                     content: const Text('Are you sure you want to delete this pin?'),
                     actions: [
                       ElevatedButton(onPressed: () => {
-                        appState.removePins(clickPin),
+                        appState.removePins(widget.clickPin),
                         Navigator.pop(context),
                         Navigator.pop(context),
                       },
@@ -72,43 +100,243 @@ class EditPinPage extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.pin_drop_outlined),
-            title: Text("Near ${clickPin.closestBuilding}"),
+            title: Text("Near ${widget.clickPin.closestBuilding}"),
             subtitle: const Text("Location"),
-            trailing: const Icon(Icons.edit),
           ),
           ListTile(
             leading: const Icon(Icons.watch_later_outlined),
             title: Text(DateFormat('kk:mm - EEE, MMM d')
-                .format(clickPin.expirationTime)),
+                .format(widget.clickPin.expirationTime)),
             subtitle: const Text("Expiration time"),
             trailing: const Icon(Icons.edit),
+            onTap: () {
+              DatePicker.showDatePicker(
+                context,
+                dateFormat: 'HH:mm MMMM dd yyyy',
+                initialDateTime: widget.clickPin.expirationTime,
+                minDateTime: DateTime(2024),
+                maxDateTime: DateTime(2025),
+                onMonthChangeStartWithFirstDate: true,
+                onConfirm: (dateTime, List<int> index) {
+                  setState(() {
+                    widget.clickPin.expirationTime = dateTime;
+                    widget.formattedExpireTime = getFormattedTime(dateTime);
+                  });
+                  appState.triggerUpdate();
+                });            
+            },
           ),
-          if (clickPin.type == 1)
-            const ListTile(
-              leading: Icon(Icons.build),
-              title: Text("Maintenance"),
-              subtitle: Text("Pin Type"),
-              trailing: Icon(Icons.edit),
+          if (widget.clickPin.type == 1)
+             ListTile(
+              leading: const Icon(Icons.build),
+              title: const Text("Maintenance"),
+              subtitle: const Text("Pin Type"),
+              trailing: const Icon(Icons.edit),
+              onTap: () {
+              showDialog(context: context, 
+              builder: (context) => AlertDialog(
+                title: const Text("Change Pin Type:"),
+                content: 
+                StatefulBuilder(
+                  builder: (context, setState) {
+                    return SizedBox(
+                      width: double.maxFinite,
+                      child:Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                          title: const Text("Trip/Fall Hazard"),
+                          leading: Radio(
+                            value: 2,
+                            groupValue: widget.clickPin.type,
+                            onChanged: (value) {
+                            setState(() {
+                              widget.clickPin.type = value!;
+                            });
+                          }),
+                        ),
+                        ListTile(
+                          title: const Text("Safety Concern"),
+                          leading: Radio(
+                            value: 3,
+                            groupValue: widget.clickPin.type,
+                            onChanged: (value) {
+                            setState(() {
+                              widget.clickPin.type = value!;
+                            });
+                            }),
+                        ),
+                        ],
+                      ),
+                    );
+                  }
+                ),
+                actions: <Widget>[
+                  TextButton(onPressed: ()=>{
+                    setState(() {
+                    widget.clickPin.description = descriptionController.text;
+                    }),
+                    appState.triggerUpdate(),
+                    Navigator.pop(context),
+                  }, child: const Text('Confirm')),
+                  TextButton(onPressed: ()=>{
+                    Navigator.pop(context),
+                  }, child: const Text('Cancel'))
+                ],      
+              ),
+              );
+              },
+              ),
+          if (widget.clickPin.type == 2)
+            ListTile(
+              leading: const Icon(Icons.personal_injury),
+              title: const Text("Trip/Fall Hazard"),
+              subtitle: const Text("Pin Type"),
+              trailing: const Icon(Icons.edit),
+                           onTap: () {
+              showDialog(context: context, 
+              builder: (context) => AlertDialog(
+                title: const Text("Change Pin Type:"),
+                content: 
+                StatefulBuilder(
+                  builder: (context, setState) {
+                    return SizedBox(
+                      width: double.maxFinite,
+                      child:Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                          title: const Text("Maintenance"),
+                          leading: Radio(
+                            value: 1,
+                            groupValue: widget.clickPin.type,
+                            onChanged: (value) {
+                            setState(() {
+                              widget.clickPin.type = value!;
+                            });
+                          }),
+                        ),
+                        ListTile(
+                          title: const Text("Safety Concern"),
+                          leading: Radio(
+                            value: 3,
+                            groupValue: widget.clickPin.type,
+                            onChanged: (value) {
+                            setState(() {
+                              widget.clickPin.type = value!;
+                            });
+                            }),
+                        ),
+                        ],
+                      ),
+                    );
+                  }
+                ),
+                actions: <Widget>[
+                  TextButton(onPressed: ()=>{
+                    setState(() {
+                    widget.clickPin.description = descriptionController.text;
+                    }),
+                    appState.triggerUpdate(),
+                    Navigator.pop(context),
+                  }, child: const Text('Confirm')),
+                  TextButton(onPressed: ()=>{
+                    Navigator.pop(context),
+                  }, child: const Text('Cancel'))
+                ],      
+              ),
+              );
+              },
             ),
-          if (clickPin.type == 2)
-            const ListTile(
-              leading: Icon(Icons.personal_injury),
-              title: Text("Trip/Fall Hazard"),
-              subtitle: Text("Pin Type"),
-              trailing: Icon(Icons.edit),
-            ),
-          if (clickPin.type == 3)
-            const ListTile(
-              leading: Icon(Icons.warning),
-              title: Text("Safety Concern "),
-              subtitle: Text("Pin Type"),
-              trailing: Icon(Icons.edit),
+          if (widget.clickPin.type == 3)
+            ListTile(
+              leading: const Icon(Icons.warning),
+              title: const Text("Safety Concern"),
+              subtitle: const Text("Pin Type"),
+              trailing: const Icon(Icons.edit),
+                           onTap: () {
+              showDialog(context: context, 
+              builder: (context) => AlertDialog(
+                title: const Text("Change Pin Type:"),
+                content: 
+                StatefulBuilder(
+                  builder: (context, setState) {
+                    return SizedBox(
+                      width: double.maxFinite,
+                      child:Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                          title: const Text("Maintenance"),
+                          leading: Radio(
+                            value: 1,
+                            groupValue: widget.clickPin.type,
+                            onChanged: (value) {
+                            setState(() {
+                              widget.clickPin.type = value!;
+                            });
+                          }),
+                        ),
+                        ListTile(
+                          title: const Text("Trip/Fall Hazard"),
+                          leading: Radio(
+                            value: 2,
+                            groupValue: widget.clickPin.type,
+                            onChanged: (value) {
+                            setState(() {
+                              widget.clickPin.type = value!;
+                            });
+                            }),
+                        ),
+                        ],
+                      ),
+                    );
+                  }
+                ),
+                actions: <Widget>[
+                  TextButton(onPressed: ()=>{
+                    setState(() {
+                    widget.clickPin.description = descriptionController.text;
+                    }),
+                    appState.triggerUpdate(),
+                    Navigator.pop(context),
+                  }, child: const Text('Confirm')),
+                  TextButton(onPressed: ()=>{
+                    Navigator.pop(context),
+                  }, child: const Text('Cancel'))
+                ],      
+              ),
+              );
+              },
             ),
           ListTile(
             leading: const Icon(Icons.description),
-            title: Text(clickPin.description),
+            title: Text(widget.clickPin.description),
             subtitle: const Text("Description"),
             trailing: const Icon(Icons.edit),
+            onTap: (){
+              showDialog(context: context, 
+              builder: (context) => AlertDialog(
+                title: const Text("Enter Description"),
+                content: TextField(
+                  decoration: InputDecoration(hintText: widget.clickPin.description),
+                  controller: descriptionController,
+                ),
+                actions: [
+                  TextButton(onPressed: ()=>{
+                    setState(() {
+                    widget.clickPin.description = descriptionController.text;
+                    }),
+                    appState.triggerUpdate(),
+                    Navigator.pop(context),
+                  }, child: const Text('Enter Pin Description')),
+                  TextButton(onPressed: ()=>{
+                    Navigator.pop(context),
+                  }, child: Text('Cancel'))
+                ],
+              ),
+              );
+          },
           ),
           const Text(
             "Tap on a property to edit",
@@ -119,7 +347,7 @@ class EditPinPage extends StatelessWidget {
             height: 420,
             child: FlutterMap(
               options: MapOptions(
-                initialCenter: clickPin.position,
+                initialCenter: widget.clickPin.position,
                 initialZoom: 18,
               ),
               children: [
@@ -129,7 +357,7 @@ class EditPinPage extends StatelessWidget {
                 ),
                 MarkerLayer(markers: [
                   Marker(
-                    point: clickPin.position,
+                    point: widget.clickPin.position,
                     width: 50,
                     height: 50,
                     child: Icon(

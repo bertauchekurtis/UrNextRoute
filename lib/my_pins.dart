@@ -6,7 +6,7 @@ import 'edit_pin.dart';
 
 class MyPinsPage extends StatelessWidget {
   const MyPinsPage({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
