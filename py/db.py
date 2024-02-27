@@ -11,7 +11,13 @@ user_table = Table(
     Column("name", String(30)),
     Column("fullname", String(80)),
 )
-
+user_role = Table(
+    "user_role",
+    metadata_obj,
+    Column("id", Integer, primary_key = True),
+    Column("uuid", String(28)),
+    Column("role", String(20)),
+)
 def init_db():
     with engine.connect() as conn:
         metadata_obj.create_all(bind = engine)
@@ -30,3 +36,16 @@ def get_user():
         for row in conn.execute(stmt):
             result.append(row)
         return result[0]
+    
+def get_user_role(uid):
+    stmt = select(user_role).where(user_role.c.uuid == uid)
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+
+        return result.first()
+
+def add_user_role(uuid, role):
+    stmt = insert(user_role).values(uuid = uuid, role = role)
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        conn.commit()

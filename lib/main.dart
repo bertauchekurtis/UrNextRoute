@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
@@ -16,7 +18,8 @@ import 'my_pins.dart';
 import 'safety_toolkit.dart';
 import 'start_end.dart';
 import 'settings.dart';
-
+import 'package:http/http.dart' as http;
+import 'role.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -139,6 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var selectedIndex = 0;
   final user = FirebaseAuth.instance.currentUser;
+  String role = "Kurtis";
   late final name = user?.providerData.first.displayName;
   late final email = user?.providerData.first.email;
   late final photoURL = user?.providerData.first.photoURL;
@@ -147,10 +151,25 @@ class _MyHomePageState extends State<MyHomePage> {
     await GoogleSignIn().signOut();
     await FirebaseAuth.instance.signOut();
   }
-
+  Future<String> fetchRole() async {
+    final response = await http
+    .get(Uri.parse('http://127.0.0.1:5000/getrole?uuid=${user?.uid}'));
+    if (response.statusCode == 200){
+      Role r =  Role.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+      return r.role;
+    }
+    else{
+      throw Exception('Failed to load role');
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
+    fetchRole().then((String result){
+    role = result; 
+    });
     Widget page;
+    print(role);
     switch (selectedIndex) {
       // SHOULD REPLACE THESE INDEXES WITH AN ENUM
       case 0:
@@ -168,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
       default:
         page = const SettingsPage();
     }
-
+    print(role);
     return Scaffold(
       key: scaffoldKey,
       resizeToAvoidBottomInset: false,
