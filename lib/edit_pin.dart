@@ -64,7 +64,7 @@ class _EditPinPageState extends State<EditPinPage> {
                             onPressed: () {
                               try {
                                 http.get(Uri.parse(
-                                    'http://$baseURL/deletepin?id=${widget.clickPin.id}'));
+                                    '$baseURL/deletepin?id=${widget.clickPin.id}'));
                               } on Exception {
                                 //pass
                               }
@@ -129,7 +129,7 @@ class _EditPinPageState extends State<EditPinPage> {
                   widget.clickPin.expirationTime = dateTime;
                   try {
                     http.get(Uri.parse(
-                        'http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                        '$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
                   } on Exception {
                     //pass
                   }
@@ -188,7 +188,7 @@ class _EditPinPageState extends State<EditPinPage> {
                             setState(() {
                               try {
                                 http.get(Uri.parse(
-                                    'http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                                    '$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
                               } on Exception {
                                 // pass
                               }
@@ -256,7 +256,7 @@ class _EditPinPageState extends State<EditPinPage> {
                             setState(() {
                               try {
                                 http.get(Uri.parse(
-                                    'http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                                    '$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
                               } on Exception {
                                 // pass
                               }
@@ -324,7 +324,7 @@ class _EditPinPageState extends State<EditPinPage> {
                             setState(() {
                               try {
                                 http.get(Uri.parse(
-                                    'http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                                    '$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
                               } on Exception {
                                 // pass
                               }
@@ -367,7 +367,7 @@ class _EditPinPageState extends State<EditPinPage> {
                                 descriptionController.text;
                             try {
                               http.get(Uri.parse(
-                                  'http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                                  '$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
                             } on Exception {
                               // pass
                             }
