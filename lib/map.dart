@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'blue_light.dart';
 import 'dart:convert';
 import 'modals/show_pin_modal.dart';
+import 'start_end.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -82,7 +83,7 @@ class MapPage extends StatelessWidget {
                       child: const Icon(
                         Icons.star_rate_rounded,
                         color: Color.fromARGB(255, 5, 106, 165),
-                        size: 50,
+                        size: 25,
                       ),
                     ),
                     Marker(
@@ -92,7 +93,7 @@ class MapPage extends StatelessWidget {
                       child: const Icon(
                         Icons.star_rate_rounded,
                         color: Color.fromARGB(255, 113, 128, 138),
-                        size: 50,
+                        size: 25,
                       ),
                     ),
                     if (appState.showBlueLights)
@@ -193,6 +194,24 @@ class MapPage extends StatelessWidget {
               icon: const Icon(Icons.menu),
             ),
           ),
+          if (appState.path.isNotEmpty)
+            Positioned(
+              right: 12,
+              top: 12,
+              child: ElevatedButton(
+                onPressed: () => {
+                  print("pressed"),
+                  appState.genRoute = false,
+                  appState.startPointChosen = false,
+                  appState.endPointChosen = false,
+                  appState.path = [],
+                  appState.start = StartEnd(true, const LatLng(0, 0)),
+                  appState.end = StartEnd(false, const LatLng(0, 0)),
+                  appState.triggerUpdate(),
+                },
+                child: const Text("Clear Route"),
+              ),
+            ),
           if (appState.startPointChosen &&
               appState.endPointChosen &&
               !appState.genRoute)
