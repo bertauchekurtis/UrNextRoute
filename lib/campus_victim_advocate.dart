@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class CampusVictimAdvocate extends StatelessWidget {
-  const CampusVictimAdvocate({super.key});
+  const CampusVictimAdvocate({
+    super.key,
+  });
 
-  final advocate = '7752217634';
-  final assistant = '7753283210';
+  final String advocate = '7752217634';
+  final String assistant = '7753283210';
 
   @override
   Widget build(BuildContext context) {

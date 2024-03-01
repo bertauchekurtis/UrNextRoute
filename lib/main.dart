@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,7 +20,8 @@ import 'start_end.dart';
 import 'settings.dart';
 import 'package:http/http.dart' as http;
 import 'path.dart';
-
+import 'role.dart';
+import 'admin_page.dart';
 String baseURL = '192.168.1.74:5000';
 
 void main() async {
@@ -62,10 +64,12 @@ class MyAppState extends ChangeNotifier {
   var end = StartEnd(false, const LatLng(0, 0));
   var genRoute = false;
   List<LatLng> path = [];
+  var initialPinGet = false;
 
   var maintenancePinsList = <SafetyPin>[];
   var tripFallPinsList = <SafetyPin>[];
   var safetyHazardPinsList = <SafetyPin>[];
+  var otherUserPins = <SafetyPin>[];
 
   void setStart(start) {
     start = start;
@@ -131,6 +135,10 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addOtherUserPin(SafetyPin newPin) {
+    otherUserPins.add(newPin);
+  }
+
   void triggerUpdate() {
     notifyListeners();
   }
@@ -149,6 +157,35 @@ class MyAppState extends ChangeNotifier {
       }
     } on Exception {}
   }
+
+  void getPins() async {
+    try {
+      final response = await http.get(Uri.parse('http://$baseURL/getallpins'));
+      if (response.statusCode == 200) {
+        print("here!");
+        Map<String, dynamic> jsonData = json.decode(response.body);
+        List<dynamic> safetyPinsJson = jsonData['pins'];
+        print(response.body);
+        print(safetyPinsJson);
+        List<SafetyPin> newPins = safetyPinsJson.map((pinJson) => SafetyPin.fromJson(pinJson)).toList();
+        print(newPins);
+        final user = FirebaseAuth.instance.currentUser;
+        for(SafetyPin pin in newPins){
+          print("also here!");
+          if(pin.userUID == user!.uid){
+            addSafetyPin(pin);
+          } else {
+            addOtherUserPin(pin);
+          }
+          }
+          initialPinGet = true;
+      } else {
+        throw Exception('Failed to load pins');
+      }
+    } on Exception {
+      print("hmm");
+    }
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -162,6 +199,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var selectedIndex = 0;
   final user = FirebaseAuth.instance.currentUser;
+  String role = "user";
+  bool showErrorMessage = false;
   late final name = user?.providerData.first.displayName;
   late final email = user?.providerData.first.email;
   late final photoURL = user?.providerData.first.photoURL;
@@ -169,6 +208,40 @@ class _MyHomePageState extends State<MyHomePage> {
   void signOutProcess() async {
     await GoogleSignIn().signOut();
     await FirebaseAuth.instance.signOut();
+  }
+
+  Future<String> fetchRole() async {
+    try {
+      final response = await http
+          .get(Uri.parse('http://$baseURL/getrole?uuid=${user?.uid}'));
+      if (response.statusCode == 200) {
+        Role r =
+            Role.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+        return r.role;
+      } else {
+        throw Exception('Failed to load role');
+      }
+    } on Exception {
+      return "user";
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    try {
+      fetchRole().then((String result) {
+        if (mounted) {
+          setState(() {
+            role = result;
+          });
+        }
+      });
+    } on Exception {
+      // in the server is down, don't crash the app
+      role = "user";
+      showErrorMessage = true;
+    }
   }
 
   @override
@@ -188,10 +261,11 @@ class _MyHomePageState extends State<MyHomePage> {
         page = const SettingsPage();
       case 5:
         page = MapEditorPage();
+      case 6: 
+        page = const AdminPage();
       default:
         page = const SettingsPage();
     }
-
     return Scaffold(
       key: scaffoldKey,
       resizeToAvoidBottomInset: false,
@@ -274,6 +348,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pop(context);
                     },
                   ),
+                  if (role == 'admin')...[
                   ListTile(
                     leading: const Icon(Icons.maps_home_work),
                     title: const Text("Map Editor"),
@@ -284,6 +359,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pop(context);
                     },
                   ),
+                  ListTile(
+                    leading: const Icon(Icons.apps),
+                    title: const Text("Admin Page"),
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 6;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
                   ListTile(
                     leading: const Icon(Icons.logout),
                     title: const Text("Logout"),
