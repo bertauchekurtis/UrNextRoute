@@ -41,7 +41,6 @@ def get_user_role(uid):
     stmt = select(user_role).where(user_role.c.uuid == uid)
     with engine.connect() as conn:
         result = conn.execute(stmt)
-
         return result.first()
 
 def add_user_role(uuid, role):
