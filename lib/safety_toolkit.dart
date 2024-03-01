@@ -17,8 +17,9 @@ class SafetyToolKit extends StatefulWidget {
 class _SafetyToolKitState extends State<SafetyToolKit> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final player = AudioPlayer();
-  final Uri _url = Uri.parse('https://www.unr.edu/equal-opportunity-title-ix/resources');
-  PlayerState _playerState = PlayerState.stopped; 
+  final Uri _url =
+      Uri.parse('https://www.unr.edu/equal-opportunity-title-ix/resources');
+  PlayerState _playerState = PlayerState.stopped;
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +46,9 @@ class _SafetyToolKitState extends State<SafetyToolKit> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-
             ListTile(
               title: const Text("Safety Tips"),
-              trailing: TextButton( 
+              trailing: TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -56,79 +56,71 @@ class _SafetyToolKitState extends State<SafetyToolKit> {
                   );
                 },
                 child: const Icon(Icons.keyboard_arrow_right),
-              ),  
+              ),
             ),
-
             const SizedBox(height: 25),
-
             ListTile(
               title: const Text("Title IX Resources"),
-              trailing: TextButton( 
+              trailing: TextButton(
                 onPressed: () {
-                    _launchUrl();
+                  _launchUrl();
                 },
                 child: const Icon(Icons.keyboard_arrow_right),
-              ),  
+              ),
             ),
-
             const SizedBox(height: 25),
-
             ListTile(
               title: const Text("Campus Police"),
-              trailing: TextButton( 
+              trailing: TextButton(
                 onPressed: () {
                   FlutterPhoneDirectCaller.callNumber('7753342677');
                 },
                 child: const Icon(Icons.local_phone_rounded),
-              ),  
+              ),
             ),
-
-            const SizedBox(height: 25),            
-            
-          ListTile(
-            title: const Text("Campus Victim Advocate"),
-            trailing: TextButton(  
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CampusVictimAdvocate()),
-                );
-              },
-          child: const Icon(Icons.keyboard_arrow_right),
-          )
-            ),
-
-            const SizedBox(height: 25),  
-
+            const SizedBox(height: 25),
+            ListTile(
+                title: const Text("Campus Victim Advocate"),
+                trailing: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CampusVictimAdvocate()),
+                    );
+                  },
+                  child: const Icon(Icons.keyboard_arrow_right),
+                )),
+            const SizedBox(height: 25),
             ListTile(
               title: const Text("Loud Alarm"),
-              trailing: TextButton( 
+              trailing: TextButton(
                 onPressed: () {
-                if(_playerState == PlayerState.stopped){
-                  VolumeController().maxVolume();
-                  player.play(AssetSource('alarm.mp3'));
-                  setState(() {
-                    _playerState = PlayerState.playing; 
-                  });
-                }
-                else{
-                  player.stop();
-                  setState(() {
-                    _playerState = PlayerState.stopped;
-                  });
-                }
-              },
+                  if (_playerState == PlayerState.stopped) {
+                    VolumeController().maxVolume();
+                    player.play(AssetSource('alarm.mp3'));
+                    setState(() {
+                      _playerState = PlayerState.playing;
+                    });
+                  } else {
+                    player.stop();
+                    setState(() {
+                      _playerState = PlayerState.stopped;
+                    });
+                  }
+                },
                 child: const Icon(Icons.notifications_active),
-              ),  
+              ),
             ),
           ],
         ),
       ),
     );
   }
-  Future<void> _launchUrl () async {
-   if (!await launchUrl(_url)) {
-        throw Exception('Could not launch $_url');
+
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
     }
   }
 }
