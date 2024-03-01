@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -20,9 +19,10 @@ import 'safety_toolkit.dart';
 import 'start_end.dart';
 import 'settings.dart';
 import 'package:http/http.dart' as http;
+import 'path.dart';
 import 'role.dart';
 import 'admin_page.dart';
-String baseURL = "172.27.24.234:5000";
+String baseURL = '192.168.1.74:5000';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,6 +63,7 @@ class MyAppState extends ChangeNotifier {
   var start = StartEnd(true, const LatLng(0, 0));
   var end = StartEnd(false, const LatLng(0, 0));
   var genRoute = false;
+  List<LatLng> path = [];
   var initialPinGet = false;
 
   var maintenancePinsList = <SafetyPin>[];
@@ -141,6 +142,22 @@ class MyAppState extends ChangeNotifier {
   void triggerUpdate() {
     notifyListeners();
   }
+
+  void getPath() async {
+    try {
+      final response = await http.get(Uri.parse(
+          'http://$baseURL/getroute?startLat=${start.position.latitude}&startLong=${start.position.longitude}&endLat=${end.position.latitude}&endLong=${end.position.longitude}'));
+      if (response.statusCode == 200) {
+        ourPath newPath =
+            ourPath.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+        path = newPath.getPathList();
+        triggerUpdate();
+      } else {
+        throw Exception('Failed to load path.');
+      }
+    } on Exception {}
+  }
+
   void getPins() async {
     try {
       final response = await http.get(Uri.parse('http://$baseURL/getallpins'));
@@ -169,7 +186,6 @@ class MyAppState extends ChangeNotifier {
       print("hmm");
     }
   }
-
 }
 
 class MyHomePage extends StatefulWidget {

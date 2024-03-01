@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'blue_light.dart';
 import 'dart:convert';
 import 'modals/show_pin_modal.dart';
+import 'start_end.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -68,37 +69,13 @@ class MapPage extends StatelessWidget {
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.app',
                 ),
-                if (appState.genRoute)
+                if (appState.path.isNotEmpty)
                   PolylineLayer(
                     polylines: [
                       Polyline(
                         borderColor: const Color.fromARGB(255, 4, 30, 66),
                         borderStrokeWidth: 6,
-                        points: [
-                          const LatLng(39.53952, -119.812431),
-                          const LatLng(39.540165, -119.81306),
-                          const LatLng(39.540129, -119.813535),
-                          const LatLng(39.540893, -119.813851),
-                          const LatLng(39.540866, -119.814374),
-                          const LatLng(39.54106, -119.814321),
-                          const LatLng(39.541282, -119.814638),
-                          const LatLng(39.541241, -119.814842),
-                          const LatLng(39.54196, -119.815549),
-                          const LatLng(39.542679, -119.815672),
-                          const LatLng(39.543545, -119.816132),
-                          const LatLng(39.543837, -119.816265),
-                          const LatLng(39.544245, -119.81678),
-                          const LatLng(39.545019, -119.816804),
-                          const LatLng(39.545381, -119.816526),
-                          const LatLng(39.546188, -119.815304),
-                          const LatLng(39.546396, -119.815057),
-                          const LatLng(39.546873, -119.814759),
-                          const LatLng(39.547312, -119.81368),
-                          const LatLng(39.547518, -119.813308),
-                          const LatLng(39.547537, -119.812809),
-                          const LatLng(39.547721, -119.812192),
-                          const LatLng(39.548412, -119.811796)
-                        ],
+                        points: appState.path,
                         color: const Color.fromARGB(255, 2, 42, 99),
                       ),
                     ],
@@ -112,7 +89,7 @@ class MapPage extends StatelessWidget {
                       child: const Icon(
                         Icons.star_rate_rounded,
                         color: Color.fromARGB(255, 5, 106, 165),
-                        size: 50,
+                        size: 25,
                       ),
                     ),
                     Marker(
@@ -122,7 +99,7 @@ class MapPage extends StatelessWidget {
                       child: const Icon(
                         Icons.star_rate_rounded,
                         color: Color.fromARGB(255, 113, 128, 138),
-                        size: 50,
+                        size: 25,
                       ),
                     ),
                     if (appState.showBlueLights)
@@ -247,6 +224,24 @@ class MapPage extends StatelessWidget {
               icon: const Icon(Icons.menu),
             ),
           ),
+          if (appState.path.isNotEmpty)
+            Positioned(
+              right: 12,
+              top: 12,
+              child: ElevatedButton(
+                onPressed: () => {
+                  print("pressed"),
+                  appState.genRoute = false,
+                  appState.startPointChosen = false,
+                  appState.endPointChosen = false,
+                  appState.path = [],
+                  appState.start = StartEnd(true, const LatLng(0, 0)),
+                  appState.end = StartEnd(false, const LatLng(0, 0)),
+                  appState.triggerUpdate(),
+                },
+                child: const Text("Clear Route"),
+              ),
+            ),
           if (appState.startPointChosen &&
               appState.endPointChosen &&
               !appState.genRoute)
@@ -257,7 +252,7 @@ class MapPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => {
                   appState.genRoute = true,
-                  appState.triggerUpdate(),
+                  appState.getPath(),
                 },
                 child: const Text("Generate Route"),
               ),
