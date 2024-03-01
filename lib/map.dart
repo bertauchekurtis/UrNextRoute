@@ -14,6 +14,9 @@ class MapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    if(appState.initialPinGet == false){
+      appState.getPins();
+    }
     List<BlueLight> blueLightList = [];
 
     Future<List<String>> loadBlueLights(context) async {
@@ -184,6 +187,30 @@ class MapPage extends StatelessWidget {
                         ),
                     if (appState.showSafetyHazardPins)
                       for (var pin in appState.safetyHazardPinsList)
+                        Marker(
+                          point: pin.position,
+                          width: 50,
+                          height: 50,
+                          child: GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (builder) {
+                                  return ShowPinModal(
+                                    clickPin: pin,
+                                  );
+                                },
+                              );
+                            },
+                            child: const Icon(
+                              Icons.push_pin_sharp,
+                              color: Color.fromARGB(255, 245, 10, 10),
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                    if (true) //change this to a setting for other users pins
+                      for (var pin in appState.otherUserPins)
                         Marker(
                           point: pin.position,
                           width: 50,

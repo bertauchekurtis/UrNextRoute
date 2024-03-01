@@ -6,6 +6,7 @@ import 'package:ur_next_route/safety_pin.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'main.dart';
+import 'package:http/http.dart' as http;
 
 class EditPinPage extends StatefulWidget {
   EditPinPage({Key? key, required this.clickPin}) : super(key: key);
@@ -60,6 +61,7 @@ class _EditPinPageState extends State<EditPinPage> {
                     content: const Text('Are you sure you want to delete this pin?'),
                     actions: [
                       ElevatedButton(onPressed: () => {
+                        http.get(Uri.parse('http://$baseURL/deletepin?id=${widget.clickPin.id}')),
                         appState.removePins(widget.clickPin),
                         Navigator.pop(context),
                         Navigator.pop(context),
@@ -120,6 +122,7 @@ class _EditPinPageState extends State<EditPinPage> {
                 onConfirm: (dateTime, List<int> index) {
                   setState(() {
                     widget.clickPin.expirationTime = dateTime;
+                    http.get(Uri.parse('http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
                     widget.formattedExpireTime = getFormattedTime(dateTime);
                   });
                   appState.triggerUpdate();
@@ -175,6 +178,7 @@ class _EditPinPageState extends State<EditPinPage> {
                   TextButton(onPressed: ()=>{
                     setState(() {
                     widget.clickPin.description = descriptionController.text;
+                    http.get(Uri.parse('http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
                     }),
                     appState.triggerUpdate(),
                     Navigator.pop(context),
@@ -236,6 +240,7 @@ class _EditPinPageState extends State<EditPinPage> {
                   TextButton(onPressed: ()=>{
                     setState(() {
                     widget.clickPin.description = descriptionController.text;
+                    http.get(Uri.parse('http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
                     }),
                     appState.triggerUpdate(),
                     Navigator.pop(context),
@@ -297,6 +302,7 @@ class _EditPinPageState extends State<EditPinPage> {
                   TextButton(onPressed: ()=>{
                     setState(() {
                     widget.clickPin.description = descriptionController.text;
+                    http.get(Uri.parse('http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
                     }),
                     appState.triggerUpdate(),
                     Navigator.pop(context),
@@ -326,6 +332,7 @@ class _EditPinPageState extends State<EditPinPage> {
                   TextButton(onPressed: ()=>{
                     setState(() {
                     widget.clickPin.description = descriptionController.text;
+                    http.get(Uri.parse('http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
                     }),
                     appState.triggerUpdate(),
                     Navigator.pop(context),

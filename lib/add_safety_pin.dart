@@ -9,6 +9,7 @@ import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_pic
 import 'main.dart';
 import 'building.dart';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AddSafetyPinPage extends StatefulWidget {
   final LatLng position;
@@ -90,6 +91,20 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
       loadBuildings(context);
     }
 
+  Future<int> addPinAndGetID(SafetyPin newPin) async {
+    try {
+      final response = await http.get(Uri.parse('http://$baseURL/addpin?uuid=${newPin.userUID}&type=${newPin.type}&lat=${newPin.position.latitude}&long=${newPin.position.longitude}&createDate=${newPin.placedTime.year},${newPin.placedTime.month},${newPin.placedTime.day},${newPin.placedTime.hour},${newPin.placedTime.minute}&expireDate=${newPin.expirationTime.year},${newPin.expirationTime.month},${newPin.expirationTime.day},${newPin.expirationTime.hour},${newPin.expirationTime.minute}&closestBuilding=${newPin.closestBuilding}&comment=${newPin.description}'));
+      if (response.statusCode == 200) {
+          Map<String, dynamic> jsonMap = json.decode(response.body);
+          return jsonMap['id'];
+      } else {
+        throw Exception('Failed to load role');
+      }
+    } on Exception {
+      return -1;
+    }
+  }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -119,10 +134,17 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
                     selectedOption,
                     descriptionController.text,
                     widget.dropTime,
-                    widget.expireTime);
-                appState.addSafetyPin(newPin);
-                Navigator.pop(context);
-                Navigator.pop(context);
+                    widget.expireTime,
+                    -1);
+                  
+                addPinAndGetID(newPin).then((int result) {
+                  print(result);
+                  newPin.id = result;
+                  appState.addSafetyPin(newPin);
+                  print(newPin.id);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                });
               },
               child: const Icon(
                 Icons.check,
