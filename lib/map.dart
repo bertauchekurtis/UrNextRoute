@@ -204,7 +204,6 @@ class MapPage extends StatelessWidget {
                 onPressed: () => {
                   appState.genRoute = true,
                   appState.getPath(),
-                  appState.triggerUpdate(),
                 },
                 child: const Text("Generate Route"),
               ),

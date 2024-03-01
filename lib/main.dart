@@ -20,7 +20,7 @@ import 'settings.dart';
 import 'package:http/http.dart' as http;
 import 'path.dart';
 
-String baseURL = '10.136.253.61:5000';
+String baseURL = '192.168.1.74:5000';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -138,11 +138,12 @@ class MyAppState extends ChangeNotifier {
   void getPath() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://$baseURL/getroute?startLat=${start.position.latitude}&startLong=${start.position.longitude}endLat=${end.position.latitude}&endLong=${end.position.longitude}'));
+          'http://$baseURL/getroute?startLat=${start.position.latitude}&startLong=${start.position.longitude}&endLat=${end.position.latitude}&endLong=${end.position.longitude}'));
       if (response.statusCode == 200) {
         ourPath newPath =
             ourPath.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
         path = newPath.getPathList();
+        triggerUpdate();
       } else {
         throw Exception('Failed to load path.');
       }

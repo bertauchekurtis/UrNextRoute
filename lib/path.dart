@@ -25,7 +25,7 @@ class ourPath {
   List<LatLng> getPathList() {
     List<String> pathStringList = pathString.split(',');
     List<LatLng> pathList = [];
-    for (var i = 0; i < pathStringList.length; i + 2) {
+    for (var i = 0; i < pathStringList.length; i += 2) {
       pathList.add(LatLng(double.parse(pathStringList[i]),
           double.parse(pathStringList[i + 1])));
     }

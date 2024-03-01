@@ -115,10 +115,10 @@ def getRoute():
     pathString = startLat + "," + startLong + ","
     for node in path:
         pathString += str(node.lat) + "," + str(node.long) + ","
-    pathString += endLat + "," + endLong + ","
+    pathString += endLat + "," + endLong
     return {
         "path" : pathString,
-        "length" : 0,
+        "length" : 0.0,
     }
 
 # for testing paths easily without the frontend (paste the result into a line plotter)
