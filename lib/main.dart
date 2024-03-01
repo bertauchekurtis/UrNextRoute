@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
@@ -16,6 +17,10 @@ import 'my_pins.dart';
 import 'safety_toolkit.dart';
 import 'start_end.dart';
 import 'settings.dart';
+import 'package:http/http.dart' as http;
+import 'path.dart';
+
+String baseURL = '10.136.253.61:5000';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,6 +61,7 @@ class MyAppState extends ChangeNotifier {
   var start = StartEnd(true, const LatLng(0, 0));
   var end = StartEnd(false, const LatLng(0, 0));
   var genRoute = false;
+  List<LatLng> path = [];
 
   var maintenancePinsList = <SafetyPin>[];
   var tripFallPinsList = <SafetyPin>[];
@@ -65,18 +71,20 @@ class MyAppState extends ChangeNotifier {
     start = start;
     notifyListeners();
   }
-  void removePins(SafetyPin pin){
-    if(pin.type == 1){
+
+  void removePins(SafetyPin pin) {
+    if (pin.type == 1) {
       maintenancePinsList.remove(pin);
     }
-    if(pin.type == 2){
+    if (pin.type == 2) {
       tripFallPinsList.remove(pin);
     }
-    if(pin.type == 3){
+    if (pin.type == 3) {
       safetyHazardPinsList.remove(pin);
     }
     notifyListeners();
   }
+
   void setEnd(end) {
     end = end;
   }
@@ -125,6 +133,20 @@ class MyAppState extends ChangeNotifier {
 
   void triggerUpdate() {
     notifyListeners();
+  }
+
+  void getPath() async {
+    try {
+      final response = await http.get(Uri.parse(
+          'http://$baseURL/getroute?startLat=${start.position.latitude}&startLong=${start.position.longitude}endLat=${end.position.latitude}&endLong=${end.position.longitude}'));
+      if (response.statusCode == 200) {
+        ourPath newPath =
+            ourPath.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+        path = newPath.getPathList();
+      } else {
+        throw Exception('Failed to load path.');
+      }
+    } on Exception {}
   }
 }
 
