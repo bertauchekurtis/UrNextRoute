@@ -21,6 +21,7 @@ import 'start_end.dart';
 import 'settings.dart';
 import 'package:http/http.dart' as http;
 import 'role.dart';
+import 'admin_page.dart';
 String baseURL = "172.27.24.234:5000";
 
 void main() async {
@@ -244,6 +245,8 @@ class _MyHomePageState extends State<MyHomePage> {
         page = const SettingsPage();
       case 5:
         page = MapEditorPage();
+      case 6: 
+        page = const AdminPage();
       default:
         page = const SettingsPage();
     }
@@ -329,7 +332,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pop(context);
                     },
                   ),
-                  if (role == 'admin')
+                  if (role == 'admin')...[
                   ListTile(
                     leading: const Icon(Icons.maps_home_work),
                     title: const Text("Map Editor"),
@@ -340,6 +343,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pop(context);
                     },
                   ),
+                  ListTile(
+                    leading: const Icon(Icons.apps),
+                    title: const Text("Admin Page"),
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 6;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
                   ListTile(
                     leading: const Icon(Icons.logout),
                     title: const Text("Logout"),
