@@ -22,7 +22,7 @@ import 'settings.dart';
 import 'package:http/http.dart' as http;
 import 'role.dart';
 import 'admin_page.dart';
-String baseURL = "10.136.7.130";
+String baseURL = "172.27.24.234:5000";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,10 +63,12 @@ class MyAppState extends ChangeNotifier {
   var start = StartEnd(true, const LatLng(0, 0));
   var end = StartEnd(false, const LatLng(0, 0));
   var genRoute = false;
+  var initialPinGet = false;
 
   var maintenancePinsList = <SafetyPin>[];
   var tripFallPinsList = <SafetyPin>[];
   var safetyHazardPinsList = <SafetyPin>[];
+  var otherUserPins = <SafetyPin>[];
 
   void setStart(start) {
     start = start;
@@ -132,9 +134,42 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addOtherUserPin(SafetyPin newPin) {
+    otherUserPins.add(newPin);
+  }
+
   void triggerUpdate() {
     notifyListeners();
   }
+  void getPins() async {
+    try {
+      final response = await http.get(Uri.parse('http://$baseURL/getallpins'));
+      if (response.statusCode == 200) {
+        print("here!");
+        Map<String, dynamic> jsonData = json.decode(response.body);
+        List<dynamic> safetyPinsJson = jsonData['pins'];
+        print(response.body);
+        print(safetyPinsJson);
+        List<SafetyPin> newPins = safetyPinsJson.map((pinJson) => SafetyPin.fromJson(pinJson)).toList();
+        print(newPins);
+        final user = FirebaseAuth.instance.currentUser;
+        for(SafetyPin pin in newPins){
+          print("also here!");
+          if(pin.userUID == user!.uid){
+            addSafetyPin(pin);
+          } else {
+            addOtherUserPin(pin);
+          }
+          }
+          initialPinGet = true;
+      } else {
+        throw Exception('Failed to load pins');
+      }
+    } on Exception {
+      print("hmm");
+    }
+  }
+
 }
 
 class MyHomePage extends StatefulWidget {
@@ -162,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<String> fetchRole() async {
     try {
       final response = await http
-          .get(Uri.parse('http://$baseURL:5000/getrole?uuid=${user?.uid}'));
+          .get(Uri.parse('http://$baseURL/getrole?uuid=${user?.uid}'));
       if (response.statusCode == 200) {
         Role r =
             Role.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
