@@ -247,6 +247,7 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: TextField(
+              maxLength: 120,
               controller: descriptionController,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),

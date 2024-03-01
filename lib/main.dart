@@ -247,6 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     Widget page;
+    var appState = context.watch<MyAppState>();
     switch (selectedIndex) {
       // SHOULD REPLACE THESE INDEXES WITH AN ENUM
       case 0:
@@ -305,6 +306,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     onTap: () {
                       setState(() {
                         selectedIndex = 0;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.refresh),
+                    title: const Text("Refresh Map"),
+                    onTap: () {
+                      setState(() {
+                        appState.initialPinGet = false;
+                        appState.triggerUpdate();
                       });
                       Navigator.pop(context);
                     },

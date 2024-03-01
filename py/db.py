@@ -73,7 +73,8 @@ def add_safety_pin(uuid, type, lat, long, createDate, expireDate, closestBuildin
                                      comment = comment)
     with engine.connect() as conn:
         result = conn.execute(stmt)
-        newId = conn.execute("SELECT LAST_INSERT_ID()").scalar()
+        newId = result.lastrowid
+        conn.commit()
     return newId
 
 def get_safety_pin_by_id(id):
