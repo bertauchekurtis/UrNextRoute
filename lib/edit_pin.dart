@@ -22,19 +22,17 @@ class EditPinPage extends StatefulWidget {
 
   @override
   State<EditPinPage> createState() => _EditPinPageState();
-  
 }
 
-
 class _EditPinPageState extends State<EditPinPage> {
-
 //  var selectedOption = widget.clickPin.type;
   final TextEditingController descriptionController = TextEditingController();
-@override
+  @override
   void dispose() {
     descriptionController.dispose();
     super.dispose();
   }
+
   String getFormattedTime(DateTime thisDate) {
     return DateFormat('kk:mm - EEE, MMM d').format(thisDate);
   }
@@ -50,41 +48,49 @@ class _EditPinPageState extends State<EditPinPage> {
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
-          Padding(padding: const EdgeInsets.only(right: 20.0),
-          child: GestureDetector(
-            onTap: (){
-              showDialog(
-                context: context, 
-                builder: (context){
-                  return AlertDialog(
-                    title: const Text('Are you sure?'),
-                    content: const Text('Are you sure you want to delete this pin?'),
-                    actions: [
-                      ElevatedButton(onPressed: () => {
-                        http.get(Uri.parse('http://$baseURL/deletepin?id=${widget.clickPin.id}')),
-                        appState.removePins(widget.clickPin),
-                        Navigator.pop(context),
-                        Navigator.pop(context),
-                      },
-                      child: const Text('Confirm'),
-                      ),
-                      ElevatedButton(onPressed: () => {
-                        Navigator.pop(context),
-                      }, 
-                      child: const Text('Decline'))
-                    ],
-                  );
-                }
-                );
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Are you sure?'),
+                        content: const Text(
+                            'Are you sure you want to delete this pin?'),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              try {
+                                http.get(Uri.parse(
+                                    'http://$baseURL/deletepin?id=${widget.clickPin.id}'));
+                              } on Exception {
+                                //pass
+                              }
+                              appState.removePins(widget.clickPin);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Confirm'),
+                          ),
+                          ElevatedButton(
+                              onPressed: () => {
+                                    Navigator.pop(context),
+                                  },
+                              child: const Text('Decline'))
+                        ],
+                      );
+                    });
 //              appState.removePins(clickPin);
- //             Navigator.pop(context);
-            },
-            child: const Icon(
-              Icons.delete,
-              color: Colors.white,
+                //             Navigator.pop(context);
+              },
+              child: const Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
             ),
           ),
-        ),
         ],
         leading: IconButton(
           icon: const Icon(
@@ -112,145 +118,161 @@ class _EditPinPageState extends State<EditPinPage> {
             subtitle: const Text("Expiration time"),
             trailing: const Icon(Icons.edit),
             onTap: () {
-              DatePicker.showDatePicker(
-                context,
-                dateFormat: 'HH:mm MMMM dd yyyy',
-                initialDateTime: widget.clickPin.expirationTime,
-                minDateTime: DateTime(2024),
-                maxDateTime: DateTime(2025),
-                onMonthChangeStartWithFirstDate: true,
-                onConfirm: (dateTime, List<int> index) {
-                  setState(() {
-                    widget.clickPin.expirationTime = dateTime;
-                    http.get(Uri.parse('http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
-                    widget.formattedExpireTime = getFormattedTime(dateTime);
-                  });
-                  appState.triggerUpdate();
-                });            
+              DatePicker.showDatePicker(context,
+                  dateFormat: 'HH:mm MMMM dd yyyy',
+                  initialDateTime: widget.clickPin.expirationTime,
+                  minDateTime: DateTime(2024),
+                  maxDateTime: DateTime(2025),
+                  onMonthChangeStartWithFirstDate: true,
+                  onConfirm: (dateTime, List<int> index) {
+                setState(() {
+                  widget.clickPin.expirationTime = dateTime;
+                  try {
+                    http.get(Uri.parse(
+                        'http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                  } on Exception {
+                    //pass
+                  }
+                  widget.formattedExpireTime = getFormattedTime(dateTime);
+                });
+                appState.triggerUpdate();
+              });
             },
           ),
           if (widget.clickPin.type == 1)
-             ListTile(
+            ListTile(
               leading: const Icon(Icons.build),
               title: const Text("Maintenance"),
               subtitle: const Text("Pin Type"),
               trailing: const Icon(Icons.edit),
               onTap: () {
-              showDialog(context: context, 
-              builder: (context) => AlertDialog(
-                title: const Text("Change Pin Type:"),
-                content: 
-                StatefulBuilder(
-                  builder: (context, setState) {
-                    return SizedBox(
-                      width: double.maxFinite,
-                      child:Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                          title: const Text("Trip/Fall Hazard"),
-                          leading: Radio(
-                            value: 2,
-                            groupValue: widget.clickPin.type,
-                            onChanged: (value) {
-                            setState(() {
-                              widget.clickPin.type = value!;
-                            });
-                          }),
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Change Pin Type:"),
+                    content: StatefulBuilder(builder: (context, setState) {
+                      return SizedBox(
+                        width: double.maxFinite,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              title: const Text("Trip/Fall Hazard"),
+                              leading: Radio(
+                                  value: 2,
+                                  groupValue: widget.clickPin.type,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      widget.clickPin.type = value!;
+                                    });
+                                  }),
+                            ),
+                            ListTile(
+                              title: const Text("Safety Concern"),
+                              leading: Radio(
+                                  value: 3,
+                                  groupValue: widget.clickPin.type,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      widget.clickPin.type = value!;
+                                    });
+                                  }),
+                            ),
+                          ],
                         ),
-                        ListTile(
-                          title: const Text("Safety Concern"),
-                          leading: Radio(
-                            value: 3,
-                            groupValue: widget.clickPin.type,
-                            onChanged: (value) {
-                            setState(() {
-                              widget.clickPin.type = value!;
-                            });
-                            }),
-                        ),
-                        ],
-                      ),
-                    );
-                  }
-                ),
-                actions: <Widget>[
-                  TextButton(onPressed: ()=>{
-                    setState(() {
-                    widget.clickPin.description = descriptionController.text;
-                    http.get(Uri.parse('http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                      );
                     }),
-                    appState.triggerUpdate(),
-                    Navigator.pop(context),
-                  }, child: const Text('Confirm')),
-                  TextButton(onPressed: ()=>{
-                    Navigator.pop(context),
-                  }, child: const Text('Cancel'))
-                ],      
-              ),
-              );
+                    actions: <Widget>[
+                      TextButton(
+                          onPressed: () {
+                            setState(() {
+                              try {
+                                http.get(Uri.parse(
+                                    'http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                              } on Exception {
+                                // pass
+                              }
+                            });
+                            appState.triggerUpdate();
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Confirm')),
+                      TextButton(
+                          onPressed: () => {
+                                Navigator.pop(context),
+                              },
+                          child: const Text('Cancel'))
+                    ],
+                  ),
+                );
               },
-              ),
+            ),
           if (widget.clickPin.type == 2)
             ListTile(
               leading: const Icon(Icons.personal_injury),
               title: const Text("Trip/Fall Hazard"),
               subtitle: const Text("Pin Type"),
               trailing: const Icon(Icons.edit),
-                           onTap: () {
-              showDialog(context: context, 
-              builder: (context) => AlertDialog(
-                title: const Text("Change Pin Type:"),
-                content: 
-                StatefulBuilder(
-                  builder: (context, setState) {
-                    return SizedBox(
-                      width: double.maxFinite,
-                      child:Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                          title: const Text("Maintenance"),
-                          leading: Radio(
-                            value: 1,
-                            groupValue: widget.clickPin.type,
-                            onChanged: (value) {
-                            setState(() {
-                              widget.clickPin.type = value!;
-                            });
-                          }),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Change Pin Type:"),
+                    content: StatefulBuilder(builder: (context, setState) {
+                      return SizedBox(
+                        width: double.maxFinite,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              title: const Text("Maintenance"),
+                              leading: Radio(
+                                  value: 1,
+                                  groupValue: widget.clickPin.type,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      widget.clickPin.type = value!;
+                                    });
+                                  }),
+                            ),
+                            ListTile(
+                              title: const Text("Safety Concern"),
+                              leading: Radio(
+                                  value: 3,
+                                  groupValue: widget.clickPin.type,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      widget.clickPin.type = value!;
+                                    });
+                                  }),
+                            ),
+                          ],
                         ),
-                        ListTile(
-                          title: const Text("Safety Concern"),
-                          leading: Radio(
-                            value: 3,
-                            groupValue: widget.clickPin.type,
-                            onChanged: (value) {
-                            setState(() {
-                              widget.clickPin.type = value!;
-                            });
-                            }),
-                        ),
-                        ],
-                      ),
-                    );
-                  }
-                ),
-                actions: <Widget>[
-                  TextButton(onPressed: ()=>{
-                    setState(() {
-                    widget.clickPin.description = descriptionController.text;
-                    http.get(Uri.parse('http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                      );
                     }),
-                    appState.triggerUpdate(),
-                    Navigator.pop(context),
-                  }, child: const Text('Confirm')),
-                  TextButton(onPressed: ()=>{
-                    Navigator.pop(context),
-                  }, child: const Text('Cancel'))
-                ],      
-              ),
-              );
+                    actions: <Widget>[
+                      TextButton(
+                          onPressed: () {
+                            setState(() {
+                              try {
+                                http.get(Uri.parse(
+                                    'http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                              } on Exception {
+                                // pass
+                              }
+                            });
+                            appState.triggerUpdate();
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Confirm')),
+                      TextButton(
+                          onPressed: () => {
+                                Navigator.pop(context),
+                              },
+                          child: const Text('Cancel'))
+                    ],
+                  ),
+                );
               },
             ),
           if (widget.clickPin.type == 3)
@@ -259,60 +281,66 @@ class _EditPinPageState extends State<EditPinPage> {
               title: const Text("Safety Concern"),
               subtitle: const Text("Pin Type"),
               trailing: const Icon(Icons.edit),
-                           onTap: () {
-              showDialog(context: context, 
-              builder: (context) => AlertDialog(
-                title: const Text("Change Pin Type:"),
-                content: 
-                StatefulBuilder(
-                  builder: (context, setState) {
-                    return SizedBox(
-                      width: double.maxFinite,
-                      child:Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                          title: const Text("Maintenance"),
-                          leading: Radio(
-                            value: 1,
-                            groupValue: widget.clickPin.type,
-                            onChanged: (value) {
-                            setState(() {
-                              widget.clickPin.type = value!;
-                            });
-                          }),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Change Pin Type:"),
+                    content: StatefulBuilder(builder: (context, setState) {
+                      return SizedBox(
+                        width: double.maxFinite,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              title: const Text("Maintenance"),
+                              leading: Radio(
+                                  value: 1,
+                                  groupValue: widget.clickPin.type,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      widget.clickPin.type = value!;
+                                    });
+                                  }),
+                            ),
+                            ListTile(
+                              title: const Text("Trip/Fall Hazard"),
+                              leading: Radio(
+                                  value: 2,
+                                  groupValue: widget.clickPin.type,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      widget.clickPin.type = value!;
+                                    });
+                                  }),
+                            ),
+                          ],
                         ),
-                        ListTile(
-                          title: const Text("Trip/Fall Hazard"),
-                          leading: Radio(
-                            value: 2,
-                            groupValue: widget.clickPin.type,
-                            onChanged: (value) {
-                            setState(() {
-                              widget.clickPin.type = value!;
-                            });
-                            }),
-                        ),
-                        ],
-                      ),
-                    );
-                  }
-                ),
-                actions: <Widget>[
-                  TextButton(onPressed: ()=>{
-                    setState(() {
-                    widget.clickPin.description = descriptionController.text;
-                    http.get(Uri.parse('http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                      );
                     }),
-                    appState.triggerUpdate(),
-                    Navigator.pop(context),
-                  }, child: const Text('Confirm')),
-                  TextButton(onPressed: ()=>{
-                    Navigator.pop(context),
-                  }, child: const Text('Cancel'))
-                ],      
-              ),
-              );
+                    actions: <Widget>[
+                      TextButton(
+                          onPressed: () {
+                            setState(() {
+                              try {
+                                http.get(Uri.parse(
+                                    'http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                              } on Exception {
+                                // pass
+                              }
+                            });
+                            appState.triggerUpdate();
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Confirm')),
+                      TextButton(
+                          onPressed: () => {
+                                Navigator.pop(context),
+                              },
+                          child: const Text('Cancel'))
+                    ],
+                  ),
+                );
               },
             ),
           ListTile(
@@ -320,30 +348,43 @@ class _EditPinPageState extends State<EditPinPage> {
             title: Text(widget.clickPin.description),
             subtitle: const Text("Description"),
             trailing: const Icon(Icons.edit),
-            onTap: (){
-              showDialog(context: context, 
-              builder: (context) => AlertDialog(
-                title: const Text("Enter Description"),
-                content: TextField(
-                  decoration: InputDecoration(hintText: widget.clickPin.description),
-                  controller: descriptionController,
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Enter Description"),
+                  content: TextField(
+                    maxLength: 120,
+                    decoration:
+                        InputDecoration(hintText: widget.clickPin.description),
+                    controller: descriptionController,
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            widget.clickPin.description =
+                                descriptionController.text;
+                            try {
+                              http.get(Uri.parse(
+                                  'http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                            } on Exception {
+                              // pass
+                            }
+                          });
+                          appState.triggerUpdate();
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Enter Pin Description')),
+                    TextButton(
+                        onPressed: () => {
+                              Navigator.pop(context),
+                            },
+                        child: Text('Cancel'))
+                  ],
                 ),
-                actions: [
-                  TextButton(onPressed: ()=>{
-                    setState(() {
-                    widget.clickPin.description = descriptionController.text;
-                    http.get(Uri.parse('http://$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
-                    }),
-                    appState.triggerUpdate(),
-                    Navigator.pop(context),
-                  }, child: const Text('Enter Pin Description')),
-                  TextButton(onPressed: ()=>{
-                    Navigator.pop(context),
-                  }, child: Text('Cancel'))
-                ],
-              ),
               );
-          },
+            },
           ),
           const Text(
             "Tap on a property to edit",
