@@ -93,7 +93,7 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
 
   Future<int> addPinAndGetID(SafetyPin newPin) async {
     try {
-      final response = await http.get(Uri.parse('http://$baseURL/addpin?uuid=${newPin.userUID}&type=${newPin.type}&lat=${newPin.position.latitude}&long=${newPin.position.longitude}&createDate=${newPin.placedTime.year},${newPin.placedTime.month},${newPin.placedTime.day},${newPin.placedTime.hour},${newPin.placedTime.minute}&expireDate=${newPin.expirationTime.year},${newPin.expirationTime.month},${newPin.expirationTime.day},${newPin.expirationTime.hour},${newPin.expirationTime.minute}&closestBuilding=${newPin.closestBuilding}&comment=${newPin.description}'));
+      final response = await http.get(Uri.parse('$baseURL/addpin?uuid=${newPin.userUID}&type=${newPin.type}&lat=${newPin.position.latitude}&long=${newPin.position.longitude}&createDate=${newPin.placedTime.year},${newPin.placedTime.month},${newPin.placedTime.day},${newPin.placedTime.hour},${newPin.placedTime.minute}&expireDate=${newPin.expirationTime.year},${newPin.expirationTime.month},${newPin.expirationTime.day},${newPin.expirationTime.hour},${newPin.expirationTime.minute}&closestBuilding=${newPin.closestBuilding}&comment=${newPin.description}'));
       if (response.statusCode == 200) {
           Map<String, dynamic> jsonMap = json.decode(response.body);
           return jsonMap['id'];

@@ -22,7 +22,8 @@ import 'package:http/http.dart' as http;
 import 'path.dart';
 import 'role.dart';
 import 'admin_page.dart';
-String baseURL = '192.168.1.74:5000';
+
+String baseURL = 'https://urnextroute.link';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -146,7 +147,7 @@ class MyAppState extends ChangeNotifier {
   void getPath() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://$baseURL/getroute?startLat=${start.position.latitude}&startLong=${start.position.longitude}&endLat=${end.position.latitude}&endLong=${end.position.longitude}'));
+          '$baseURL/getroute?startLat=${start.position.latitude}&startLong=${start.position.longitude}&endLat=${end.position.latitude}&endLong=${end.position.longitude}'));
       if (response.statusCode == 200) {
         ourPath newPath =
             ourPath.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
@@ -160,25 +161,32 @@ class MyAppState extends ChangeNotifier {
 
   void getPins() async {
     try {
-      final response = await http.get(Uri.parse('http://$baseURL/getallpins'));
+      final response = await http.get(Uri.parse('$baseURL/getallpins'));
       if (response.statusCode == 200) {
-        print("here!");
+        maintenancePinsList.clear();
+        tripFallPinsList.clear();
+        safetyHazardPinsList.clear();
+        otherUserPins.clear();
         Map<String, dynamic> jsonData = json.decode(response.body);
         List<dynamic> safetyPinsJson = jsonData['pins'];
         print(response.body);
         print(safetyPinsJson);
-        List<SafetyPin> newPins = safetyPinsJson.map((pinJson) => SafetyPin.fromJson(pinJson)).toList();
+        List<SafetyPin> newPins = safetyPinsJson
+            .map((pinJson) => SafetyPin.fromJson(pinJson))
+            .toList();
         print(newPins);
-        final user = FirebaseAuth.instance.currentUser;
-        for(SafetyPin pin in newPins){
+        var user = FirebaseAuth.instance.currentUser;
+        print(user!.uid);
+        for (SafetyPin pin in newPins) {
           print("also here!");
-          if(pin.userUID == user!.uid){
+          if (pin.userUID == user!.uid) {
             addSafetyPin(pin);
           } else {
             addOtherUserPin(pin);
           }
-          }
-          initialPinGet = true;
+        }
+        initialPinGet = true;
+        triggerUpdate();
       } else {
         throw Exception('Failed to load pins');
       }
@@ -212,8 +220,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<String> fetchRole() async {
     try {
-      final response = await http
-          .get(Uri.parse('http://$baseURL/getrole?uuid=${user?.uid}'));
+      final response =
+          await http.get(Uri.parse('$baseURL/getrole?uuid=${user?.uid}'));
       if (response.statusCode == 200) {
         Role r =
             Role.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
@@ -262,7 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = const SettingsPage();
       case 5:
         page = MapEditorPage();
-      case 6: 
+      case 6:
         page = const AdminPage();
       default:
         page = const SettingsPage();
@@ -360,33 +368,38 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pop(context);
                     },
                   ),
-                  if (role == 'admin')...[
-                  ListTile(
-                    leading: const Icon(Icons.maps_home_work),
-                    title: const Text("Map Editor"),
-                    onTap: () {
-                      setState(() {
-                        selectedIndex = 5;
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.apps),
-                    title: const Text("Admin Page"),
-                    onTap: () {
-                      setState(() {
-                        selectedIndex = 6;
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+                  if (role == 'admin') ...[
+                    ListTile(
+                      leading: const Icon(Icons.maps_home_work),
+                      title: const Text("Map Editor"),
+                      onTap: () {
+                        setState(() {
+                          selectedIndex = 5;
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.apps),
+                      title: const Text("Admin Page"),
+                      onTap: () {
+                        setState(() {
+                          selectedIndex = 6;
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
                   ListTile(
                     leading: const Icon(Icons.logout),
                     title: const Text("Logout"),
                     onTap: () {
+                      appState.maintenancePinsList.clear();
+                      appState.safetyHazardPinsList.clear();
+                      appState.otherUserPins.clear();
+                      appState.tripFallPinsList.clear();
                       signOutProcess();
+                      appState.initialPinGet = false;
                       Navigator.pop(context);
                       Navigator.pop(context);
                     },

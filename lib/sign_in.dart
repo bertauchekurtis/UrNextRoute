@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:ur_next_route/main.dart';
 
 Future<UserCredential> signInWithGoogle() async {
@@ -26,9 +27,10 @@ void debugSign() {
   }
 }
 
-void signInProcess(context) async {
+void signInProcess(context, appState) async {
   await signInWithGoogle();
   if (FirebaseAuth.instance.currentUser != null) {
+    appState.getPins();
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const MyHomePage()));
   } else {
@@ -62,6 +64,7 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     return Scaffold(
       body: Center(
         child: SizedBox.expand(
@@ -83,7 +86,8 @@ class _SignInPageState extends State<SignInPage> {
                   height: 20,
                 ),
                 ElevatedButton(
-                    onPressed: () => {debugSign(), signInProcess(context)},
+                    onPressed: () =>
+                        {debugSign(), signInProcess(context, appState)},
                     child: const Text("Sign in with Google")),
               ],
             ),

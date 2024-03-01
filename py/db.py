@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import Table, Column, Integer, String, insert, select, DateTime, Float, delete, update
+from sqlalchemy import Table, Column, Integer, String, insert, select, DateTime, Float, delete, update, Double
 # note that the password in this file is not the password used on the server, github actions will auto fill that
 engine = sqlalchemy.create_engine("mariadb+mariadbconnector://root@127.0.0.1:3306/urnextroute")
 metadata_obj = sqlalchemy.MetaData()
@@ -24,8 +24,8 @@ safety_pin = Table(
     Column("id", Integer, primary_key = True),
     Column("uuid", String(28)),
     Column("type", Integer),
-    Column("latitude", Float),
-    Column("longitude", Float),
+    Column("latitude", Double),
+    Column("longitude", Double),
     Column("creationDate", DateTime),
     Column("expirationDate", DateTime),
     Column("closestBuilding", String(120)),
