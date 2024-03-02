@@ -1,6 +1,4 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:ur_next_route/main.dart';
 import 'package:ur_next_route/path.dart';
 import 'package:ur_next_route/safety_pin.dart';
@@ -12,18 +10,20 @@ void main() {
       () async {
     // ARRANGE
     final appState = MyAppState();
+    // ACT
+    appState.toggleBlueLights();
     // ASSERT
     expect(appState.showBlueLights, true);
   });
   test(
-      'Given showMaintenancePins is false, When toggleMaintenancePins is called, Then showMaintenancePins is true',
+      'Given showMaintenancePins is true, When toggleMaintenancePins is called, Then showMaintenancePins is false',
       () async {
     // ARRANGE
     final appState = MyAppState();
     // ACT
-    appState.toggleBlueLights();
+    appState.toggleMaintenancePins();
     // ASSERT
-    expect(appState.showMaintenancePins, true);
+    expect(appState.showMaintenancePins, false);
   });
   test(
       'Given a new maintenance safety pin to add, when addSafetyPin is called it should exist in the maintenance pin list',
