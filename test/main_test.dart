@@ -1,8 +1,5 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:ur_next_route/main.dart';
-import 'package:ur_next_route/start_end.dart';
 
 void main() {
   test(
@@ -10,17 +7,19 @@ void main() {
       () async {
     // ARRANGE
     final appState = MyAppState();
+    // ACT
+    appState.toggleBlueLights();
     // ASSERT
     expect(appState.showBlueLights, true);
   });
   test(
-      'Given showMaintenancePins is false, When toggleMaintenancePins is called, Then showMaintenancePins is true',
+      'Given showMaintenancePins is true, When toggleMaintenancePins is called, Then showMaintenancePins is false',
       () async {
     // ARRANGE
     final appState = MyAppState();
     // ACT
-    appState.toggleBlueLights();
+    appState.toggleMaintenancePins();
     // ASSERT
-    expect(appState.showMaintenancePins, true);
+    expect(appState.showMaintenancePins, false);
   });
 }
