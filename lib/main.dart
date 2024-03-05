@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
@@ -11,6 +9,7 @@ import 'package:ur_next_route/safety_pin.dart';
 import 'firebase_options.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'sign_in.dart';
 import 'map.dart';
 import 'route_settings.dart';
@@ -18,7 +17,16 @@ import 'my_pins.dart';
 import 'safety_toolkit.dart';
 import 'start_end.dart';
 import 'settings.dart';
-import 'package:path_provider/path_provider.dart';
+
+Future<void> setSettings(bool setting, String settingName) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setBool(settingName, setting);
+}
+
+Future<bool> getSettings(String settingName) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool(settingName) ?? false;
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,7 +57,12 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
-  var showBlueLights = false;
+  var showBlueLights;
+  // Future<bool> showBlueLights;
+  MyAppState() {
+    showBlueLights = getSettings("showBlueLights"); // initialize it in the constructor
+  }
+  // var showBlueLights = SettingsPage().getSettings('ShowBlueLights');
   var startPointChosen = false;
   var endPointChosen = false;
   var showMaintenancePins = true;
@@ -87,9 +100,22 @@ class MyAppState extends ChangeNotifier {
   }
 
   void toggleBlueLights() {
-    showBlueLights = !showBlueLights;
-    notifyListeners();
+    showBlueLights.then((currentSetting) async {
+      await setSettings(!currentSetting, "showBlueLights");
+      showBlueLights = Future.value(!currentSetting);
+      notifyListeners();
+    });
   }
+
+  // void toggleBlueLights() async {
+  //   bool currentSetting = await getSettings("showBlueLights");
+  //   await setSettings(!currentSetting, "showBlueLights");
+  //   notifyListeners();
+
+  //    // showBlueLights = !await wshowBlueLights;
+  //   // await setSettings(showBlueLights, "showBlueLights");
+  //   // //showBlueLights = value;
+  // }
 
   void toggleMaintenancePins() {
     showMaintenancePins = !showMaintenancePins;
@@ -153,47 +179,8 @@ class _MyHomePageState extends State<MyHomePage> {
     await FirebaseAuth.instance.signOut();
   }
 
-
-  Future<File> get settingsFile async {
-    final path = await _localPath;
-    return File('$path/settings.csv');
-  }
-
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
-  Future<File> writeSettings() async {
-    final file = await settingsFile;
-    final stream = file.openWrite();
-    final String preparedString =
-        '${showBlueLights.toString()},${showMaintenancePins.toString()},${showTripFallPins.toString()},${showSafetyHazardPins.toString()}';
-    stream.write(preparedString);
-    stream.close();
-    return file;
-  }
-
-  void readSettings() async {
-    try {
-      final file = await settingsFile;
-      final contents = await file.readAsLines();
-      for (final line in contents) {
-        List stringAsList = line.split(',');
-        showBlueLights = stringAsList[0];
-        showMaintenancePins = stringAsList[1];
-        showTripFallPins = stringAsList[2];
-        showSafetyHazardPins = stringAsList[3];
-        notifyListeners();
-      }
-    } catch (e) {
-      return;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-
     Widget page;
     switch (selectedIndex) {
       // SHOULD REPLACE THESE INDEXES WITH AN ENUM
