@@ -24,9 +24,9 @@ class AddSafetyPinPage extends StatefulWidget {
   DateTime dropTime = DateTime.now();
   late String formattedDropTime =
       DateFormat('kk:mm - EEE, MMM d').format(dropTime);
-  DateTime expireTime = DateTime.now();
-  late String formattedExpireTime =
-      DateFormat('kk:mm - EEE, MMM d').format(expireTime);
+  DateTime expireTime = DateTime.now(); 
+  //late String formattedExpireTime =
+  //    DateFormat('kk:mm - EEE, MMM d').format(expireTime);
     
   List<Building> buildings = [];
 
@@ -37,6 +37,7 @@ class AddSafetyPinPage extends StatefulWidget {
 class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
   final TextEditingController descriptionController = TextEditingController();
   var selectedOption = 1;
+  
   Distance distance =
     const Distance(roundResult: false, calculator: Vincenty());
 
@@ -87,6 +88,9 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    widget.expireTime = DateTime(widget.dropTime.year, widget.dropTime.month + 1);
+    late String formattedExpireTime =
+      DateFormat('kk:mm - EEE, MMM d').format(widget.expireTime);
     if(widget.buildings.isEmpty){
       loadBuildings(context);
     }
@@ -221,7 +225,7 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
           ),
           ListTile(
             leading: const Icon(Icons.watch_later_outlined),
-            title: Text("Expire Time: ${widget.formattedExpireTime}"),
+            title: Text("Expire Time: ${formattedExpireTime}"),
             subtitle: const Text("Tap to select date"), 
             trailing: const Icon(Icons.edit),
             onTap: () {
@@ -235,7 +239,7 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
                 onConfirm: (dateTime, List<int> index) {
                   setState(() {
                     widget.expireTime = dateTime;
-                    widget.formattedExpireTime = getFormattedTime(dateTime);
+                    formattedExpireTime = getFormattedTime(dateTime);
                   });
                 });            
             },
