@@ -224,7 +224,7 @@ class MapPage extends StatelessWidget {
               icon: const Icon(Icons.menu),
             ),
           ),
-          if (appState.path.isNotEmpty)
+          if (appState.path.isNotEmpty) ...[
             Positioned(
               right: 12,
               top: 12,
@@ -237,11 +237,43 @@ class MapPage extends StatelessWidget {
                   appState.path = [],
                   appState.start = StartEnd(true, const LatLng(0, 0)),
                   appState.end = StartEnd(false, const LatLng(0, 0)),
+                  appState.isFavPath = false,
+                  
                   appState.triggerUpdate(),
                 },
                 child: const Text("Clear Route"),
               ),
             ),
+            if (!appState.isFavPath) ...[
+            Positioned(
+              right: 140,
+              top: 12,
+              child: ElevatedButton(
+                onPressed: () => {
+                  print("Saved button"),
+                  appState.isFavPath = !appState.isFavPath,
+                  appState.favoritePaths.add(appState.pathObj),
+                  appState.triggerUpdate(),
+                },
+                child: const Icon(Icons.favorite_border, 
+                color: Colors.grey,),
+              ),
+            )] else ...[
+              Positioned(
+                right: 140,
+                top: 12,
+                child: ElevatedButton(
+                  onPressed: () => {
+                    print("Saved button"),
+                    appState.isFavPath = !appState.isFavPath,
+                    appState.favoritePaths.remove(appState.pathObj),
+                    appState.triggerUpdate(),
+                  },
+                  child: const Icon(Icons.favorite, 
+                  color: Colors.pink,),
+                ),),
+            ],
+            ],
           if (appState.startPointChosen &&
               appState.endPointChosen &&
               !appState.genRoute)
