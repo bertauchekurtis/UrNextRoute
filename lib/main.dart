@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-          title: 'Namer App',
+          title: 'Ur Next Route',
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(
@@ -56,7 +55,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
   var showBlueLights = false;
   var startPointChosen = false;
   var endPointChosen = false;
