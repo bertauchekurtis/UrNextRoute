@@ -226,5 +226,24 @@ def update_pin():
     db.update_pin_by_id(id, uuid, type, lat, long, createDate, expireDate, closestBuilding, comment)
     return {"status" : "success"}
 
+@app.route("/addpath")
+def add_path():
+    uuid = request.args.get('uuid', None)
+    path = request.args.get('path', None)
+    result = db.add_favorite_route(uuid, path)
+    return jsonify({"id": result})
+
+@app.route("/removepath")
+def remove_path():
+    id = request.args.get('id', None)
+    db.delete_fav_path_by_id(int(id))
+    return {"status": "success"}
+
+@app.route('/getallpathsofuser')
+def get_all_paths_of_user():
+    id = request.args.get('uuid', None)
+    paths = db.get_all_favorite_routes_of_one_user(id)
+    return jsonify({"paths": paths})
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

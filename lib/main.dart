@@ -26,7 +26,7 @@ import 'admin_page.dart';
 import 'building.dart';
 import 'dart:convert';
 
-String baseURL = 'https://urnextroute.link';
+String baseURL = 'http://192.168.1.74:5000';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,8 +69,9 @@ class MyAppState extends ChangeNotifier {
   var genRoute = false;
   List<LatLng> path = [];
   var isFavPath = false;
-  late ourPath pathObj;
+  var pathObj;
   var initialPinGet = false;
+  var initialPathGet = false;
 
   List<Building> buildings = [];
   var maintenancePinsList = <SafetyPin>[];
@@ -203,13 +204,39 @@ class MyAppState extends ChangeNotifier {
       print("hmm");
     }
   }
-    String getClosestBuilding(point) {
+
+  void getAllPaths() async {
+    var uuid = FirebaseAuth.instance.currentUser?.uid;
+    try {
+      final response =
+          await http.get(Uri.parse('$baseURL/getallpathsofuser?uuid=$uuid'));
+      if (response.statusCode == 200) {
+        favoritePaths.clear();
+        Map<String, dynamic> jsonData = json.decode(response.body);
+        List<dynamic> pathsJson = jsonData['paths'];
+        List<ourPath> newPaths =
+            pathsJson.map((pathJson) => ourPath.fromJson(pathJson)).toList();
+
+        favoritePaths = newPaths;
+        initialPathGet = true;
+        triggerUpdate();
+      } else {
+        throw Exception('Failed to load paths');
+      }
+    } on Exception {
+      print("hmm");
+    }
+  }
+
+  String getClosestBuilding(point) {
     double currentDist = 999.9;
-    Distance distance = const Distance(roundResult: false, calculator: Vincenty());
+    Distance distance =
+        const Distance(roundResult: false, calculator: Vincenty());
     String closest = "err";
-    for(var building in buildings){
-      double thisDist = distance.as(LengthUnit.Kilometer, point, building.position);
-      if(thisDist < currentDist) {
+    for (var building in buildings) {
+      double thisDist =
+          distance.as(LengthUnit.Kilometer, point, building.position);
+      if (thisDist < currentDist) {
         currentDist = thisDist;
         closest = building.name;
       }
@@ -225,16 +252,16 @@ class MyAppState extends ChangeNotifier {
       for (String i in const LineSplitter().convert(q)) {
         var allThree = i.split(',');
         Building building = Building(allThree[2],
-              LatLng(double.parse(allThree[0]), double.parse(allThree[1])));
+            LatLng(double.parse(allThree[0]), double.parse(allThree[1])));
         builds.add(building);
       }
     });
-      buildings = builds;
+    buildings = builds;
     return builds;
   }
+
   var selectedIndex = 0;
 }
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -242,7 +269,6 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-
 
 class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -274,7 +300,6 @@ class _MyHomePageState extends State<MyHomePage> {
       return "user";
     }
   }
-
 
   @override
   void initState() {
