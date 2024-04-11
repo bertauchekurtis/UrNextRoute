@@ -23,7 +23,7 @@ import 'path.dart';
 import 'role.dart';
 import 'admin_page.dart';
 
-String baseURL = 'https://urnextroute.link';
+String baseURL = 'http://10.136.110.180:5000';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -221,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<String> fetchRole() async {
     try {
       final response =
-          await http.get(Uri.parse('$baseURL/getrole?uuid=${user?.uid}'));
+          await http.get(Uri.parse('$baseURL/getrole?uuid=${user?.uid}&email=${user?.email}'));
       if (response.statusCode == 200) {
         Role r =
             Role.fromJson(jsonDecode(response.body) as Map<String, dynamic>);

@@ -88,7 +88,7 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    widget.expireTime = DateTime(widget.dropTime.year, widget.dropTime.month + 1);
+    //widget.expireTime = DateTime(widget.dropTime.year, widget.dropTime.month + 1);
     late String formattedExpireTime =
       DateFormat('kk:mm - EEE, MMM d').format(widget.expireTime);
     if(widget.buildings.isEmpty){
