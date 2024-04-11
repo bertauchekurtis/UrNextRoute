@@ -66,7 +66,8 @@ class MyAppState extends ChangeNotifier {
   var genRoute = false;
   List<LatLng> path = [];
   var initialPinGet = false;
-
+  var initialRoleGet = false; 
+  List<Role> roles = [];
   var maintenancePinsList = <SafetyPin>[];
   var tripFallPinsList = <SafetyPin>[];
   var safetyHazardPinsList = <SafetyPin>[];
@@ -193,6 +194,31 @@ class MyAppState extends ChangeNotifier {
     } on Exception {
       print("hmm");
     }
+  }
+   Future<List<Role>> getRoles() async {
+    try {
+      final response = await http.get(Uri.parse('$baseURL/getuserroles'));
+      if (response.statusCode == 200) {
+        roles.clear();
+
+        Map<String, dynamic> jsonData = json.decode(response.body);
+        List<dynamic> rolesJson = jsonData['roles'];
+
+        List<Role> newRoles = rolesJson
+            .map((pinJson) => Role.fromJson(pinJson))
+            .toList();
+        initialRoleGet = true;
+        roles = newRoles;
+        triggerUpdate();
+        return newRoles;
+
+      } else {
+        throw Exception('Failed to load roles');
+      }
+    } on Exception {
+      print("hmm");
+    }
+  throw Exception('Failed to load roles');
   }
 }
 

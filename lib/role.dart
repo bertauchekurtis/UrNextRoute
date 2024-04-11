@@ -12,7 +12,7 @@ class Role{
     return switch(json){
       {
         "id": int id,
-        "uuid": int uuid,
+        "uuid": String uuid,
         "role": String role,
         "email": String email,
       } => 

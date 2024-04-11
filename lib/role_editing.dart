@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'role.dart';
 import 'package:http/http.dart' as http;
 import 'main.dart';
 import 'dart:convert';
 
-class RoleEditing extends StatefulWidget{
+class RoleEditing extends StatelessWidget{
   RoleEditing({super.key});
 
   var allUsers = <Role>[];
-
-  @override
-  State<RoleEditing> createState() => _RoleEditingState();
-}
-
-class _RoleEditingState extends State<RoleEditing> {
-  Future<List<Role>> getRoles() async {
   
+  Future<List<Role>> getRoles() async {
     try {
       final response = await http.get(Uri.parse('$baseURL/getuserroles'));
       if (response.statusCode == 200) {
-        widget.allUsers.clear();
+        allUsers.clear();
 
         Map<String, dynamic> jsonData = json.decode(response.body);
         List<dynamic> rolesJson = jsonData['roles'];
@@ -40,23 +35,17 @@ class _RoleEditingState extends State<RoleEditing> {
   }
 
   // @override
-  // void initState(){
-  //   super.initState();
-  //   getRoles().then((List<Role> roleList){
-  //     print(roleList);
-  //     setState(() {
-  //       widget.allUsers = roleList;
-  //     });
-  //   }  );
-  //   print(widget.allUsers);
-  //   print("here");
-  // }
   @override
   Widget build(BuildContext context) {
-      getRoles().then((List<Role> roleList){
-       print(roleList);
-       widget.allUsers = roleList;
-      }  );
+      // getRoles().then((List<Role> roleList){
+      //  print(roleList);
+      //  widget.allUsers = roleList;
+      // }  );
+      var appState = context.watch<MyAppState>();
+      if(appState.initialRoleGet == false){
+        appState.getRoles();
+      }
+      //print(appState.roles[0].email);
       return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -78,15 +67,12 @@ class _RoleEditingState extends State<RoleEditing> {
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
-          for (var role in widget.allUsers)
+          for (var role in appState.roles)
             ListTile(
-              title: Text("HELLO"),
-              trailing: const Icon(Icons.access_alarm),
+              title: Text(role.email),
+              subtitle: Text(role.role),
+              trailing: const Icon(Icons.person),
             ),
-          ListTile(
-            title: Text("HELLO"),
-            trailing: const Icon(Icons.access_alarm),
-          )  
         ]
         ),
       );
