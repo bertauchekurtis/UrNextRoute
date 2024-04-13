@@ -9,7 +9,7 @@ class EditLinkModal extends StatefulWidget {
   bool isInside;
   bool containsBlueLight;
   bool containsStairs;
-  double brightnessLevel;
+  String brightnessLevel;
   Function delLink;
   final Function writeLinks;
 
@@ -97,7 +97,7 @@ class _EditLinkModalState extends State<EditLinkModal> {
               onSubmitted: (value) => {
                 setState(
                   () {
-                    widget.brightnessLevel = double.parse(value);
+                    widget.brightnessLevel = value;
                   },
                 )
               },
@@ -108,14 +108,33 @@ class _EditLinkModalState extends State<EditLinkModal> {
             ),
           ),
           ElevatedButton(
-            onPressed: () => {
+            onPressed: ()  {
+              try {
+                double test = double.parse(brightnessController.text);
               widget.thisLink.brightnessLevel =
-                  double.parse(brightnessController.text),
-              widget.thisLink.containsBlueLight = widget.containsBlueLight,
-              widget.thisLink.containsStairs = widget.containsStairs,
-              widget.thisLink.isInside = widget.isInside,
-              widget.writeLinks(),
-              Navigator.pop(context)
+                  double.parse(brightnessController.text);
+              widget.thisLink.containsBlueLight = widget.containsBlueLight;
+              widget.thisLink.containsStairs = widget.containsStairs;
+              widget.thisLink.isInside = widget.isInside;
+              widget.writeLinks();
+              Navigator.pop(context);
+              } on Exception {
+                   showDialog(
+                    context: context, 
+                    builder: (builder){
+                      return AlertDialog(
+                        title: const Text("Error"),
+                        content: const Text("Inputted data is not a number. Please fix and try again."),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }, 
+                            child: const Text("Close Alert"))
+                        ],
+                      );
+                    });
+              }
             },
             child: const Text("Save Changes"),
           ),

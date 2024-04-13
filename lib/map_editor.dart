@@ -542,7 +542,7 @@ class _MapEditorPageState extends State<MapEditorPage> {
                           widget.startNewLink, widget.endNewLink);
                       return EditLinkModal(
                         thisLink: link,
-                        brightnessLevel: link.brightnessLevel.toDouble(),
+                        brightnessLevel: link.brightnessLevel.toString(),
                         isInside: link.isInside,
                         containsBlueLight: link.containsBlueLight,
                         containsStairs: link.containsStairs,
