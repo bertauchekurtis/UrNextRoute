@@ -191,7 +191,7 @@ def get_all_roles():
 @app.route('/updateroles')
 def update_role():
     id = request.args.get("id")
-    new_role = request.args.get("role")
+    new_role = request.args.get("new_role")
     db.update_user_role(id, new_role)
     return {"status": "success"}
 

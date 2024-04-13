@@ -79,6 +79,7 @@ def update_user_role(id, new_role):
     with engine.connect() as conn:
         result = conn.execute(stmt)
         conn.commit()
+        
 def clear_expired():
     stmt = delete(safety_pin).where(safety_pin.c.expirationDate < func.now())
     with engine.connect() as conn:
