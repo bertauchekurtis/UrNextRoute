@@ -331,6 +331,7 @@ class MapPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => {
                   appState.genRoute = true,
+                  print(appState.pathSensitivity),
                   appState.getPath(),
                 },
                 child: const Text("Generate Route"),

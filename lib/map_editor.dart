@@ -110,34 +110,6 @@ class _MapEditorPageState extends State<MapEditorPage> {
     }
   }
 
-  Color convertBrightnessToColor(int brightness) {
-    switch (brightness) {
-      case 0:
-        return const Color.fromARGB(255, 29, 31, 36);
-      case 1:
-        return const Color.fromARGB(255, 46, 45, 80);
-      case 2:
-        return const Color.fromARGB(255, 74, 72, 131);
-      case 3:
-        return const Color.fromARGB(255, 87, 111, 166);
-      case 4:
-        return const Color.fromARGB(255, 87, 132, 166);
-      case 5:
-        return const Color.fromARGB(255, 87, 166, 164);
-      case 6:
-        return const Color.fromARGB(255, 87, 166, 140);
-      case 7:
-        return const Color.fromARGB(255, 87, 166, 115);
-      case 8:
-        return const Color.fromARGB(255, 87, 166, 94);
-      case 9:
-        return const Color.fromARGB(255, 104, 171, 92);
-      case 10:
-        return const Color.fromARGB(255, 80, 206, 58);
-      default:
-        return const Color.fromARGB(255, 80, 206, 58);
-    }
-  }
 
   bool linkExists(Node? nodeA, Node? nodeB) {
     final thisLinkIndex = widget.linkList.indexWhere((element) =>

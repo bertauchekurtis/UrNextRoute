@@ -25,7 +25,7 @@ import 'admin_page.dart';
 import 'building.dart';
 import 'dart:convert';
 
-String baseURL = 'http://192.168.1.74:5000';
+String baseURL = 'https://urnextroute.link';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +61,7 @@ class MyAppState extends ChangeNotifier {
   var showMaintenancePins = true;
   var showTripFallPins = true;
   var showSafetyHazardPins = true;
+  var pathSensitivity = 0.0;
   var blueLightList = <BlueLight>[];
   var start = StartEnd(true, const LatLng(0, 0));
   var end = StartEnd(false, const LatLng(0, 0));
@@ -154,7 +155,7 @@ class MyAppState extends ChangeNotifier {
   void getPath() async {
     try {
       final response = await http.get(Uri.parse(
-          '$baseURL/getroute?startLat=${start.position.latitude}&startLong=${start.position.longitude}&endLat=${end.position.latitude}&endLong=${end.position.longitude}'));
+          '$baseURL/getroute?startLat=${start.position.latitude}&startLong=${start.position.longitude}&endLat=${end.position.latitude}&endLong=${end.position.longitude}&sensitivity=$pathSensitivity'));
       if (response.statusCode == 200) {
         ourPath newPath =
             ourPath.fromJson(jsonDecode(response.body) as Map<String, dynamic>);

@@ -17,7 +17,7 @@ class Node:
         return hash(self.keyForHash())
         
 class Link:
-    def __init__(self, edgeID, startID, endID, brightessLevel, startPos, endPos, isInside, bluelight, stairs, length):
+    def __init__(self, edgeID, startID, endID, brightessLevel, startPos, endPos, isInside, bluelight, stairs, length, uniformBright):
         self.edgeID = edgeID
         self.startID = startID
         self.endID = endID
@@ -28,3 +28,4 @@ class Link:
         self.blueLight = bluelight
         self.stairs = stairs
         self.length = length
+        self.uniformBright = uniformBright,

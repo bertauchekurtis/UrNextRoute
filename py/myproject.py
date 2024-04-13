@@ -6,6 +6,7 @@ from helpers import Link, Node
 import csv
 import datetime
 import geopy.distance
+import numpy as np
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
@@ -14,28 +15,63 @@ db.init_db()
 # Load data
 links = []
 nodes = []
+brightness = []
+maxBrightness = 0
+minBrigtness = 99999
 r = csv.reader(open("./links.csv"))
 for item in r:
-    edgeID = item[0]
-    start_nodeID = item[1]
-    end_nodeID = item[2]
     brightnessLevel = item[3]
-    startLat = item[4]
-    startLong = item[5]
-    endLat = item[6]
-    endLong = item[7]
-    isInside = item[8]
-    blueLight = item[9]
-    stairs = item[10]
-    length = item[11]
+    brightness.append(float(brightnessLevel))
+
+# uniform thing from <>
+def uniformize(x, nbins = 1000):
+    which = lambda lst:list(np.where(lst)[0])
+    gh = np.histogram(x, bins = nbins)
+    empirical_cumulative_distribution = np.cumsum(gh[0])/nbins
+
+    ans_x = x
+    for idx in range(len(x)):
+        max_idx = max(which(gh[1]<x[idx])+[0])
+        ans_x[idx] = empirical_cumulative_distribution[max_idx]
+
+    return ans_x
+
+
+uniformBright = uniformize(np.array(brightness))
+r = csv.reader(open("./links.csv"))
+for item in zip(r, uniformBright):
+    edgeID = item[0][0]
+    start_nodeID = item[0][1]
+    end_nodeID = item[0][2]
+    brightnessLevel = item[0][3]
+    startLat = item[0][4]
+    startLong = item[0][5]
+    endLat = item[0][6]
+    endLong = item[0][7]
+    isInside = item[0][8]
+    blueLight = item[0][9]
+    stairs = item[0][10]
+    length = item[0][11]
+
+    if float(brightnessLevel) < minBrigtness:
+        minBrigtness = float(brightnessLevel)
+    if float(brightnessLevel) > maxBrightness:
+        maxBrightness = float(brightnessLevel)
+    print(type(float(item[1])))
 
     links.append(Link(edgeID,
                       start_nodeID,
                       end_nodeID,
                       brightnessLevel,
                       (startLat,startLong),
-                      (endLat,endLong),isInside,blueLight,
-                                stairs,length))
+                      (endLat,endLong),
+                      isInside,
+                      blueLight,
+                      stairs,
+                      length,
+                      float(item[1])
+                      )
+                )
     
 # Load nodes
 r = csv.reader(open("./nodes.csv"))
@@ -49,6 +85,7 @@ for item in r:
 neighborDict = {}
 lookUpNodeById = {}
 linkLengthDict = {}
+linkBrightnessDict = {}
 for node in nodes:
     neighborDict[node] = []
     lookUpNodeById[node.nodeId] = node
@@ -57,12 +94,15 @@ for link in links:
     neighborDict[lookUpNodeById[link.endID]].append(lookUpNodeById[link.startID])
     linkLengthDict[link.startID + link.endID] = float(link.length)
     linkLengthDict[link.endID + link.startID] = float(link.length)
+    #print(link.uniformBright[0])
+    linkBrightnessDict[link.startID + link.endID] = float(link.uniformBright[0])
+    linkBrightnessDict[link.endID + link.startID] = float(link.uniformBright[0])
 
 def getNeighbors(node):
     return neighborDict[node]
 
-def getDistanceBetweenTwoNodes(node1, node2):
-    return linkLengthDict[node1.nodeId + node2.nodeId]
+# def getDistanceBetweenTwoNodes(node1, node2):
+#     return linkLengthDict[node1.nodeId + node2.nodeId]
 
 def getGeoDistance(current, goal):
     posOne = (current.lat, current.long)
@@ -98,6 +138,23 @@ def getRoute():
     startLong = request.args.get('startLong', None)
     endLat = request.args.get('endLat', None)
     endLong = request.args.get('endLong', None)
+    sensitivity = request.args.get('sensitivity', None)
+    def getDistanceBetweenTwoNodes(node1, node2, sensitivity = sensitivity):
+       sensitivity = float(sensitivity)
+       baseDistance = linkLengthDict[node1.nodeId + node2.nodeId]
+       brightness = linkBrightnessDict[node1.nodeId + node2.nodeId]
+       #print(sensitivity, brightness)
+
+       if sensitivity == 0:
+           return baseDistance
+       else:
+           normalizedBrightness = (brightness - 0)/(1.006 - 0)
+           oneminus = 1 - normalizedBrightness
+           j = 10 - sensitivity
+           k = 2 ** j
+           scaling = 1 - ((1 - oneminus) ** k)
+           #print("Base Distance: ", baseDistance, "\nModified: ", scaling * baseDistance)
+           return scaling * baseDistance
     startingNode = getClosestNode(float(startLat), float(startLong))
     endingNode = getClosestNode(float(endLat), float(endLong))
     path = astar.find_path(startingNode, 
@@ -123,6 +180,23 @@ def getRouteHTML():
     endLong = request.args.get('endLong', None)
     startingNode = getClosestNode(float(startLat), float(startLong))
     endingNode = getClosestNode(float(endLat), float(endLong))
+    sensitivity = request.args.get('sensitivity', None)
+    def getDistanceBetweenTwoNodes(node1, node2, sensitivity = sensitivity):
+       sensitivity = float(sensitivity)
+       baseDistance = linkLengthDict[node1.nodeId + node2.nodeId]
+       brightness = linkBrightnessDict[node1.nodeId + node2.nodeId]
+       #print(sensitivity, brightness)
+
+       if sensitivity == 0:
+           return baseDistance
+       else:
+           normalizedBrightness = (brightness - 0)/(1.006 - 0)
+           oneminus = 1 - normalizedBrightness
+           j = 10 - sensitivity
+           k = 2 ** j
+           scaling = 1 - ((1 - oneminus) ** k)
+           #print("Base Distance: ", baseDistance, "\nModified: ", scaling * baseDistance)
+           return scaling * baseDistance
     path = astar.find_path(startingNode, 
                            endingNode, 
                            neighbors_fnct=getNeighbors, 
