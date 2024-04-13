@@ -368,6 +368,7 @@ class _EditPinPageState extends State<EditPinPage> {
                             try {
                               http.get(Uri.parse(
                                   '$baseURL/updatepin?uuid=${widget.clickPin.userUID}&type=${widget.clickPin.type}&lat=${widget.clickPin.position.latitude}&long=${widget.clickPin.position.longitude}&createDate=${widget.clickPin.placedTime.year},${widget.clickPin.placedTime.month},${widget.clickPin.placedTime.day},${widget.clickPin.placedTime.hour},${widget.clickPin.placedTime.minute}&expireDate=${widget.clickPin.expirationTime.year},${widget.clickPin.expirationTime.month},${widget.clickPin.expirationTime.day},${widget.clickPin.expirationTime.hour},${widget.clickPin.expirationTime.minute}&closestBuilding=${widget.clickPin.closestBuilding}&comment=${widget.clickPin.description}&id=${widget.clickPin.id}'));
+                              appState.initialPinGet = false;
                             } on Exception {
                               // pass
                             }
