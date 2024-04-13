@@ -22,6 +22,7 @@ import 'package:http/http.dart' as http;
 import 'path.dart';
 import 'role.dart';
 import 'admin_page.dart';
+import 'link.dart';
 
 String baseURL = 'https://urnextroute.link';
 
@@ -55,12 +56,14 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   var showBlueLights = false;
+  var showHeatMap = false;
   var startPointChosen = false;
   var endPointChosen = false;
   var showMaintenancePins = true;
   var showTripFallPins = true;
   var showSafetyHazardPins = true;
   var blueLightList = <BlueLight>[];
+  var heatLinkList = <Link>[];
   var start = StartEnd(true, const LatLng(0, 0));
   var end = StartEnd(false, const LatLng(0, 0));
   var genRoute = false;
@@ -92,6 +95,11 @@ class MyAppState extends ChangeNotifier {
 
   void setEnd(end) {
     end = end;
+  }
+
+  void toggleHeatMap() {
+    showHeatMap = !showHeatMap;
+    notifyListeners();
   }
 
   void toggleBlueLights() {

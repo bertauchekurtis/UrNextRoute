@@ -8,6 +8,9 @@ import 'blue_light.dart';
 import 'dart:convert';
 import 'modals/show_pin_modal.dart';
 import 'start_end.dart';
+import 'link.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -15,7 +18,7 @@ class MapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    if(appState.initialPinGet == false){
+    if (appState.initialPinGet == false) {
       appState.getPins();
     }
     List<BlueLight> blueLightList = [];
@@ -39,6 +42,84 @@ class MapPage extends StatelessWidget {
     }
 
     loadBlueLights(context);
+
+    List<Link> linkList = [];
+
+    Link buildLinkFromList(List linkInfo) {
+      return Link(
+          linkInfo[0],
+          linkInfo[1],
+          linkInfo[2],
+          double.parse(linkInfo[3]),
+          LatLng(double.parse(linkInfo[4]), double.parse(linkInfo[5])),
+          LatLng(double.parse(linkInfo[6]), double.parse(linkInfo[7])),
+          bool.parse(linkInfo[8]),
+          bool.parse(linkInfo[9]),
+          bool.parse(linkInfo[10]),
+          double.parse(linkInfo[11]));
+    }
+
+    Future<List<String>> heatLinks(context) async {
+      List<String> questions = [];
+      await DefaultAssetBundle.of(context)
+          .loadString('assets/links.csv')
+          .then((q) {
+        for (String i in const LineSplitter().convert(q)) {
+          var allThree = i.split(',');
+          questions.add(i);
+          //print(allThree);
+          Link thisLink = buildLinkFromList(allThree);
+          linkList.add(thisLink);
+          appState.heatLinkList.add(thisLink);
+        }
+      });
+      return questions;
+    }
+
+    Color convertBrightnessToColor(double brightness) {
+      if (brightness < 3) {
+        return Color.fromARGB(44, 176, 4, 4);
+      }
+      if (brightness < 6 && brightness > 3) {
+        return Color.fromARGB(44, 226, 66, 17);
+      }
+      if (brightness < 15 && brightness > 6) {
+        return Color.fromARGB(45, 234, 157, 14);
+      }
+      if (brightness < 30 && brightness > 15) {
+        return Color.fromARGB(46, 243, 205, 37);
+      }
+      if (brightness < 60) {
+        return Color.fromARGB(46, 214, 232, 51);
+      }
+      if (brightness < 90) {
+        return Color.fromARGB(46, 191, 219, 142);
+      }
+      if (brightness < 120) {
+        return Color.fromARGB(48, 153, 236, 105);
+      }
+      if (brightness < 150) {
+        return Color.fromARGB(47, 135, 231, 164);
+      }
+      if (brightness < 180) {
+        return Color.fromARGB(49, 127, 205, 202);
+      }
+      if (brightness < 210) {
+        return Color.fromARGB(48, 103, 165, 159);
+      }
+      if (brightness < 240) {
+        return Color.fromARGB(47, 173, 147, 221);
+      }
+      if (brightness < 270) {
+        return Color.fromARGB(48, 198, 188, 237);
+      } 
+      else {
+        return Color.fromARGB(48, 237, 229, 247);
+      }
+    }
+
+    heatLinks(context);
+  
 
     return SafeArea(
       child: Stack(
@@ -69,15 +150,23 @@ class MapPage extends StatelessWidget {
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.app',
                 ),
-                if (appState.path.isNotEmpty)
-                  PolylineLayer(
+                
+                PolylineLayer(
                     polylines: [
+                      if (appState.path.isNotEmpty)
                       Polyline(
                         borderColor: const Color.fromARGB(255, 4, 30, 66),
                         borderStrokeWidth: 6,
                         points: appState.path,
                         color: const Color.fromARGB(255, 2, 42, 99),
                       ),
+                    if (appState.showHeatMap)
+                        for (var link in appState.heatLinkList)
+                          Polyline(
+                              points: [link.startPos, link.endPos],
+                              color: convertBrightnessToColor(
+                                  link.brightnessLevel),
+                              strokeWidth: 25)
                     ],
                   ),
                 MarkerLayer(
@@ -132,8 +221,8 @@ class MapPage extends StatelessWidget {
                               );
                             },
                             child: const Icon(
-                              Icons.push_pin_sharp,
-                              color: Color.fromARGB(255, 229, 10, 245),
+                              Icons.build,
+                              color: Color.fromARGB(255, 61, 66, 87),
                               size: 20,
                             ),
                           ),
@@ -156,8 +245,8 @@ class MapPage extends StatelessWidget {
                               );
                             },
                             child: const Icon(
-                              Icons.push_pin_sharp,
-                              color: Color.fromARGB(255, 46, 135, 195),
+                              Icons.personal_injury,
+                              color: Color.fromARGB(255, 88, 171, 255),
                               size: 20,
                             ),
                           ),
@@ -180,7 +269,7 @@ class MapPage extends StatelessWidget {
                               );
                             },
                             child: const Icon(
-                              Icons.push_pin_sharp,
+                              Icons.warning,
                               color: Color.fromARGB(255, 245, 10, 10),
                               size: 20,
                             ),
@@ -205,7 +294,7 @@ class MapPage extends StatelessWidget {
                             },
                             child: const Icon(
                               Icons.push_pin_sharp,
-                              color: Color.fromARGB(255, 245, 10, 10),
+                              color: Color.fromARGB(255, 19, 93, 18),
                               size: 20,
                             ),
                           ),
@@ -229,6 +318,10 @@ class MapPage extends StatelessWidget {
               right: 12,
               top: 12,
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                foregroundColor: Color.fromARGB(255, 211, 224, 241),
+                backgroundColor: Color.fromARGB(255, 4, 30, 66),
+                ),
                 onPressed: () => {
                   print("pressed"),
                   appState.genRoute = false,
@@ -250,6 +343,10 @@ class MapPage extends StatelessWidget {
               left: MediaQuery.of(context).size.width / 2 - 100,
               width: 200,
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                foregroundColor: Color.fromARGB(255, 211, 224, 241),
+                backgroundColor: Color.fromARGB(255, 4, 30, 66),
+                ),
                 onPressed: () => {
                   appState.genRoute = true,
                   appState.getPath(),

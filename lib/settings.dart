@@ -31,6 +31,19 @@ class SettingsPage extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(
+              Icons.animation_outlined,
+              size: 30,
+            ),
+            title: const Text("Overlay Brightness Heat Map"),
+            trailing: Switch(
+              value: appState.showHeatMap,
+              onChanged: (value) {
+                appState.toggleHeatMap();
+              },
+            ),
+          ),
+          ListTile(
+            leading: const Icon(
               Icons.campaign_outlined,
               size: 30,
             ),
