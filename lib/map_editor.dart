@@ -110,7 +110,6 @@ class _MapEditorPageState extends State<MapEditorPage> {
     }
   }
 
-
   bool linkExists(Node? nodeA, Node? nodeB) {
     final thisLinkIndex = widget.linkList.indexWhere((element) =>
         (element.startPos == nodeA!.position &&
