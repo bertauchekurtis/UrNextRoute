@@ -70,9 +70,11 @@ class MyAppState extends ChangeNotifier {
   var isFavPath = false;
   var pathObj;
   var initialPinGet = false;
+  var initialRoleGet = false; 
+  List<Role> roles = [];
   var initialPathGet = false;
-
   List<Building> buildings = [];
+
   var maintenancePinsList = <SafetyPin>[];
   var tripFallPinsList = <SafetyPin>[];
   var safetyHazardPinsList = <SafetyPin>[];
@@ -204,6 +206,27 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
+   Future<List<Role>> getRoles() async {
+    try {
+      final response = await http.get(Uri.parse('$baseURL/getuserroles'));
+      if (response.statusCode == 200) {
+        roles.clear();
+
+        Map<String, dynamic> jsonData = json.decode(response.body);
+        List<dynamic> rolesJson = jsonData['roles'];
+
+        List<Role> newRoles = rolesJson
+            .map((pinJson) => Role.fromJson(pinJson))
+            .toList();
+        initialRoleGet = true;
+        roles = newRoles;
+        triggerUpdate();
+        return newRoles;
+
+      } else {
+        throw Exception('Failed to load roles');
+      }
+
   void getAllPaths() async {
     var uuid = FirebaseAuth.instance.currentUser?.uid;
     try {
@@ -221,11 +244,11 @@ class MyAppState extends ChangeNotifier {
         triggerUpdate();
       } else {
         throw Exception('Failed to load paths');
+
       }
     } on Exception {
       print("hmm");
     }
-  }
 
   String getClosestBuilding(point) {
     double currentDist = 999.9;
@@ -258,7 +281,6 @@ class MyAppState extends ChangeNotifier {
     buildings = builds;
     return builds;
   }
-
   var selectedIndex = 0;
 }
 
@@ -287,7 +309,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<String> fetchRole() async {
     try {
       final response =
-          await http.get(Uri.parse('$baseURL/getrole?uuid=${user?.uid}'));
+          await http.get(Uri.parse('$baseURL/getrole?uuid=${user?.uid}&email=${user?.email}'));
       if (response.statusCode == 200) {
         Role r =
             Role.fromJson(jsonDecode(response.body) as Map<String, dynamic>);

@@ -9,10 +9,14 @@ import geopy.distance
 import numpy as np
 import bad_words_filter
 import pandas as pd
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 db.init_db()
+scheduler = BackgroundScheduler()
+job = scheduler.add_job(db.clear_expired, 'interval', minutes=1)
+scheduler.start()
 
 profanity_df = pd.read_csv('profanity_en.csv')
 profanity_words = bad_words_filter.open_df(profanity_df)
@@ -216,11 +220,12 @@ def getRouteHTML():
 @app.route('/getrole')
 def get_role():
     uuid = request.args.get('uuid', None)
+    email = request.args.get('email', None)
     user = db.get_user_role(uuid)
     if user is not None:
         return {'role': user[2]}
     else:
-        db.add_user_role(uuid, "user")
+        db.add_user_role(uuid, "user", email)
         return {'role': "user"}
     
 @app.route('/addpin')
@@ -234,6 +239,7 @@ def add_pin():
     creationDateList = creationDateString.split(',')
     expireDateString = request.args.get('expireDate', None)
     expireDateList = expireDateString.split(',')
+    currentDate = datetime.datetime.now()
     createDate = datetime.datetime(year = int(creationDateList[0]),
                                    month = int(creationDateList[1]),
                                    day = int(creationDateList[2]),
@@ -261,7 +267,21 @@ def add_pin():
                       expireDate = expireDate,
                       closestBuilding = closestBuilding,
                       comment = comment)
+    #if expireDate < currentDate:
+    #    delete_pin()
     return({"id": result})
+
+@app.route("/getuserroles")
+def get_all_roles():
+    roles = db.get_all_user_roles()
+    return jsonify({"roles": roles})
+
+@app.route('/updateroles')
+def update_role():
+    id = request.args.get("id")
+    new_role = request.args.get("new_role")
+    db.update_user_role(id, new_role)
+    return {"status": "success"}
 
 @app.route("/getallpins")
 def get_all_pins():

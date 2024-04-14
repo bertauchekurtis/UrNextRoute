@@ -252,6 +252,7 @@ class MapPage extends StatelessWidget {
               icon: const Icon(Icons.menu),
             ),
           ),
+
           if (appState.path.isNotEmpty) ...[
             Positioned(
               right: 12,
@@ -269,6 +270,18 @@ class MapPage extends StatelessWidget {
                   appState.triggerUpdate(),
                 },
                 child: const Text("Clear Route"),
+              ),
+            ),],
+          Positioned(
+              right: 12,
+              bottom: 12,
+              child: ElevatedButton(
+                onPressed: () {
+                  print("pressed");
+                  appState.initialPinGet = false; 
+                  appState.triggerUpdate();
+                },
+                child: const Icon(Icons.refresh)),
               ),
             ),
             if (!appState.isFavPath) ...[
