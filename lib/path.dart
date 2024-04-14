@@ -2,11 +2,13 @@ import 'package:latlong2/latlong.dart';
 
 class ourPath {
   final String pathString;
-  final double length;
+  double length;
+  int id;
 
   ourPath({
     required this.pathString,
-    required this.length,
+    this.length = -1,
+    this.id = -1,
   });
 
   factory ourPath.fromJson(Map<String, dynamic> json) {
@@ -19,6 +21,14 @@ class ourPath {
           pathString: pathString,
           length: length,
         ),
+      {
+        "id": int id,
+        "uuid": String uuid,
+        "path": String path,
+      } => 
+        ourPath(
+          id: id, 
+          pathString: path),
       _ => throw const FormatException('Failed to load path.'),
     };
   }

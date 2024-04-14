@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import Table, Column, Integer, String, insert, select, DateTime, Float, delete, update, Double
+from sqlalchemy import Table, Column, Integer, String, insert, select, DateTime, Float, delete, update, Double, VARCHAR, func
 # note that the password in this file is not the password used on the server, github actions will auto fill that
 engine = sqlalchemy.create_engine("mariadb+mariadbconnector://root@127.0.0.1:3306/urnextroute")
 metadata_obj = sqlalchemy.MetaData()
@@ -17,6 +17,7 @@ user_role = Table(
     Column("id", Integer, primary_key = True),
     Column("uuid", String(28)),
     Column("role", String(20)),
+    Column("email", VARCHAR(200)),
 )
 safety_pin = Table(
     "safety_pin",
@@ -31,6 +32,15 @@ safety_pin = Table(
     Column("closestBuilding", String(120)),
     Column("comment", String(120)),
 )
+
+fav_paths = Table(
+    "fav_paths",
+    metadata_obj,
+    Column("id", Integer, primary_key = True),
+    Column("uuid", String(28)),
+    Column("path", VARCHAR(50000))
+)
+
 def init_db():
     with engine.connect() as conn:
         metadata_obj.create_all(bind = engine)
@@ -56,12 +66,34 @@ def get_user_role(uid):
         result = conn.execute(stmt)
         return result.first()
 
-def add_user_role(uuid, role):
-    stmt = insert(user_role).values(uuid = uuid, role = role)
+def add_user_role(uuid, role, email):
+    stmt = insert(user_role).values(uuid = uuid, role = role, email = email)
     with engine.connect() as conn:
         result = conn.execute(stmt)
         conn.commit()
 
+def get_all_user_roles():
+    stmt = select(user_role)
+    with engine.connect() as conn:
+        result = []
+        for row in conn.execute(stmt):
+            result.append({"id": row[0],
+                           "uuid": row[1],
+                           "role": row[2],
+                           "email": row[3],})
+        return result
+    
+def update_user_role(id, new_role):
+    stmt = update(user_role).where(user_role.c.id == id).values(role = new_role)
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        conn.commit()
+        
+def clear_expired():
+    stmt = delete(safety_pin).where(safety_pin.c.expirationDate < func.now())
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        conn.commit()
 def add_safety_pin(uuid, type, lat, long, createDate, expireDate, closestBuilding, comment):
     stmt = insert(safety_pin).values(uuid = uuid, 
                                      type = type, 
@@ -141,4 +173,39 @@ def update_pin_by_id(id, uuid, type, lat, long, createDate, expireDate, closestB
                                      comment = comment)
     with engine.connect() as conn:
         result = conn.execute(stmt)
+        conn.commit()
+
+def add_favorite_route(uuid, path):
+    stmt = insert(fav_paths).values(uuid = uuid,
+                                    path = path)    
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        newId = result.lastrowid
+        conn.commit()
+    return newId
+
+def get_all_favorite_routes():
+    stmt = select(fav_paths)
+    with engine.connect() as conn:
+        result = []
+        for row in conn.execute(stmt):
+            result.append({"id": row[0],
+                           "uuid": row[1],
+                           "path": row[2],})
+        return result
+    
+def get_all_favorite_routes_of_one_user(uuid):
+    stmt = select(fav_paths).where(fav_paths.c.uuid == uuid)
+    with engine.connect() as conn:
+        result = []
+        for row in conn.execute(stmt):
+            result.append({"id": row[0],
+                           "uuid": row[1],
+                           "path": row[2],})
+        return result
+    
+def delete_fav_path_by_id(id):
+    stmt = delete(fav_paths).where(fav_paths.c.id == id)
+    with engine.connect() as conn:
+        conn.execute(stmt)
         conn.commit()

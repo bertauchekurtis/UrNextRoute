@@ -41,7 +41,7 @@ class _AdminPageState extends State<AdminPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const RoleEditing()),
+                    MaterialPageRoute(builder: (context) => RoleEditing()),
                   );
                 },
                 child: const Icon(Icons.keyboard_arrow_right),
@@ -56,7 +56,7 @@ class _AdminPageState extends State<AdminPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AllPins()),
+                    MaterialPageRoute(builder: (context) =>  AllPins()),
                   );
                 },
                 child: const Icon(Icons.keyboard_arrow_right),

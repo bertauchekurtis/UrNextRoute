@@ -110,8 +110,6 @@ class _MapEditorPageState extends State<MapEditorPage> {
     }
   }
 
-
-
   bool linkExists(Node? nodeA, Node? nodeB) {
     final thisLinkIndex = widget.linkList.indexWhere((element) =>
         (element.startPos == nodeA!.position &&
@@ -543,7 +541,7 @@ class _MapEditorPageState extends State<MapEditorPage> {
                           widget.startNewLink, widget.endNewLink);
                       return EditLinkModal(
                         thisLink: link,
-                        brightnessLevel: link.brightnessLevel.toDouble(),
+                        brightnessLevel: link.brightnessLevel.toString(),
                         isInside: link.isInside,
                         containsBlueLight: link.containsBlueLight,
                         containsStairs: link.containsStairs,
