@@ -37,7 +37,7 @@ class MapPage extends StatelessWidget {
       } else {
         throw Exception('Failed to remove path');
       }
-    } on Exception { }
+    } on Exception {}
   }
 
   @override
@@ -106,16 +106,6 @@ class MapPage extends StatelessWidget {
                         points: appState.path,
                         color: const Color.fromARGB(255, 2, 42, 99),
                       ),
-                      Polyline(
-                        borderColor: const Color.fromARGB(255, 4, 30, 66),
-                        borderStrokeWidth: 6,
-                        strokeWidth: 100,
-                        points: [
-                          LatLng(39.540935679934854, -119.81507552294075),
-                          LatLng(39.54380387300942, -119.81741941626998)
-                        ],
-                        color: const Color.fromARGB(100, 2, 42, 99),
-                      )
                     ],
                   ),
                 MarkerLayer(
