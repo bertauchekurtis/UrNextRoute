@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,7 +22,6 @@ import 'path.dart';
 import 'role.dart';
 import 'admin_page.dart';
 import 'building.dart';
-import 'dart:convert';
 
 String baseURL = 'http://192.168.1.74:5000';
 
@@ -226,6 +224,12 @@ class MyAppState extends ChangeNotifier {
       } else {
         throw Exception('Failed to load roles');
       }
+    } on Exception {
+      print("hmm");
+    }
+  throw Exception('Failed to load roles');
+  }
+
 
   void getAllPaths() async {
     var uuid = FirebaseAuth.instance.currentUser?.uid;
@@ -249,6 +253,7 @@ class MyAppState extends ChangeNotifier {
     } on Exception {
       print("hmm");
     }
+  }
 
   String getClosestBuilding(point) {
     double currentDist = 999.9;
@@ -281,7 +286,9 @@ class MyAppState extends ChangeNotifier {
     buildings = builds;
     return builds;
   }
-  var selectedIndex = 0;
+  
+
+var selectedIndex = 0;
 }
 
 class MyHomePage extends StatefulWidget {
