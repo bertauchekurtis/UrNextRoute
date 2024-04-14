@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:ur_next_route/blue_light.dart';
+import 'package:ur_next_route/favorite_routes.dart';
 import 'package:ur_next_route/map_editor.dart';
 import 'package:ur_next_route/safety_pin.dart';
 import 'firebase_options.dart';
@@ -22,8 +22,10 @@ import 'package:http/http.dart' as http;
 import 'path.dart';
 import 'role.dart';
 import 'admin_page.dart';
+import 'building.dart';
+import 'dart:convert';
 
-String baseURL = 'http://172.20.10.4:5000';
+String baseURL = 'http://192.168.1.74:5000';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-          title: 'Namer App',
+          title: 'Ur Next Route',
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(
@@ -53,24 +55,30 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
   var showBlueLights = false;
   var startPointChosen = false;
   var endPointChosen = false;
   var showMaintenancePins = true;
   var showTripFallPins = true;
   var showSafetyHazardPins = true;
+  var pathSensitivity = 0.0;
   var blueLightList = <BlueLight>[];
   var start = StartEnd(true, const LatLng(0, 0));
   var end = StartEnd(false, const LatLng(0, 0));
   var genRoute = false;
   List<LatLng> path = [];
+  var isFavPath = false;
+  var pathObj;
   var initialPinGet = false;
+  var initialPathGet = false;
 
+  List<Building> buildings = [];
   var maintenancePinsList = <SafetyPin>[];
   var tripFallPinsList = <SafetyPin>[];
   var safetyHazardPinsList = <SafetyPin>[];
   var otherUserPins = <SafetyPin>[];
+
+  var favoritePaths = <ourPath>[];
 
   void setStart(start) {
     start = start;
@@ -147,10 +155,11 @@ class MyAppState extends ChangeNotifier {
   void getPath() async {
     try {
       final response = await http.get(Uri.parse(
-          '$baseURL/getroute?startLat=${start.position.latitude}&startLong=${start.position.longitude}&endLat=${end.position.latitude}&endLong=${end.position.longitude}'));
+          '$baseURL/getroute?startLat=${start.position.latitude}&startLong=${start.position.longitude}&endLat=${end.position.latitude}&endLong=${end.position.longitude}&sensitivity=$pathSensitivity'));
       if (response.statusCode == 200) {
         ourPath newPath =
             ourPath.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+        pathObj = newPath;
         path = newPath.getPathList();
         triggerUpdate();
       } else {
@@ -194,6 +203,63 @@ class MyAppState extends ChangeNotifier {
       print("hmm");
     }
   }
+
+  void getAllPaths() async {
+    var uuid = FirebaseAuth.instance.currentUser?.uid;
+    try {
+      final response =
+          await http.get(Uri.parse('$baseURL/getallpathsofuser?uuid=$uuid'));
+      if (response.statusCode == 200) {
+        favoritePaths.clear();
+        Map<String, dynamic> jsonData = json.decode(response.body);
+        List<dynamic> pathsJson = jsonData['paths'];
+        List<ourPath> newPaths =
+            pathsJson.map((pathJson) => ourPath.fromJson(pathJson)).toList();
+
+        favoritePaths = newPaths;
+        initialPathGet = true;
+        triggerUpdate();
+      } else {
+        throw Exception('Failed to load paths');
+      }
+    } on Exception {
+      print("hmm");
+    }
+  }
+
+  String getClosestBuilding(point) {
+    double currentDist = 999.9;
+    Distance distance =
+        const Distance(roundResult: false, calculator: Vincenty());
+    String closest = "err";
+    for (var building in buildings) {
+      double thisDist =
+          distance.as(LengthUnit.Kilometer, point, building.position);
+      if (thisDist < currentDist) {
+        currentDist = thisDist;
+        closest = building.name;
+      }
+    }
+    return closest;
+  }
+
+  Future<List<Building>> loadBuildings(context) async {
+    List<Building> builds = [];
+    await DefaultAssetBundle.of(context)
+        .loadString('assets/buildings.csv')
+        .then((q) {
+      for (String i in const LineSplitter().convert(q)) {
+        var allThree = i.split(',');
+        Building building = Building(allThree[2],
+            LatLng(double.parse(allThree[0]), double.parse(allThree[1])));
+        builds.add(building);
+      }
+    });
+    buildings = builds;
+    return builds;
+  }
+
+  var selectedIndex = 0;
 }
 
 class MyHomePage extends StatefulWidget {
@@ -205,7 +271,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  var selectedIndex = 0;
+  //var selectedIndex = 0;
   final user = FirebaseAuth.instance.currentUser;
   String role = "user";
   bool showErrorMessage = false;
@@ -256,7 +322,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     Widget page;
     var appState = context.watch<MyAppState>();
-    switch (selectedIndex) {
+    switch (appState.selectedIndex) {
       // SHOULD REPLACE THESE INDEXES WITH AN ENUM
       case 0:
         page = const MapPage();
@@ -272,6 +338,8 @@ class _MyHomePageState extends State<MyHomePage> {
         page = MapEditorPage();
       case 6:
         page = const AdminPage();
+      case 7:
+        page = const FavRoutesPage();
       default:
         page = const SettingsPage();
     }
@@ -313,7 +381,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     title: const Text("Map"),
                     onTap: () {
                       setState(() {
-                        selectedIndex = 0;
+                        appState.selectedIndex = 0;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.favorite_border),
+                    title: const Text("Saved Routes"),
+                    onTap: () {
+                      setState(() {
+                        appState.selectedIndex = 7;
                       });
                       Navigator.pop(context);
                     },
@@ -334,7 +412,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       title: const Text("Route Settings"),
                       onTap: () {
                         setState(() {
-                          selectedIndex = 1;
+                          appState.selectedIndex = 1;
                         });
                         Navigator.pop(context);
                       }),
@@ -343,7 +421,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     title: const Text("My Pins"),
                     onTap: () {
                       setState(() {
-                        selectedIndex = 2;
+                        appState.selectedIndex = 2;
                       });
                       Navigator.pop(context);
                     },
@@ -353,7 +431,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     title: const Text("Safety Toolkit"),
                     onTap: () {
                       setState(() {
-                        selectedIndex = 3;
+                        appState.selectedIndex = 3;
                       });
                       Navigator.pop(context);
                     },
@@ -363,7 +441,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     title: const Text("Settings"),
                     onTap: () {
                       setState(() {
-                        selectedIndex = 4;
+                        appState.selectedIndex = 4;
                       });
                       Navigator.pop(context);
                     },
@@ -374,7 +452,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       title: const Text("Map Editor"),
                       onTap: () {
                         setState(() {
-                          selectedIndex = 5;
+                          appState.selectedIndex = 5;
                         });
                         Navigator.pop(context);
                       },
@@ -384,7 +462,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       title: const Text("Admin Page"),
                       onTap: () {
                         setState(() {
-                          selectedIndex = 6;
+                          appState.selectedIndex = 6;
                         });
                         Navigator.pop(context);
                       },

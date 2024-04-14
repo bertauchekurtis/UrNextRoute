@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import Table, Column, Integer, String, insert, select, DateTime, Float, delete, update, Double
+from sqlalchemy import Table, Column, Integer, String, insert, select, DateTime, Float, delete, update, Double, VARCHAR
 # note that the password in this file is not the password used on the server, github actions will auto fill that
 engine = sqlalchemy.create_engine("mariadb+mariadbconnector://root@127.0.0.1:3306/urnextroute")
 metadata_obj = sqlalchemy.MetaData()
@@ -31,6 +31,15 @@ safety_pin = Table(
     Column("closestBuilding", String(120)),
     Column("comment", String(120)),
 )
+
+fav_paths = Table(
+    "fav_paths",
+    metadata_obj,
+    Column("id", Integer, primary_key = True),
+    Column("uuid", String(28)),
+    Column("path", VARCHAR(50000))
+)
+
 def init_db():
     with engine.connect() as conn:
         metadata_obj.create_all(bind = engine)
@@ -141,4 +150,39 @@ def update_pin_by_id(id, uuid, type, lat, long, createDate, expireDate, closestB
                                      comment = comment)
     with engine.connect() as conn:
         result = conn.execute(stmt)
+        conn.commit()
+
+def add_favorite_route(uuid, path):
+    stmt = insert(fav_paths).values(uuid = uuid,
+                                    path = path)    
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        newId = result.lastrowid
+        conn.commit()
+    return newId
+
+def get_all_favorite_routes():
+    stmt = select(fav_paths)
+    with engine.connect() as conn:
+        result = []
+        for row in conn.execute(stmt):
+            result.append({"id": row[0],
+                           "uuid": row[1],
+                           "path": row[2],})
+        return result
+    
+def get_all_favorite_routes_of_one_user(uuid):
+    stmt = select(fav_paths).where(fav_paths.c.uuid == uuid)
+    with engine.connect() as conn:
+        result = []
+        for row in conn.execute(stmt):
+            result.append({"id": row[0],
+                           "uuid": row[1],
+                           "path": row[2],})
+        return result
+    
+def delete_fav_path_by_id(id):
+    stmt = delete(fav_paths).where(fav_paths.c.id == id)
+    with engine.connect() as conn:
+        conn.execute(stmt)
         conn.commit()

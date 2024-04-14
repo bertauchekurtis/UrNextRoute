@@ -30,7 +30,9 @@ void debugSign() {
 void signInProcess(context, appState) async {
   await signInWithGoogle();
   if (FirebaseAuth.instance.currentUser != null) {
-    appState.getPins();
+    await appState.getPins();
+    await appState.getAllPaths();
+    await appState.loadBuildings(context);
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const MyHomePage()));
   } else {

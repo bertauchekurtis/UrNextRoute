@@ -8,14 +8,42 @@ import 'blue_light.dart';
 import 'dart:convert';
 import 'modals/show_pin_modal.dart';
 import 'start_end.dart';
+import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
 
+  Future<int> addPathAndGetID(String newPath) async {
+    var uuid = FirebaseAuth.instance.currentUser?.uid;
+    try {
+      final response = await http
+          .get(Uri.parse('$baseURL/addpath?uuid=$uuid&path=$newPath'));
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonMap = json.decode(response.body);
+        return jsonMap['id'];
+      } else {
+        throw Exception('Failed to save path');
+      }
+    } on Exception {
+      return -1;
+    }
+  }
+
+  void removePathByID(int id) async {
+    try {
+      final response = await http.get(Uri.parse('$baseURL/removepath?id=$id'));
+      if (response.statusCode == 200) {
+      } else {
+        throw Exception('Failed to remove path');
+      }
+    } on Exception {}
+  }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    if(appState.initialPinGet == false){
+    if (appState.initialPinGet == false) {
       appState.getPins();
     }
     List<BlueLight> blueLightList = [];
@@ -224,7 +252,7 @@ class MapPage extends StatelessWidget {
               icon: const Icon(Icons.menu),
             ),
           ),
-          if (appState.path.isNotEmpty)
+          if (appState.path.isNotEmpty) ...[
             Positioned(
               right: 12,
               top: 12,
@@ -237,11 +265,52 @@ class MapPage extends StatelessWidget {
                   appState.path = [],
                   appState.start = StartEnd(true, const LatLng(0, 0)),
                   appState.end = StartEnd(false, const LatLng(0, 0)),
+                  appState.isFavPath = false,
                   appState.triggerUpdate(),
                 },
                 child: const Text("Clear Route"),
               ),
             ),
+            if (!appState.isFavPath) ...[
+              Positioned(
+                right: 140,
+                top: 12,
+                child: ElevatedButton(
+                  onPressed: () => {
+                    appState.isFavPath = !appState.isFavPath,
+                    appState.favoritePaths.add(appState.pathObj),
+                    addPathAndGetID(appState.pathObj.pathString)
+                        .then((int result) {
+                      appState.pathObj.id = result;
+                    }),
+                    appState.triggerUpdate(),
+                  },
+                  child: const Icon(
+                    Icons.favorite_border,
+                    color: Colors.grey,
+                  ),
+                ),
+              )
+            ] else ...[
+              Positioned(
+                right: 140,
+                top: 12,
+                child: ElevatedButton(
+                  onPressed: () => {
+                    print("Saved button"),
+                    appState.isFavPath = !appState.isFavPath,
+                    removePathByID(appState.pathObj.id),
+                    appState.favoritePaths.remove(appState.pathObj),
+                    appState.triggerUpdate(),
+                  },
+                  child: const Icon(
+                    Icons.favorite,
+                    color: Colors.pink,
+                  ),
+                ),
+              ),
+            ],
+          ],
           if (appState.startPointChosen &&
               appState.endPointChosen &&
               !appState.genRoute)
@@ -252,6 +321,7 @@ class MapPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => {
                   appState.genRoute = true,
+                  print(appState.pathSensitivity),
                   appState.getPath(),
                 },
                 child: const Text("Generate Route"),

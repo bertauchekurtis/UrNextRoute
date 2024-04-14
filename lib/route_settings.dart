@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'main.dart';
 
 class RouteSettingsPage extends StatefulWidget {
   const RouteSettingsPage({super.key});
@@ -9,12 +11,13 @@ class RouteSettingsPage extends StatefulWidget {
 
 class _RouteSettingsPageState extends State<RouteSettingsPage> {
   double _blueLightValue = 0.9;
-  double _brightnessPref = 0.5;
+  double _brightnessPref = 0.0;
   bool allowStairs = true;
   bool allowBuildings = true;
   bool allowPins = true;
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -42,87 +45,31 @@ class _RouteSettingsPageState extends State<RouteSettingsPage> {
               size: 30,
             ),
             title: Slider(
-              value: _brightnessPref,
+              value: appState.pathSensitivity,
+              min: 0,
+              max: 9,
               onChanged: (value) {
                 setState(() {
                   _brightnessPref = value;
+                  appState.pathSensitivity = value;
                 });
               },
+              label: "Label",
             ),
             subtitle: const Text(
               "Path Brightness Preference",
               textAlign: TextAlign.center,
             ),
           ),
-          ListTile(
-            leading: const Icon(
-              Icons.light_sharp,
-              size: 30,
-              color: Colors.blue,
-            ),
-            title: Slider(
-              value: _blueLightValue,
-              divisions: 100,
-              min: 0,
-              max: 1,
-              onChanged: (value) {
-                setState(() {
-                  _blueLightValue = value;
-                });
-              },
-            ),
-            subtitle: const Text(
-              "Emergency Blue Light Closeness",
-              textAlign: TextAlign.center,
-            ),
+          const Divider(),
+          const ListTile(
+            title: const Text("Set the Path Brightness Preference all the way to the left to only use distance in the calculation."),
+            leading: const Icon(Icons.info_sharp),
           ),
-          const Divider(
-            color: Color.fromARGB(255, 4, 30, 66),
+          const ListTile(
+            title: const Text("Set the Path Brightness Calculation all the way to the right to use the maximum amount of brightness scaling."),
+            leading: const Icon(Icons.info_sharp),
           ),
-          ListTile(
-            leading: const Icon(
-              Icons.stairs,
-              size: 30,
-            ),
-            title: const Text("Allow routing with Stairs"),
-            trailing: Switch(
-              value: allowStairs,
-              onChanged: (bool value) {
-              setState(() {
-                allowStairs = value;
-              });}
-            ),
-          ),
-          ListTile(
-            leading: const Icon(
-              Icons.store,
-              size: 30,
-            ),
-            title: const Text("Allow routing through buildings"),
-            trailing: Switch(
-              value: allowBuildings,
-              onChanged: (value) {
-                setState(() {
-                  allowBuildings = value;
-                });
-              },
-            ),
-          ),
-          ListTile(
-            leading: const Icon(
-              Icons.pin_drop,
-              size: 30,
-            ),
-            title: const Text("Allow routing near safety pins"),
-            trailing: Switch(
-              value: allowPins,
-              onChanged: (value) {
-                setState(() {
-                  allowPins = value;
-                });
-              },
-            ),
-          )
         ],
       ),
     );
