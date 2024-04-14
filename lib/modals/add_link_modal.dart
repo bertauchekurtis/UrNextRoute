@@ -105,8 +105,10 @@ class _AddLinkModalState extends State<AddLinkModal> {
             ),
           ),
           ElevatedButton(
-              onPressed: () => {
-                    widget.addLink(Link(
+              onPressed: ()  {
+                try {
+                  double test = double.parse(brightnessController.text);
+                  widget.addLink(Link(
                         widget.getNewLinkuuid(),
                         widget.startNode.nodeId,
                         widget.endNode.nodeId,
@@ -117,9 +119,26 @@ class _AddLinkModalState extends State<AddLinkModal> {
                         widget.containsBlueLight,
                         widget.containsStairs,
                         distance.as(LengthUnit.Meter, widget.startNode.position,
-                            widget.endNode.position))),
-                    Navigator.pop(context),
-                  },
+                            widget.endNode.position)));
+                    Navigator.pop(context);
+                } on Exception {
+                  showDialog(
+                    context: context, 
+                    builder: (builder){
+                      return AlertDialog(
+                        title: const Text("Error"),
+                        content: const Text("Inputted data is not a number. Please fix and try again."),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }, 
+                            child: const Text("Close Alert"))
+                        ],
+                      );
+                    });
+                }
+              },
               child: const Text("Add Link"))
         ],
       ),
