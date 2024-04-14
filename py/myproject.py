@@ -7,10 +7,15 @@ import csv
 import datetime
 import geopy.distance
 import numpy as np
+import bad_words_filter
+import pandas as pd
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 db.init_db()
+
+profanity_df = pd.read_csv('profanity_en.csv')
+profanity_words = bad_words_filter.open_df(profanity_df)
 
 # Load data
 links = []
@@ -241,6 +246,13 @@ def add_pin():
                                    minute = int(expireDateList[4]))
     closestBuilding = request.args.get('closestBuilding', None)
     comment = request.args.get('comment', None)
+    comment = bad_words_filter.process_input(comment)
+    bad_words = bad_words_filter.check_description(comment, profanity_words)
+    for i in range(len(comment)):
+        if comment[i] in bad_words:
+            comment[i] = comment[i].replace(comment[i], '*' * len(comment[i]))  
+    comment = ' '.join(comment)
+
     result = db.add_safety_pin(uuid = uuid,
                       type = int(type),
                       lat = float(lat),
@@ -297,6 +309,12 @@ def update_pin():
                                    minute = int(expireDateList[4]))
     closestBuilding = request.args.get('closestBuilding', None)
     comment = request.args.get('comment', None)
+    comment = bad_words_filter.process_input(comment)
+    bad_words = bad_words_filter.check_description(comment, profanity_words)
+    for i in range(len(comment)):
+        if comment[i] in bad_words:
+            comment[i] = comment[i].replace(comment[i], '*' * len(comment[i]))  
+    comment = ' '.join(comment)
     db.update_pin_by_id(id, uuid, type, lat, long, createDate, expireDate, closestBuilding, comment)
     return {"status" : "success"}
 

@@ -27,7 +27,7 @@ class AddSafetyPinPage extends StatefulWidget {
   DateTime expireTime = DateTime.now();
   late String formattedExpireTime =
       DateFormat('kk:mm - EEE, MMM d').format(expireTime);
-    
+
   List<Building> buildings = [];
 
   @override
@@ -38,7 +38,7 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
   final TextEditingController descriptionController = TextEditingController();
   var selectedOption = 1;
   Distance distance =
-    const Distance(roundResult: false, calculator: Vincenty());
+      const Distance(roundResult: false, calculator: Vincenty());
 
   String getFormattedTime(DateTime thisDate) {
     return DateFormat('kk:mm - EEE, MMM d').format(thisDate);
@@ -54,7 +54,7 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
         //builds.add(i);
         //print(allThree);
         Building building = Building(allThree[2],
-              LatLng(double.parse(allThree[0]), double.parse(allThree[1])));
+            LatLng(double.parse(allThree[0]), double.parse(allThree[1])));
         //widget.buildings.add(building);
         builds.add(building);
       }
@@ -68,16 +68,17 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
   String getClosestBuilding(point) {
     double currentDist = 999.9;
     String closest = "err";
-    for(var building in widget.buildings){
-      double thisDist = distance.as(LengthUnit.Kilometer, point, building.position);
-      if(thisDist < currentDist) {
+    for (var building in widget.buildings) {
+      double thisDist =
+          distance.as(LengthUnit.Kilometer, point, building.position);
+      if (thisDist < currentDist) {
         currentDist = thisDist;
         closest = building.name;
       }
     }
     return closest;
   }
-  
+
   @override
   void dispose() {
     descriptionController.dispose();
@@ -87,23 +88,25 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    if(widget.buildings.isEmpty){
+    if (widget.buildings.isEmpty) {
       loadBuildings(context);
     }
 
-  Future<int> addPinAndGetID(SafetyPin newPin) async {
-    try {
-      final response = await http.get(Uri.parse('$baseURL/addpin?uuid=${newPin.userUID}&type=${newPin.type}&lat=${newPin.position.latitude}&long=${newPin.position.longitude}&createDate=${newPin.placedTime.year},${newPin.placedTime.month},${newPin.placedTime.day},${newPin.placedTime.hour},${newPin.placedTime.minute}&expireDate=${newPin.expirationTime.year},${newPin.expirationTime.month},${newPin.expirationTime.day},${newPin.expirationTime.hour},${newPin.expirationTime.minute}&closestBuilding=${newPin.closestBuilding}&comment=${newPin.description}'));
-      if (response.statusCode == 200) {
+    Future<int> addPinAndGetID(SafetyPin newPin) async {
+      try {
+        final response = await http.get(Uri.parse(
+            '$baseURL/addpin?uuid=${newPin.userUID}&type=${newPin.type}&lat=${newPin.position.latitude}&long=${newPin.position.longitude}&createDate=${newPin.placedTime.year},${newPin.placedTime.month},${newPin.placedTime.day},${newPin.placedTime.hour},${newPin.placedTime.minute}&expireDate=${newPin.expirationTime.year},${newPin.expirationTime.month},${newPin.expirationTime.day},${newPin.expirationTime.hour},${newPin.expirationTime.minute}&closestBuilding=${newPin.closestBuilding}&comment=${newPin.description}'));
+        if (response.statusCode == 200) {
           Map<String, dynamic> jsonMap = json.decode(response.body);
+          appState.initialPinGet = false;
           return jsonMap['id'];
-      } else {
-        throw Exception('Failed to load role');
+        } else {
+          throw Exception('Failed to load role');
+        }
+      } on Exception {
+        return -1;
       }
-    } on Exception {
-      return -1;
     }
-  }
 
     return Scaffold(
       appBar: AppBar(
@@ -136,7 +139,7 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
                     widget.dropTime,
                     widget.expireTime,
                     -1);
-                  
+
                 addPinAndGetID(newPin).then((int result) {
                   print(result);
                   newPin.id = result;
@@ -201,46 +204,43 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
           ListTile(
             leading: const Icon(Icons.watch_later_outlined),
             title: Text("Drop Time: ${widget.formattedDropTime}"),
-            subtitle: const Text("Tap to back date"), 
+            subtitle: const Text("Tap to back date"),
             trailing: const Icon(Icons.edit),
             onTap: () {
-              DatePicker.showDatePicker(
-                context,
-                dateFormat: 'HH:mm MMMM dd yyyy',
-                initialDateTime: DateTime.now(),
-                minDateTime: DateTime(2023),
-                maxDateTime: DateTime.now(),
-                onMonthChangeStartWithFirstDate: true,
-                onConfirm: (dateTime, List<int> index) {
-                  setState(() {
-                    widget.dropTime = dateTime;
-                    widget.formattedDropTime = getFormattedTime(dateTime);
-                  });
-                });            
+              DatePicker.showDatePicker(context,
+                  dateFormat: 'HH:mm MMMM dd yyyy',
+                  initialDateTime: DateTime.now(),
+                  minDateTime: DateTime(2023),
+                  maxDateTime: DateTime.now(),
+                  onMonthChangeStartWithFirstDate: true,
+                  onConfirm: (dateTime, List<int> index) {
+                setState(() {
+                  widget.dropTime = dateTime;
+                  widget.formattedDropTime = getFormattedTime(dateTime);
+                });
+              });
             },
           ),
           ListTile(
             leading: const Icon(Icons.watch_later_outlined),
             title: Text("Expire Time: ${widget.formattedExpireTime}"),
-            subtitle: const Text("Tap to select date"), 
+            subtitle: const Text("Tap to select date"),
             trailing: const Icon(Icons.edit),
             onTap: () {
-              DatePicker.showDatePicker(
-                context,
-                dateFormat: 'HH:mm MMMM dd yyyy',
-                initialDateTime: DateTime.now(),
-                minDateTime: DateTime.now(),
-                maxDateTime: DateTime(2025),
-                onMonthChangeStartWithFirstDate: true,
-                onConfirm: (dateTime, List<int> index) {
-                  setState(() {
-                    widget.expireTime = dateTime;
-                    widget.formattedExpireTime = getFormattedTime(dateTime);
-                  });
-                });            
+              DatePicker.showDatePicker(context,
+                  dateFormat: 'HH:mm MMMM dd yyyy',
+                  initialDateTime: DateTime.now(),
+                  minDateTime: DateTime.now(),
+                  maxDateTime: DateTime(2025),
+                  onMonthChangeStartWithFirstDate: true,
+                  onConfirm: (dateTime, List<int> index) {
+                setState(() {
+                  widget.expireTime = dateTime;
+                  widget.formattedExpireTime = getFormattedTime(dateTime);
+                });
+              });
             },
           ),
-
           const SizedBox(
             height: 15,
           ),
