@@ -152,6 +152,24 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeSafetyPin(SafetyPin oldPin) {
+    switch (oldPin.type) {
+      case 1:
+        // maintenance
+        maintenancePinsList.remove(oldPin);
+        break;
+      case 2:
+        // trip/fall
+        tripFallPinsList.remove(oldPin);
+        break;
+      case 3:
+        // safety
+        safetyHazardPinsList.remove(oldPin);
+        break;
+    }
+    notifyListeners();
+  }
+
   void addOtherUserPin(SafetyPin newPin) {
     otherUserPins.add(newPin);
   }
@@ -553,6 +571,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     leading: const Icon(Icons.logout),
                     title: const Text("Logout"),
                     onTap: () {
+                      appState.genRoute = false;
+                      appState.startPointChosen = false;
+                      appState.endPointChosen = false;
+                      appState.path = [];
+                      appState.start = StartEnd(true, const LatLng(0, 0));
+                      appState.end = StartEnd(false, const LatLng(0, 0));
+                      appState.isFavPath = false;
                       appState.maintenancePinsList.clear();
                       appState.safetyHazardPinsList.clear();
                       appState.otherUserPins.clear();
