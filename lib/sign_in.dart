@@ -33,6 +33,7 @@ void signInProcess(context, appState) async {
     await appState.getPins();
     await appState.getAllPaths();
     await appState.loadBuildings(context);
+    await appState.getSettings();
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const MyHomePage()));
   } else {

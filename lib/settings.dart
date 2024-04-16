@@ -52,6 +52,7 @@ class SettingsPage extends StatelessWidget {
               value: appState.showBlueLights,
               onChanged: (value) {
                 appState.toggleBlueLights();
+                appState.updateSettings();
               },
             ),
           ),
@@ -65,6 +66,7 @@ class SettingsPage extends StatelessWidget {
               value: appState.showMaintenancePins,
               onChanged: (value) {
                 appState.toggleMaintenancePins();
+                appState.updateSettings();
               },
             ),
           ),
@@ -78,6 +80,7 @@ class SettingsPage extends StatelessWidget {
               value: appState.showTripFallPins,
               onChanged: (value) {
                 appState.toggleTripFallPins();
+                appState.updateSettings();
               },
             ),
           ),
@@ -91,6 +94,7 @@ class SettingsPage extends StatelessWidget {
               value: appState.showSafetyHazardPins,
               onChanged: (value) {
                 appState.toggleSafetyHazardPins();
+                appState.updateSettings();
               },
             ),
           ),

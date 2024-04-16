@@ -193,6 +193,7 @@ class _EditPinPageState extends State<EditPinPage> {
                                 // pass
                               }
                             });
+                            appState.initialPinGet = false;
                             appState.triggerUpdate();
                             Navigator.pop(context);
                           },
@@ -261,6 +262,7 @@ class _EditPinPageState extends State<EditPinPage> {
                                 // pass
                               }
                             });
+                            appState.initialPinGet = false;
                             appState.triggerUpdate();
                             Navigator.pop(context);
                           },
@@ -329,6 +331,7 @@ class _EditPinPageState extends State<EditPinPage> {
                                 // pass
                               }
                             });
+                            appState.initialPinGet = false;
                             appState.triggerUpdate();
                             Navigator.pop(context);
                           },

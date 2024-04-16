@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import Table, Column, Integer, String, insert, select, DateTime, Float, delete, update, Double, VARCHAR, func
+from sqlalchemy import Table, Column, Integer, String, insert, select, DateTime, Float, delete, update, Double, VARCHAR, func, TEXT, Boolean
 # note that the password in this file is not the password used on the server, github actions will auto fill that
 engine = sqlalchemy.create_engine("mariadb+mariadbconnector://root@127.0.0.1:3306/urnextroute")
 metadata_obj = sqlalchemy.MetaData()
@@ -38,7 +38,18 @@ fav_paths = Table(
     metadata_obj,
     Column("id", Integer, primary_key = True),
     Column("uuid", String(28)),
-    Column("path", VARCHAR(50000))
+    Column("path", TEXT(50000))
+)
+
+settings = Table(
+    "settings",
+    metadata_obj,
+    Column("id", Integer, primary_key= True),
+    Column("uuid", String(28)),
+    Column("blueLights", Boolean),
+    Column("maintenance", Boolean),
+    Column("trip", Boolean),
+    Column("safety", Boolean),
 )
 
 def init_db():
@@ -209,3 +220,37 @@ def delete_fav_path_by_id(id):
     with engine.connect() as conn:
         conn.execute(stmt)
         conn.commit()
+
+def add_settings(uuid, blueLights, maintenance, trip, safety):
+    stmt = insert(settings).values(uuid = uuid, 
+                                     blueLights = blueLights,
+                                     maintenance = maintenance,
+                                     trip = trip,
+                                     safety = safety,
+                                     )
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        newId = result.lastrowid
+        conn.commit()
+    return newId
+
+def get_settings_by_uuid(uuid):
+    stmt = select(settings).where(settings.c.uuid == uuid)
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        sets = result.first()
+        if sets is None:
+            return None
+        return sets
+
+def update_settings_by_uuid(uuid, blueLights, maintenance, trip, safety):
+    stmt = update(settings).where(settings.c.uuid == uuid).values(
+                                     blueLights = blueLights, 
+                                     maintenance = maintenance,
+                                     trip = trip,
+                                     safety = safety,
+                                    )
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        conn.commit()
+

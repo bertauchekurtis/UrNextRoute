@@ -35,6 +35,8 @@ class AddPinModal extends StatelessWidget {
                         true,
                         position,
                       )),
+                      appState.genRoute = false,//
+                      appState.path = [],//
                       appState.startPointChosen = true,
                       appState.triggerUpdate(),
                       Navigator.pop(context),
@@ -59,6 +61,8 @@ class AddPinModal extends StatelessWidget {
                         position,
                       )),
                       appState.endPointChosen = true,
+                      appState.genRoute = false,//
+                      appState.path = [],//
                       appState.triggerUpdate(),
                       Navigator.pop(context),
                     }),

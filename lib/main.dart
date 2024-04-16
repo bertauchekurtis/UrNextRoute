@@ -153,6 +153,24 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeSafetyPin(SafetyPin oldPin) {
+    switch (oldPin.type) {
+      case 1:
+        // maintenance
+        maintenancePinsList.remove(oldPin);
+        break;
+      case 2:
+        // trip/fall
+        tripFallPinsList.remove(oldPin);
+        break;
+      case 3:
+        // safety
+        safetyHazardPinsList.remove(oldPin);
+        break;
+    }
+    notifyListeners();
+  }
+
   void addOtherUserPin(SafetyPin newPin) {
     otherUserPins.add(newPin);
   }
@@ -238,6 +256,50 @@ class MyAppState extends ChangeNotifier {
     }
   throw Exception('Failed to load roles');
   }
+
+  void addSettings() async {
+    try {
+        var user = FirebaseAuth.instance.currentUser;
+        final response = await http.get(Uri.parse(
+            '$baseURL/addsettings?uuid=${user!.uid}&blueLights=$showBlueLights&maintenance=$showMaintenancePins&trip=$showTripFallPins&safety=$showTripFallPins'));
+        if (response.statusCode == 200) {
+        } else {
+          throw Exception('Failed to load role');
+        }
+      } on Exception {
+      }
+    }
+
+  void updateSettings() async {
+    try {
+        var user = FirebaseAuth.instance.currentUser;
+        final response = await http.get(Uri.parse(
+            '$baseURL/updatesettings?uuid=${user!.uid}&blueLights=$showBlueLights&maintenance=$showMaintenancePins&trip=$showTripFallPins&safety=$showTripFallPins'));
+        if (response.statusCode == 200) {
+        } else {
+          throw Exception('Failed to load role');
+        }
+      } on Exception {
+      }
+    }
+
+  void getSettings() async {
+    try {
+        var user = FirebaseAuth.instance.currentUser;
+        final response = await http.get(Uri.parse(
+            '$baseURL/getsettings?uuid=${user!.uid}'));
+        if (response.statusCode == 200) {
+          Map<String, dynamic> jsonMap = json.decode(response.body);
+          showBlueLights = jsonMap['blueLights'];
+          showMaintenancePins = jsonMap['maintenance'];
+          showTripFallPins = jsonMap['trip'];
+          showSafetyHazardPins = jsonMap['safety'];
+        } else {
+          throw Exception('Failed to load role');
+        }
+      } on Exception {
+      }
+    }
 
 
   void getAllPaths() async {
@@ -510,6 +572,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     leading: const Icon(Icons.logout),
                     title: const Text("Logout"),
                     onTap: () {
+                      appState.genRoute = false;
+                      appState.startPointChosen = false;
+                      appState.endPointChosen = false;
+                      appState.path = [];
+                      appState.start = StartEnd(true, const LatLng(0, 0));
+                      appState.end = StartEnd(false, const LatLng(0, 0));
+                      appState.isFavPath = false;
                       appState.maintenancePinsList.clear();
                       appState.safetyHazardPinsList.clear();
                       appState.otherUserPins.clear();
