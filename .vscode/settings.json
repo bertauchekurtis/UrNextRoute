@@ -1,4 +1,5 @@
 {
     "cmake.configureOnOpen": false,
-    "cmake.sourceDirectory": "D:/UrNextRoute/linux"
+    "cmake.sourceDirectory": "D:/UrNextRoute/linux",
+    "java.compile.nullAnalysis.mode": "automatic"
 }

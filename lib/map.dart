@@ -140,14 +140,12 @@ class MapPage extends StatelessWidget {
       }
       if (brightness < 270) {
         return Color.fromARGB(48, 198, 188, 237);
-      } 
-      else {
+      } else {
         return Color.fromARGB(48, 237, 229, 247);
       }
     }
 
     heatLinks(context);
-  
 
     return SafeArea(
       child: Stack(
@@ -178,10 +176,9 @@ class MapPage extends StatelessWidget {
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.app',
                 ),
-                
                 PolylineLayer(
-                    polylines: [
-                      if (appState.path.isNotEmpty)
+                  polylines: [
+                    if (appState.path.isNotEmpty)
                       Polyline(
                         borderColor: const Color.fromARGB(255, 4, 30, 66),
                         borderStrokeWidth: 6,
@@ -189,14 +186,14 @@ class MapPage extends StatelessWidget {
                         color: const Color.fromARGB(255, 2, 42, 99),
                       ),
                     if (appState.showHeatMap)
-                        for (var link in appState.heatLinkList)
-                          Polyline(
-                              points: [link.startPos, link.endPos],
-                              color: convertBrightnessToColor(
-                                  link.brightnessLevel),
-                              strokeWidth: 25)
-                    ],
-                  ),
+                      for (var link in appState.heatLinkList)
+                        Polyline(
+                            points: [link.startPos, link.endPos],
+                            color:
+                                convertBrightnessToColor(link.brightnessLevel),
+                            strokeWidth: 25)
+                  ],
+                ),
                 MarkerLayer(
                   markers: [
                     Marker(
@@ -394,6 +391,10 @@ class MapPage extends StatelessWidget {
             right: 12,
             bottom: 12,
             child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Color.fromARGB(255, 211, 224, 241),
+                  backgroundColor: Color.fromARGB(255, 4, 30, 66),
+                ),
                 onPressed: () {
                   print("pressed");
                   appState.initialPinGet = false;
@@ -407,8 +408,8 @@ class MapPage extends StatelessWidget {
               top: 12,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                foregroundColor: Color.fromARGB(255, 211, 224, 241),
-                backgroundColor: Color.fromARGB(255, 4, 30, 66),
+                  foregroundColor: Color.fromARGB(255, 211, 224, 241),
+                  backgroundColor: Color.fromARGB(255, 4, 30, 66),
                 ),
                 onPressed: () => {
                   print("pressed"),
@@ -429,6 +430,9 @@ class MapPage extends StatelessWidget {
                 right: 140,
                 top: 12,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 4, 30, 66),
+                  ),
                   onPressed: () => {
                     appState.isFavPath = !appState.isFavPath,
                     appState.favoritePaths.add(appState.pathObj),
@@ -439,8 +443,8 @@ class MapPage extends StatelessWidget {
                     appState.triggerUpdate(),
                   },
                   child: const Icon(
-                    Icons.favorite_border,
-                    color: Colors.grey,
+                    Icons.favorite,
+                    color: Colors.white,
                   ),
                 ),
               )
@@ -449,6 +453,9 @@ class MapPage extends StatelessWidget {
                 right: 140,
                 top: 12,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 4, 30, 66),
+                  ),
                   onPressed: () => {
                     print("Saved button"),
                     appState.isFavPath = !appState.isFavPath,
@@ -473,8 +480,8 @@ class MapPage extends StatelessWidget {
               width: 200,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                foregroundColor: Color.fromARGB(255, 211, 224, 241),
-                backgroundColor: Color.fromARGB(255, 4, 30, 66),
+                  foregroundColor: Color.fromARGB(255, 211, 224, 241),
+                  backgroundColor: Color.fromARGB(255, 4, 30, 66),
                 ),
                 onPressed: () => {
                   appState.genRoute = true,
