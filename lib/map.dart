@@ -305,28 +305,77 @@ class MapPage extends StatelessWidget {
                         ),
                     if (true) //change this to a setting for other users pins
                       for (var pin in appState.otherUserPins)
-                        Marker(
-                          point: pin.position,
-                          width: 50,
-                          height: 50,
-                          child: GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (builder) {
-                                  return ShowPinModal(
-                                    clickPin: pin,
-                                  );
-                                },
-                              );
-                            },
-                            child: const Icon(
-                              Icons.push_pin_sharp,
-                              color: Color.fromARGB(255, 19, 93, 18),
-                              size: 20,
+                        if(pin.type == 1) ... [
+                          Marker(
+                            point: pin.position,
+                            width: 50,
+                            height: 50,
+                            child: GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (builder) {
+                                    return ShowPinModal(
+                                      clickPin: pin,
+                                    );
+                                  },
+                                );
+                              },
+                              child: const Icon(
+                                Icons.build,
+                                color: Color.fromARGB(255, 61, 66, 87),
+                                size: 20,
+                              ),
                             ),
                           ),
-                        ),
+                        ] else 
+                        if(pin.type == 2) ... [
+                          Marker(
+                            point: pin.position,
+                            width: 50,
+                            height: 50,
+                            child: GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (builder) {
+                                    return ShowPinModal(
+                                      clickPin: pin,
+                                    );
+                                  },
+                                );
+                              },
+                              child: const Icon(
+                                Icons.personal_injury,
+                                color: Color.fromARGB(255, 88, 171, 255),
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ] else
+                        if(pin.type == 3)
+                          Marker(
+                            point: pin.position,
+                            width: 50,
+                            height: 50,
+                            child: GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (builder) {
+                                    return ShowPinModal(
+                                      clickPin: pin,
+                                    );
+                                  },
+                                );
+                              },
+                              child: const Icon(
+                                Icons.warning,
+                                color: Color.fromARGB(255, 245, 10, 10),
+                                size: 20,
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ],
