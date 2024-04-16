@@ -357,5 +357,72 @@ def get_all_paths_of_user():
     paths = db.get_all_favorite_routes_of_one_user(id)
     return jsonify({"paths": paths})
 
+@app.route('/addsettings')
+def add_settings():
+    uuid = request.args.get('uuid', None)
+    blueLights = request.args.get('blueLights', None)
+    if blueLights == 'true':
+        blueLights = True
+    else:
+        blueLights = False
+    maintenance = request.args.get('maintenance', None)
+    if maintenance == 'true':
+        maintenance = True
+    else:
+        maintenance = False
+    trip = request.args.get('trip', None)
+    if trip == 'true':
+        trip = True
+    else:
+        trip = False
+    safety = request.args.get('safety', None)
+    if safety == 'true':
+        safety = True
+    else:
+        safety = False
+    db.add_settings(uuid, blueLights, maintenance, trip, safety)
+    return {"status": "success"}
+
+@app.route("/updatesettings")
+def update_settings():
+    uuid = request.args.get('uuid', None)
+    blueLights = request.args.get('blueLights', None)
+    if blueLights == 'true':
+        blueLights = True
+    else:
+        blueLights = False
+    maintenance = request.args.get('maintenance', None)
+    if maintenance == 'true':
+        maintenance = True
+    else:
+        maintenance = False
+    trip = request.args.get('trip', None)
+    if trip == 'true':
+        trip = True
+    else:
+        trip = False
+    safety = request.args.get('safety', None)
+    if safety == 'true':
+        safety = True
+    else:
+        safety = False
+    db.update_settings_by_uuid(uuid, blueLights, maintenance, trip, safety)
+    return {"status": "success"}
+
+@app.route("/getsettings")
+def get_settings():
+    uuid = request.args.get('uuid', None)
+    sets = db.get_settings_by_uuid(uuid)
+    if sets is not None:
+        return {"id": sets[0],
+                "uuid": sets[1],
+                "blueLights": sets[2],
+                "maintenance": sets[3],
+                "trip": sets[4],
+                "safety": sets[5],}
+    else:
+        db.add_settings(uuid, False, True, True, True)
+                                   
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

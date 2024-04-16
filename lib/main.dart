@@ -24,7 +24,7 @@ import 'admin_page.dart';
 import 'link.dart';
 import 'building.dart';
 
-String baseURL = 'http://192.168.1.74:5000';
+String baseURL = 'http://172.27.24.234:5000';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -237,6 +237,50 @@ class MyAppState extends ChangeNotifier {
     }
   throw Exception('Failed to load roles');
   }
+
+  void addSettings() async {
+    try {
+        var user = FirebaseAuth.instance.currentUser;
+        final response = await http.get(Uri.parse(
+            '$baseURL/addsettings?uuid=${user!.uid}&blueLights=$showBlueLights&maintenance=$showMaintenancePins&trip=$showTripFallPins&safety=$showTripFallPins'));
+        if (response.statusCode == 200) {
+        } else {
+          throw Exception('Failed to load role');
+        }
+      } on Exception {
+      }
+    }
+
+  void updateSettings() async {
+    try {
+        var user = FirebaseAuth.instance.currentUser;
+        final response = await http.get(Uri.parse(
+            '$baseURL/updatesettings?uuid=${user!.uid}&blueLights=$showBlueLights&maintenance=$showMaintenancePins&trip=$showTripFallPins&safety=$showTripFallPins'));
+        if (response.statusCode == 200) {
+        } else {
+          throw Exception('Failed to load role');
+        }
+      } on Exception {
+      }
+    }
+
+  void getSettings() async {
+    try {
+        var user = FirebaseAuth.instance.currentUser;
+        final response = await http.get(Uri.parse(
+            '$baseURL/getsettings?uuid=${user!.uid}'));
+        if (response.statusCode == 200) {
+          Map<String, dynamic> jsonMap = json.decode(response.body);
+          showBlueLights = jsonMap['blueLights'];
+          showMaintenancePins = jsonMap['maintenance'];
+          showTripFallPins = jsonMap['trip'];
+          showSafetyHazardPins = jsonMap['safety'];
+        } else {
+          throw Exception('Failed to load role');
+        }
+      } on Exception {
+      }
+    }
 
 
   void getAllPaths() async {
