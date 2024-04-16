@@ -24,11 +24,12 @@ import 'admin_page.dart';
 import 'link.dart';
 import 'building.dart';
 
-String baseURL = 'http://192.168.1.74:5000';
+String baseURL = 'http://10.136.110.180:5000';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
