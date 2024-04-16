@@ -381,6 +381,9 @@ class MapPage extends StatelessWidget {
                 right: 140,
                 top: 12,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 4, 30, 66),
+                  ),
                   onPressed: () => {
                     appState.isFavPath = !appState.isFavPath,
                     appState.favoritePaths.add(appState.pathObj),
@@ -391,8 +394,8 @@ class MapPage extends StatelessWidget {
                     appState.triggerUpdate(),
                   },
                   child: const Icon(
-                    Icons.favorite_border,
-                    color: Colors.grey,
+                    Icons.favorite,
+                    color: Colors.white,
                   ),
                 ),
               )
@@ -402,7 +405,6 @@ class MapPage extends StatelessWidget {
                 top: 12,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Color.fromARGB(255, 211, 224, 241),
                     backgroundColor: Color.fromARGB(255, 4, 30, 66),
                   ),
                   onPressed: () => {
@@ -414,6 +416,7 @@ class MapPage extends StatelessWidget {
                   },
                   child: const Icon(
                     Icons.favorite,
+                    color: Colors.pink,
                   ),
                 ),
               ),
