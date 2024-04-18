@@ -24,7 +24,7 @@ import 'admin_page.dart';
 import 'link.dart';
 import 'building.dart';
 
-String baseURL = 'https://UrNextRoute.link';
+String baseURL = 'http://172.27.24.234:5000';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

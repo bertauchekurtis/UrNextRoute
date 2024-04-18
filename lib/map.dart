@@ -163,12 +163,22 @@ class MapPage extends StatelessWidget {
                         const LatLng(39.525842, -119.798912))),
                 onTap: (tapPosition, point) => {
                   //appState.addStartEnd(StartEnd(true, point)),
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (builder) {
-                      return AddPinModal(position: point);
-                    },
-                  ),
+                  if (point.latitude < 39.552097 && point.latitude > 39.536310 && point.longitude < -119.812110 && point.longitude > -119.821888) {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (builder) {
+                        return AddPinModal(position: point);
+                      },
+                    ),
+                  } else {
+                    showDialog(context: context, 
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text("Oops!"),
+                        content: const Text("Tapped location is not on campus."),
+                      );
+                    })
+                  }
                 },
               ),
               children: [

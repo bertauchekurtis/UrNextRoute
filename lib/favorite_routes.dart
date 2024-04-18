@@ -22,8 +22,10 @@ class FavRoutesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     if (appState.initialPathGet == false) {
-      appState.loadBuildings(context);
       appState.getAllPaths();
+    }
+    if (appState.buildings.isEmpty) {
+      appState.loadBuildings(context);
     }
     return Scaffold(
       appBar: AppBar(
