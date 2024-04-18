@@ -33,7 +33,7 @@ for item in r:
     brightness.append(float(brightnessLevel))
 
 # uniform thing from <>
-def uniformize(x, nbins = 1100):
+def uniformize(x, nbins = 1200):
     which = lambda lst:list(np.where(lst)[0])
     gh = np.histogram(x, bins = nbins)
     empirical_cumulative_distribution = np.cumsum(gh[0])/nbins
