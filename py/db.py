@@ -4,6 +4,8 @@ from sqlalchemy import Table, Column, Integer, String, insert, select, DateTime,
 engine = sqlalchemy.create_engine("mariadb+mariadbconnector://root@127.0.0.1:3306/urnextroute")
 metadata_obj = sqlalchemy.MetaData()
 
+# This table (lines 9-15) is an example and came from
+# https://docs.sqlalchemy.org/en/20/tutorial/metadata.html
 user_table = Table(
     "user_account",
     metadata_obj,
@@ -55,14 +57,16 @@ settings = Table(
 def init_db():
     with engine.connect() as conn:
         metadata_obj.create_all(bind = engine)
-
+# This is an example (lines 62 - 67) from SQLAlchemy documentation:
+# https://docs.sqlalchemy.org/en/20/tutorial/data_insert.html#tutorial-core-insert
 def add_user():
     stmt = insert(user_table).values(name = "spongebob", fullname = "Spongebob Squarepants")
     compiled = stmt.compile()
     with engine.connect() as conn:
         result = conn.execute(stmt)
         conn.commit()
-
+# This function is an example (lines 69 - 75) from SQLAlchemy documentation
+# https://docs.sqlalchemy.org/en/20/tutorial/data_select.html
 def get_user():
     stmt = select(user_table).where(user_table.c.name == "spongebob")
     with engine.connect() as conn:

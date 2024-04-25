@@ -14,10 +14,15 @@ from apscheduler.schedulers.background import BackgroundScheduler
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 db.init_db()
+
+# The following three lines of code (20 - 22) were sourced from
+# https://stackoverflow.com/questions/21214270/how-to-schedule-a-function-to-run-every-hour-on-flask
 scheduler = BackgroundScheduler()
 job = scheduler.add_job(db.clear_expired, 'interval', minutes=1)
 scheduler.start()
 
+# Profanity list was sourced from
+# https://github.com/surge-ai/profanity
 profanity_df = pd.read_csv('profanity_en.csv')
 profanity_words = bad_words_filter.open_df(profanity_df)
 
@@ -32,7 +37,8 @@ for item in r:
     brightnessLevel = item[3]
     brightness.append(float(brightnessLevel))
 
-# uniform thing from <>
+# This function (uniformize()) was sourced from:
+# https://dsp.stackexchange.com/questions/60691/how-to-transform-data-to-uniform-distribution-uniform-percentiles
 def uniformize(x, nbins = 1200):
     which = lambda lst:list(np.where(lst)[0])
     gh = np.histogram(x, bins = nbins)

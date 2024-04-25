@@ -5,6 +5,8 @@ class Node:
         self.long = long
         self.isInside = isInside
 
+    # see this Stack Overflow post for where we found how to make this object hashable
+    # https://stackoverflow.com/questions/2909106/whats-a-correct-and-good-way-to-implement-hash
     def __eq__(self, other):
         if self.lat == other.lat and self.long == other.long:
             return True
