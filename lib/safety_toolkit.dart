@@ -71,6 +71,7 @@ class _SafetyToolKitState extends State<SafetyToolKit> {
             const SizedBox(height: 25),
             ListTile(
               title: const Text("Campus Police"),
+              subtitle: const Text("(775)-334-2677"),
               trailing: TextButton(
                 onPressed: () {
                   FlutterPhoneDirectCaller.callNumber('7753342677');
@@ -91,6 +92,11 @@ class _SafetyToolKitState extends State<SafetyToolKit> {
                   },
                   child: const Icon(Icons.keyboard_arrow_right),
                 )),
+            const ListTile(
+              title: Text(
+                  "Campus Victim Advocate provides services to people affected by harassment, assault, stalking, and other crimes. Their goal is to give you a voice and ensure you have the resources you need."),
+              leading: Icon(Icons.info_sharp),
+            ),
             const SizedBox(height: 25),
             ListTile(
               title: const Text("Loud Alarm"),

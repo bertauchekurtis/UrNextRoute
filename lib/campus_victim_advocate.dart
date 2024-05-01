@@ -37,6 +37,7 @@ class CampusVictimAdvocate extends StatelessWidget {
           children: [
             ListTile(
               title: const Text("Campus Victim Advocate"),
+              subtitle: const Text("(775)-221-7634"),
               trailing: TextButton(
                 onPressed: () {
                   FlutterPhoneDirectCaller.callNumber(advocate);
@@ -49,6 +50,7 @@ class CampusVictimAdvocate extends StatelessWidget {
             const SizedBox(height: 25),
             ListTile(
               title: const Text("Victim Witness Associate Center"),
+              subtitle: const Text("(775)-328-310"),
               trailing: TextButton(
                 onPressed: () {
                   FlutterPhoneDirectCaller.callNumber(assistant);
