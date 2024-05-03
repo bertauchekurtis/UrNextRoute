@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -163,22 +164,30 @@ class MapPage extends StatelessWidget {
                         const LatLng(39.525842, -119.798912))),
                 onTap: (tapPosition, point) => {
                   //appState.addStartEnd(StartEnd(true, point)),
-                  if (point.latitude < 39.552097 && point.latitude > 39.536310 && point.longitude < -119.812110 && point.longitude > -119.821888) {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (builder) {
-                        return AddPinModal(position: point);
-                      },
-                    ),
-                  } else {
-                    showDialog(context: context, 
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("Oops!"),
-                        content: const Text("Tapped location is not on campus."),
-                      );
-                    })
-                  }
+                  if (point.latitude < 39.552097 &&
+                      point.latitude > 39.536310 &&
+                      point.longitude < -119.812110 &&
+                      point.longitude > -119.821888)
+                    {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (builder) {
+                          return AddPinModal(position: point);
+                        },
+                      ),
+                    }
+                  else
+                    {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Oops!"),
+                              content: const Text(
+                                  "Tapped location is not on campus."),
+                            );
+                          })
+                    }
                 },
               ),
               children: [
@@ -312,7 +321,7 @@ class MapPage extends StatelessWidget {
                         ),
                     if (true) //change this to a setting for other users pins
                       for (var pin in appState.otherUserPins)
-                        if(pin.type == 1) ... [
+                        if (pin.type == 1) ...[
                           Marker(
                             point: pin.position,
                             width: 50,
@@ -335,8 +344,7 @@ class MapPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ] else 
-                        if(pin.type == 2) ... [
+                        ] else if (pin.type == 2) ...[
                           Marker(
                             point: pin.position,
                             width: 50,
@@ -359,8 +367,7 @@ class MapPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ] else
-                        if(pin.type == 3)
+                        ] else if (pin.type == 3)
                           Marker(
                             point: pin.position,
                             width: 50,
@@ -384,6 +391,9 @@ class MapPage extends StatelessWidget {
                             ),
                           ),
                   ],
+                ),
+                const SimpleAttributionWidget(
+                  source: Text('OpenStreetMap contributors'),
                 ),
               ],
             ),

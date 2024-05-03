@@ -407,6 +407,9 @@ class _EditPinPageState extends State<EditPinPage> {
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.app',
                 ),
+                const SimpleAttributionWidget(
+                  source: Text('OpenStreetMap contributors'),
+                ),
                 MarkerLayer(markers: [
                   Marker(
                     point: widget.clickPin.position,

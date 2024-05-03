@@ -38,7 +38,7 @@ class AddSafetyPinPage extends StatefulWidget {
 class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
   final TextEditingController descriptionController = TextEditingController();
   var selectedOption = 1;
-  
+
   Distance distance =
       const Distance(roundResult: false, calculator: Vincenty());
 
@@ -92,9 +92,9 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
     var appState = context.watch<MyAppState>();
 
     late String formattedExpireTime =
-      DateFormat('kk:mm - EEE, MMM d').format(widget.expireTime);
-    
-    if(widget.buildings.isEmpty){
+        DateFormat('kk:mm - EEE, MMM d').format(widget.expireTime);
+
+    if (widget.buildings.isEmpty) {
       loadBuildings(context);
     }
 
@@ -230,22 +230,21 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
           ListTile(
             leading: const Icon(Icons.watch_later_outlined),
             title: Text("Expire Time: ${formattedExpireTime}"),
-            subtitle: const Text("Tap to select date"), 
+            subtitle: const Text("Tap to select date"),
             trailing: const Icon(Icons.edit),
             onTap: () {
-              DatePicker.showDatePicker(
-                context,
-                dateFormat: 'HH:mm MMMM dd yyyy',
-                initialDateTime: DateTime.now(),
-                minDateTime: DateTime.now(),
-                maxDateTime: DateTime(2025),
-                onMonthChangeStartWithFirstDate: true,
-                onConfirm: (dateTime, List<int> index) {
-                  setState(() {
-                    widget.expireTime = dateTime;
-                    formattedExpireTime = getFormattedTime(dateTime);
-                  });
-                });            
+              DatePicker.showDatePicker(context,
+                  dateFormat: 'HH:mm MMMM dd yyyy',
+                  initialDateTime: DateTime.now(),
+                  minDateTime: DateTime.now(),
+                  maxDateTime: DateTime(2025),
+                  onMonthChangeStartWithFirstDate: true,
+                  onConfirm: (dateTime, List<int> index) {
+                setState(() {
+                  widget.expireTime = dateTime;
+                  formattedExpireTime = getFormattedTime(dateTime);
+                });
+              });
             },
           ),
           const SizedBox(
@@ -294,6 +293,9 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
                     ),
                   ),
                 ]),
+                const SimpleAttributionWidget(
+                  source: Text('OpenStreetMap contributors'),
+                ),
               ],
             ),
           ),

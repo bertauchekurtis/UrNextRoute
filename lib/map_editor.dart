@@ -476,9 +476,8 @@ class _MapEditorPageState extends State<MapEditorPage> {
                   polylines: [
                     for (var link in widget.linkList)
                       Polyline(
-                        borderColor:
-                            const Color.fromARGB(255, 4, 30, 66),
-                        color: const Color.fromARGB(255,4 , 30, 66),
+                        borderColor: const Color.fromARGB(255, 4, 30, 66),
+                        color: const Color.fromARGB(255, 4, 30, 66),
                         borderStrokeWidth: 4,
                         points: [
                           link.startPos,
@@ -497,7 +496,10 @@ class _MapEditorPageState extends State<MapEditorPage> {
                         ],
                       )
                   ],
-                )
+                ),
+                const SimpleAttributionWidget(
+                  source: Text('OpenStreetMap contributors'),
+                ),
               ],
             ),
           ),
