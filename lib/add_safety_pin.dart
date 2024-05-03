@@ -279,7 +279,7 @@ class _AddSafetyPinPageState extends State<AddSafetyPinPage> {
               children: [
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.app',
+                  userAgentPackageName: 'com.urnextroute.app',
                 ),
                 MarkerLayer(markers: [
                   Marker(

@@ -405,7 +405,7 @@ class _EditPinPageState extends State<EditPinPage> {
               children: [
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.app',
+                  userAgentPackageName: 'com.urnextroute.app',
                 ),
                 const SimpleAttributionWidget(
                   source: Text('OpenStreetMap contributors'),
