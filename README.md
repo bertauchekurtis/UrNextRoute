@@ -44,4 +44,5 @@ samples, guidance on mobile development, and a full API reference.
 - astar (BSD-3-Clause): [link](https://github.com/jrialland/python-astar) [license](https://opensource.org/license/bsd-3-clause)
 - numpy (BSD-3-Clause): [link](https://pypi.org/project/numpy/) [licnese](https://opensource.org/license/bsd-3-clause)
 - apscheduler (MIT License): [link](https://pypi.org/project/APScheduler/) [license](https://opensource.org/license/mit)
+- geopy (MIT License): [link](https://pypi.org/project/geopy/) [license](https://opensource.org/license/mit)
 
